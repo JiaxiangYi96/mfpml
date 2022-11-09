@@ -1,11 +1,13 @@
 Metadata-Version: 2.1
 Name: MfPml
-Version: 0.0.1
+Version: 0.0.4
 Summary: Probabilistic machine learning methods
+Home-page: https://github.com/JiaxiangYi96/MFPML.git
 Author: Jiaxiang Yi (Delft University of Technology), Ji Cheng (City University of Hong Kong)
 Author-email: <yagafighting@gmail.com>
 Keywords: python,multi-fidelity machine learning,Bayesian Optimization,Reliability analysis
 Classifier: Development Status :: 1 - Planning
+Classifier: License :: OSI Approved :: MIT License
 Classifier: Intended Audience :: Developers
 Classifier: Programming Language :: Python :: 3
 Classifier: Operating System :: Unix
