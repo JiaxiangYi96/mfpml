@@ -1,0 +1,5 @@
+numpy
+pandas
+SALib
+matplotlib
+scipy

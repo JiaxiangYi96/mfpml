@@ -1,0 +1,17 @@
+Metadata-Version: 2.1
+Name: MfPml
+Version: 0.0.1
+Summary: Probabilistic machine learning methods
+Author: Jiaxiang Yi (Delft University of Technology), Ji Cheng (City University of Hong Kong)
+Author-email: <yagafighting@gmail.com>
+Keywords: python,multi-fidelity machine learning,Bayesian Optimization,Reliability analysis
+Classifier: Development Status :: 1 - Planning
+Classifier: Intended Audience :: Developers
+Classifier: Programming Language :: Python :: 3
+Classifier: Operating System :: Unix
+Classifier: Operating System :: MacOS :: MacOS X
+Classifier: Operating System :: Microsoft :: Windows
+Description-Content-Type: text/markdown
+License-File: LICENSE
+
+A package that used for establishing multi-fidelity probabilistic machine learning models Meanwhile, it also could be used for multi-fidelity Bayesian optimization and multi-fidelityand multi-fidelity reliability analysis

@@ -2,12 +2,13 @@
 import os
 import numpy as np
 import pandas as pd
-from SALib.sample import sobol_sequence, saltelli
+from SALib.sample import sobol_sequence
 from scipy.stats import qmc
 from matplotlib import pyplot as plt
 
 
 class Sampler:
+
     """Arg:
         design_space
         num_simples
@@ -36,6 +37,7 @@ class Sampler:
         pass
 
     def SetDesignSpace(self, design_space: dict = None) -> None:
+
         """"
             This function is used to get the design space info
             and the number of dimension of this problem
