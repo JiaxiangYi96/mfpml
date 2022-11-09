@@ -12,7 +12,7 @@ setup(
     version=VERSION,
     author="Jiaxiang Yi (Delft University of Technology), Ji Cheng (City University of Hong Kong)",
     author_email="<yagafighting@gmail.com>",
-    # url='https://github.com/JiaxiangYi96/MFPML.git',
+    url='https://github.com/JiaxiangYi96/MFPML.git',
     description=DESCRIPTION,
     long_description_content_type="text/markdown",
     long_description=LONG_DESCRIPTION,
