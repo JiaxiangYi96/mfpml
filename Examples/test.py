@@ -1,23 +1,29 @@
+# configure the environmental path
+import os
+import sys
 
 from collections import OrderedDict
-from DoE.Samplers import LatinHyperCube
 
-def main():
-    # define the design space
-    doe_variables = OrderedDict({'x': [0.0, 1.0]})
-    # define number of samples
-    num_points = 10
-    # define the information of outputs
-    name_outputs = ['y']
+from MfPml.DoE.DesignSpace import CreateDesignSpace
+from MfPml.DoE.LantinHypeCube import LatinHyperCube
+from MfPml.Functions.MultiFidelityUnconstrained import Forrester
 
-    doe_sampler = LatinHyperCube()
-    samples = doe_sampler.Sampling(num_samples=num_points,
-                                   design_space=doe_variables,
-                                   out_names=name_outputs,
-                                   seed=123456)
-    print(samples)
+function = Forrester()
 
-    return samples
+design_space = function.design_space
+# print(design_space)
+# define the number of samples
+num_points = 10
+name_outputs = ["y"]
+doe_sampler = LatinHyperCube()
+samples = doe_sampler.sampling(num_samples=num_points,
+                               design_space=design_space,
+                               out_names=name_outputs,
+                               seed=123456)
 
-if __name__ == "__main__":
-    main()
+samples['y'] = function(samples['x'])
+
+function.plot_function(with_low_fidelity=True)
+# print(function.get_optimum())
+# print(function.get_optimum_variable())
+# print(function.get_design_space())

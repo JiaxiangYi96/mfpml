@@ -1,197 +1,63 @@
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
-<head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MfPml.DoE package &mdash; MfPmlDocs 0.0.1 documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <!--[if lt IE 9]>
-    <script src="_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="_static/doctools.js"></script>
-        <script src="_static/sphinx_highlight.js"></script>
-    <script src="_static/js/theme.js"></script>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>MfPml.DoE package &#8212; MfPmlDocs 0.0.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" /> 
-</head>
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
-<body class="wy-body-for-nav"> 
-  <div class="wy-grid-for-nav">
-    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
-      <div class="wy-side-scroll">
-        <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> MfPmlDocs
-          </a>
-<div role="search">
-  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
-    <input type="hidden" name="check_keywords" value="yes" />
-    <input type="hidden" name="area" value="default" />
-  </form>
-</div>
-        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <!-- Local TOC -->
-              <div class="local-toc"><ul>
-<li><a class="reference internal" href="#">MfPml.DoE package</a><ul>
-<li><a class="reference internal" href="#submodules">Submodules</a></li>
-<li><a class="reference internal" href="#module-MfPml.DoE.Samplers">MfPml.DoE.Samplers module</a><ul>
-<li><a class="reference internal" href="#MfPml.DoE.Samplers.FixNumberSampler"><code class="docutils literal notranslate"><span class="pre">FixNumberSampler</span></code></a><ul>
-<li><a class="reference internal" href="#MfPml.DoE.Samplers.FixNumberSampler.GetSamples"><code class="docutils literal notranslate"><span class="pre">FixNumberSampler.GetSamples()</span></code></a></li>
-<li><a class="reference internal" href="#MfPml.DoE.Samplers.FixNumberSampler.Sampling"><code class="docutils literal notranslate"><span class="pre">FixNumberSampler.Sampling()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#MfPml.DoE.Samplers.LatinHyperCube"><code class="docutils literal notranslate"><span class="pre">LatinHyperCube</span></code></a><ul>
-<li><a class="reference internal" href="#MfPml.DoE.Samplers.LatinHyperCube.GetSamples"><code class="docutils literal notranslate"><span class="pre">LatinHyperCube.GetSamples()</span></code></a></li>
-<li><a class="reference internal" href="#MfPml.DoE.Samplers.LatinHyperCube.Sampling"><code class="docutils literal notranslate"><span class="pre">LatinHyperCube.Sampling()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#MfPml.DoE.Samplers.RandomSampler"><code class="docutils literal notranslate"><span class="pre">RandomSampler</span></code></a><ul>
-<li><a class="reference internal" href="#MfPml.DoE.Samplers.RandomSampler.GetSamples"><code class="docutils literal notranslate"><span class="pre">RandomSampler.GetSamples()</span></code></a></li>
-<li><a class="reference internal" href="#MfPml.DoE.Samplers.RandomSampler.Sampling"><code class="docutils literal notranslate"><span class="pre">RandomSampler.Sampling()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#MfPml.DoE.Samplers.Sampler"><code class="docutils literal notranslate"><span class="pre">Sampler</span></code></a><ul>
-<li><a class="reference internal" href="#MfPml.DoE.Samplers.Sampler.CreatePandasFrame"><code class="docutils literal notranslate"><span class="pre">Sampler.CreatePandasFrame()</span></code></a></li>
-<li><a class="reference internal" href="#MfPml.DoE.Samplers.Sampler.GetSamples"><code class="docutils literal notranslate"><span class="pre">Sampler.GetSamples()</span></code></a></li>
-<li><a class="reference internal" href="#MfPml.DoE.Samplers.Sampler.PlotSamples1D"><code class="docutils literal notranslate"><span class="pre">Sampler.PlotSamples1D()</span></code></a></li>
-<li><a class="reference internal" href="#MfPml.DoE.Samplers.Sampler.PlotSamples2D"><code class="docutils literal notranslate"><span class="pre">Sampler.PlotSamples2D()</span></code></a></li>
-<li><a class="reference internal" href="#MfPml.DoE.Samplers.Sampler.SaveDoE"><code class="docutils literal notranslate"><span class="pre">Sampler.SaveDoE()</span></code></a></li>
-<li><a class="reference internal" href="#MfPml.DoE.Samplers.Sampler.SetDesignSpace"><code class="docutils literal notranslate"><span class="pre">Sampler.SetDesignSpace()</span></code></a></li>
-<li><a class="reference internal" href="#MfPml.DoE.Samplers.Sampler.SetSeed"><code class="docutils literal notranslate"><span class="pre">Sampler.SetSeed()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#MfPml.DoE.Samplers.SobolSequence"><code class="docutils literal notranslate"><span class="pre">SobolSequence</span></code></a><ul>
-<li><a class="reference internal" href="#MfPml.DoE.Samplers.SobolSequence.GetSamples"><code class="docutils literal notranslate"><span class="pre">SobolSequence.GetSamples()</span></code></a></li>
-<li><a class="reference internal" href="#MfPml.DoE.Samplers.SobolSequence.Sampling"><code class="docutils literal notranslate"><span class="pre">SobolSequence.Sampling()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><a class="reference internal" href="#module-MfPml.DoE">Module contents</a></li>
-</ul>
-</li>
-</ul>
-</div>
-        </div>
-      </div>
-    </nav>
+  </head><body>
+  
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
-          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">MfPmlDocs</a>
-      </nav>
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
 
-      <div class="wy-nav-content">
-        <div class="rst-content">
-          <div role="navigation" aria-label="Page navigation">
-  <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a></li>
-      <li class="breadcrumb-item active">MfPml.DoE package</li>
-      <li class="wy-breadcrumbs-aside">
-            <a href="_sources/MfPml.DoE.rst.txt" rel="nofollow"> View page source</a>
-      </li>
-  </ul>
-  <hr/>
-</div>
-          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
-           <div itemprop="articleBody">
-             
+          <div class="body" role="main">
+            
   <section id="mfpml-doe-package">
-<h1>MfPml.DoE package<a class="headerlink" href="#mfpml-doe-package" title="Permalink to this heading"></a></h1>
+<h1>MfPml.DoE package<a class="headerlink" href="#mfpml-doe-package" title="Permalink to this headline">¶</a></h1>
 <section id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 </section>
-<section id="module-MfPml.DoE.Samplers">
-<span id="mfpml-doe-samplers-module"></span><h2>MfPml.DoE.Samplers module<a class="headerlink" href="#module-MfPml.DoE.Samplers" title="Permalink to this heading"></a></h2>
+<section id="module-MfPml.DoE.DesignSpace">
+<span id="mfpml-doe-designspace-module"></span><h2>MfPml.DoE.DesignSpace module<a class="headerlink" href="#module-MfPml.DoE.DesignSpace" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
-<dt class="sig sig-object py" id="MfPml.DoE.Samplers.FixNumberSampler">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">MfPml.DoE.Samplers.</span></span><span class="sig-name descname"><span class="pre">FixNumberSampler</span></span><a class="reference internal" href="_modules/MfPml/DoE/Samplers.html#FixNumberSampler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#MfPml.DoE.Samplers.FixNumberSampler" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#MfPml.DoE.Samplers.Sampler" title="MfPml.DoE.Samplers.Sampler"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sampler</span></code></a></p>
-<dl class="py method">
-<dt class="sig sig-object py" id="MfPml.DoE.Samplers.FixNumberSampler.GetSamples">
-<span class="sig-name descname"><span class="pre">GetSamples</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_samples</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="_modules/MfPml/DoE/Samplers.html#FixNumberSampler.GetSamples"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#MfPml.DoE.Samplers.FixNumberSampler.GetSamples" title="Permalink to this definition"></a></dt>
-<dd><dl class="simple">
-<dt>“</dt><dd><p>This function is used to get the samples</p>
-</dd>
-<dt>Arg:</dt><dd><p>num_samples : a dict that contain the design space</p>
-</dd>
-</dl>
-<p>Note:  the function should be completed at the subsclass</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="MfPml.DoE.Samplers.FixNumberSampler.Sampling">
-<span class="sig-name descname"><span class="pre">Sampling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_samples</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">design_space</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/MfPml/DoE/Samplers.html#FixNumberSampler.Sampling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#MfPml.DoE.Samplers.FixNumberSampler.Sampling" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="MfPml.DoE.Samplers.LatinHyperCube">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">MfPml.DoE.Samplers.</span></span><span class="sig-name descname"><span class="pre">LatinHyperCube</span></span><a class="reference internal" href="_modules/MfPml/DoE/Samplers.html#LatinHyperCube"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#MfPml.DoE.Samplers.LatinHyperCube" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#MfPml.DoE.Samplers.Sampler" title="MfPml.DoE.Samplers.Sampler"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sampler</span></code></a></p>
-<dl class="py method">
-<dt class="sig sig-object py" id="MfPml.DoE.Samplers.LatinHyperCube.GetSamples">
-<span class="sig-name descname"><span class="pre">GetSamples</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_samples</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="_modules/MfPml/DoE/Samplers.html#LatinHyperCube.GetSamples"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#MfPml.DoE.Samplers.LatinHyperCube.GetSamples" title="Permalink to this definition"></a></dt>
-<dd><dl class="simple">
-<dt>“</dt><dd><p>This function is used to get the samples</p>
-</dd>
-<dt>Arg:</dt><dd><p>num_samples : a dict that contain the design space</p>
-</dd>
-</dl>
-<p>Note:  the function should be completed at the subsclass</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="MfPml.DoE.Samplers.LatinHyperCube.Sampling">
-<span class="sig-name descname"><span class="pre">Sampling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_samples</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">design_space</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/MfPml/DoE/Samplers.html#LatinHyperCube.Sampling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#MfPml.DoE.Samplers.LatinHyperCube.Sampling" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="MfPml.DoE.Samplers.RandomSampler">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">MfPml.DoE.Samplers.</span></span><span class="sig-name descname"><span class="pre">RandomSampler</span></span><a class="reference internal" href="_modules/MfPml/DoE/Samplers.html#RandomSampler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#MfPml.DoE.Samplers.RandomSampler" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#MfPml.DoE.Samplers.Sampler" title="MfPml.DoE.Samplers.Sampler"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sampler</span></code></a></p>
-<dl class="py method">
-<dt class="sig sig-object py" id="MfPml.DoE.Samplers.RandomSampler.GetSamples">
-<span class="sig-name descname"><span class="pre">GetSamples</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_samples</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="_modules/MfPml/DoE/Samplers.html#RandomSampler.GetSamples"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#MfPml.DoE.Samplers.RandomSampler.GetSamples" title="Permalink to this definition"></a></dt>
-<dd><dl class="simple">
-<dt>“</dt><dd><p>This function is used to get the samples</p>
-</dd>
-<dt>Arg:</dt><dd><p>num_samples : a dict that contain the design space</p>
-</dd>
-</dl>
-<p>Note:  the function should be completed at the subsclass</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="MfPml.DoE.Samplers.RandomSampler.Sampling">
-<span class="sig-name descname"><span class="pre">Sampling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_samples</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">design_space</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/MfPml/DoE/Samplers.html#RandomSampler.Sampling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#MfPml.DoE.Samplers.RandomSampler.Sampling" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="MfPml.DoE.Samplers.Sampler">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">MfPml.DoE.Samplers.</span></span><span class="sig-name descname"><span class="pre">Sampler</span></span><a class="reference internal" href="_modules/MfPml/DoE/Samplers.html#Sampler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#MfPml.DoE.Samplers.Sampler" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="MfPml.DoE.DesignSpace.CreateDesignSpace">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">MfPml.DoE.DesignSpace.</span></span><span class="sig-name descname"><span class="pre">CreateDesignSpace</span></span><a class="reference internal" href="_modules/MfPml/DoE/DesignSpace.html#CreateDesignSpace"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#MfPml.DoE.DesignSpace.CreateDesignSpace" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Arg:
-design_space
-num_simples</p>
 <dl class="py method">
-<dt class="sig sig-object py" id="MfPml.DoE.Samplers.Sampler.CreatePandasFrame">
-<span class="sig-name descname"><span class="pre">CreatePandasFrame</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">out_names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/MfPml/DoE/Samplers.html#Sampler.CreatePandasFrame"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#MfPml.DoE.Samplers.Sampler.CreatePandasFrame" title="Permalink to this definition"></a></dt>
-<dd><p>this function is used to create pandas framework for the doe
-the output will be added at the end of the pandas dataframe but without giving names</p>
+<dt class="sig sig-object py" id="MfPml.DoE.DesignSpace.CreateDesignSpace.AddVariables">
+<span class="sig-name descname"><span class="pre">AddVariables</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lower_bound</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">high_bound</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="reference internal" href="_modules/MfPml/DoE/DesignSpace.html#CreateDesignSpace.AddVariables"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#MfPml.DoE.DesignSpace.CreateDesignSpace.AddVariables" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add variables and corresponding design space sequentially
+Note:  one or more dimensional could be added to the design space sequentially</p>
 <dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>list</em>) – Names of added variables</p></li>
+<li><p><strong>lower_bound</strong> (<em>list</em>) – Lower bound of added design variables</p></li>
+<li><p><strong>high_bound</strong> (<em>list</em>) – Higher bound of added design variables</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>None</p>
 </dd>
@@ -199,124 +65,319 @@ the output will be added at the end of the pandas dataframe but without giving n
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="MfPml.DoE.Samplers.Sampler.GetSamples">
-<span class="sig-name descname"><span class="pre">GetSamples</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_samples</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/MfPml/DoE/Samplers.html#Sampler.GetSamples"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#MfPml.DoE.Samplers.Sampler.GetSamples" title="Permalink to this definition"></a></dt>
-<dd><dl class="simple">
-<dt>“</dt><dd><p>This function is used to get the samples</p>
+<dt class="sig sig-object py" id="MfPml.DoE.DesignSpace.CreateDesignSpace.AssembleDesignSpace">
+<span class="sig-name descname"><span class="pre">AssembleDesignSpace</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">dict</span><a class="reference internal" href="_modules/MfPml/DoE/DesignSpace.html#CreateDesignSpace.AssembleDesignSpace"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#MfPml.DoE.DesignSpace.CreateDesignSpace.AssembleDesignSpace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to assemble the design space based on the design
+variable information defined in AddVaribales function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>design_space</strong> – design space generated for the objective problem</p>
 </dd>
-<dt>Arg:</dt><dd><p>num_samples : a dict that contain the design space</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>dict</p>
 </dd>
 </dl>
-<p>Note:  the function should be completed at the subsclass</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-MfPml.DoE.Samplers">
+<span id="mfpml-doe-samplers-module"></span><h2>MfPml.DoE.Samplers module<a class="headerlink" href="#module-MfPml.DoE.Samplers" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="MfPml.DoE.Samplers.FixNumberSampler">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">MfPml.DoE.Samplers.</span></span><span class="sig-name descname"><span class="pre">FixNumberSampler</span></span><a class="reference internal" href="_modules/MfPml/DoE/Samplers.html#FixNumberSampler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#MfPml.DoE.Samplers.FixNumberSampler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="source/MfPml.DoE.html#MfPml.DoE.Samplers.Sampler" title="MfPml.DoE.Samplers.Sampler"><code class="xref py py-class docutils literal notranslate"><span class="pre">MfPml.DoE.Samplers.Sampler</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="MfPml.DoE.Samplers.FixNumberSampler.GetSamples">
+<span class="sig-name descname"><span class="pre">GetSamples</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_samples</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">numpy.ndarray</span><a class="reference internal" href="_modules/MfPml/DoE/Samplers.html#FixNumberSampler.GetSamples"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#MfPml.DoE.Samplers.FixNumberSampler.GetSamples" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the samples</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>num_samples</strong> (<em>int</em>) – number of samples</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The function should be completed at the sub-sclass</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="MfPml.DoE.Samplers.LatinHyperCube">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">MfPml.DoE.Samplers.</span></span><span class="sig-name descname"><span class="pre">LatinHyperCube</span></span><a class="reference internal" href="_modules/MfPml/DoE/Samplers.html#LatinHyperCube"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#MfPml.DoE.Samplers.LatinHyperCube" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="source/MfPml.DoE.html#MfPml.DoE.Samplers.Sampler" title="MfPml.DoE.Samplers.Sampler"><code class="xref py py-class docutils literal notranslate"><span class="pre">MfPml.DoE.Samplers.Sampler</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="MfPml.DoE.Samplers.LatinHyperCube.GetSamples">
+<span class="sig-name descname"><span class="pre">GetSamples</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_samples</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">numpy.ndarray</span><a class="reference internal" href="_modules/MfPml/DoE/Samplers.html#LatinHyperCube.GetSamples"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#MfPml.DoE.Samplers.LatinHyperCube.GetSamples" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the samples</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>num_samples</strong> (<em>int</em>) – number of samples</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The function should be completed at the sub-sclass</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="MfPml.DoE.Samplers.RandomSampler">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">MfPml.DoE.Samplers.</span></span><span class="sig-name descname"><span class="pre">RandomSampler</span></span><a class="reference internal" href="_modules/MfPml/DoE/Samplers.html#RandomSampler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#MfPml.DoE.Samplers.RandomSampler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="source/MfPml.DoE.html#MfPml.DoE.Samplers.Sampler" title="MfPml.DoE.Samplers.Sampler"><code class="xref py py-class docutils literal notranslate"><span class="pre">MfPml.DoE.Samplers.Sampler</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="MfPml.DoE.Samplers.RandomSampler.GetSamples">
+<span class="sig-name descname"><span class="pre">GetSamples</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_samples</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">numpy.ndarray</span><a class="reference internal" href="_modules/MfPml/DoE/Samplers.html#RandomSampler.GetSamples"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#MfPml.DoE.Samplers.RandomSampler.GetSamples" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the samples</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>num_samples</strong> (<em>int</em>) – number of samples</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The function should be completed at the sub-sclass</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="MfPml.DoE.Samplers.Sampler">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">MfPml.DoE.Samplers.</span></span><span class="sig-name descname"><span class="pre">Sampler</span></span><a class="reference internal" href="_modules/MfPml/DoE/Samplers.html#Sampler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#MfPml.DoE.Samplers.Sampler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class for drawing samples from design space</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="MfPml.DoE.Samplers.Sampler.CreatePandasFrame">
+<span class="sig-name descname"><span class="pre">CreatePandasFrame</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">out_names</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="reference internal" href="_modules/MfPml/DoE/Samplers.html#Sampler.CreatePandasFrame"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#MfPml.DoE.Samplers.Sampler.CreatePandasFrame" title="Permalink to this definition">¶</a></dt>
+<dd><p>this function is used to create pandas framework for the doe
+the output will be added at the end of the pandas dataframe but without giving names</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>out_names</strong> (<em>list</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="MfPml.DoE.Samplers.Sampler.GetSamples">
+<span class="sig-name descname"><span class="pre">GetSamples</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_samples</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">numpy.ndarray</span><a class="reference internal" href="_modules/MfPml/DoE/Samplers.html#Sampler.GetSamples"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#MfPml.DoE.Samplers.Sampler.GetSamples" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the samples</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>num_samples</strong> (<em>int</em>) – number of samples</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The function should be completed at the sub-sclass</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="MfPml.DoE.Samplers.Sampler.PlotSamples1D">
-<span class="sig-name descname"><span class="pre">PlotSamples1D</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">saveplot</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/MfPml/DoE/Samplers.html#Sampler.PlotSamples1D"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#MfPml.DoE.Samplers.Sampler.PlotSamples1D" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">PlotSamples1D</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">saveplot</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="reference internal" href="_modules/MfPml/DoE/Samplers.html#Sampler.PlotSamples1D"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#MfPml.DoE.Samplers.Sampler.PlotSamples1D" title="Permalink to this definition">¶</a></dt>
 <dd><p>function to visualize the one dimension design of experiment
-:Parameters: * <strong>name</strong> (<em>name of figure</em>)</p>
+:Parameters: * <strong>name</strong> (<em>str</em>) – name of the figure file</p>
 <blockquote>
 <div><ul class="simple">
-<li><p><strong>saveplot</strong> (<em>bool operator to claim save the figure or not</em>)</p></li>
+<li><p><strong>saveplot</strong> (<em>bool</em>) – operator to claim save the figure or not</p></li>
 </ul>
 </div></blockquote>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="MfPml.DoE.Samplers.Sampler.PlotSamples2D">
-<span class="sig-name descname"><span class="pre">PlotSamples2D</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">saveplot</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/MfPml/DoE/Samplers.html#Sampler.PlotSamples2D"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#MfPml.DoE.Samplers.Sampler.PlotSamples2D" title="Permalink to this definition"></a></dt>
-<dd><p>This function is used to visualize the two-dimensional sampling</p>
+<span class="sig-name descname"><span class="pre">PlotSamples2D</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">saveplot</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="reference internal" href="_modules/MfPml/DoE/Samplers.html#Sampler.PlotSamples2D"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#MfPml.DoE.Samplers.Sampler.PlotSamples2D" title="Permalink to this definition">¶</a></dt>
+<dd><p>function to visualize the one dimension design of experiment
+:Parameters: * <strong>name</strong> (<em>str</em>) – name of the figure file</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><strong>saveplot</strong> (<em>bool</em>) – operator to claim save the figure or not</p></li>
+</ul>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="MfPml.DoE.Samplers.Sampler.Sampling">
+<span class="sig-name descname"><span class="pre">Sampling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_samples</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">design_space</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_names</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">pandas.core.frame.DataFrame</span><a class="reference internal" href="_modules/MfPml/DoE/Samplers.html#Sampler.Sampling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#MfPml.DoE.Samplers.Sampler.Sampling" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sampling interface to the user</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>num_samples</strong> (<em>int</em>) – number of samples</p></li>
+<li><p><strong>design_space</strong> (<em>dict</em>) – design space of this problem</p></li>
+<li><p><strong>seed</strong> (<em>int</em>) – seed for sampler, for replicating the same results</p></li>
+<li><p><strong>out_names</strong> (<em>list</em>) – names of the outputs</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>samples</strong> – a pandas dataframe to that contains the information of samples</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pandas.DataFrame</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="MfPml.DoE.Samplers.Sampler.SaveDoE">
-<span class="sig-name descname"><span class="pre">SaveDoE</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'doe'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/MfPml/DoE/Samplers.html#Sampler.SaveDoE"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#MfPml.DoE.Samplers.Sampler.SaveDoE" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">SaveDoE</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'doe'</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="reference internal" href="_modules/MfPml/DoE/Samplers.html#Sampler.SaveDoE"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#MfPml.DoE.Samplers.Sampler.SaveDoE" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function is used to save the DoE to Json files</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>name</strong> (<em>str</em>) – name for the Json.file</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="MfPml.DoE.Samplers.Sampler.SetDesignSpace">
-<span class="sig-name descname"><span class="pre">SetDesignSpace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">design_space</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/MfPml/DoE/Samplers.html#Sampler.SetDesignSpace"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#MfPml.DoE.Samplers.Sampler.SetDesignSpace" title="Permalink to this definition"></a></dt>
-<dd><dl class="simple">
-<dt>“</dt><dd><p>This function is used to get the design space info
+<span class="sig-name descname"><span class="pre">SetDesignSpace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">design_space</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="reference internal" href="_modules/MfPml/DoE/Samplers.html#Sampler.SetDesignSpace"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#MfPml.DoE.Samplers.Sampler.SetDesignSpace" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function is used to get the design space info
 and the number of dimension of this problem</p>
-</dd>
-<dt>Arg:</dt><dd><p>design_space : a dict that contain the design space</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>design_space</strong> (<em>dict</em>)</p></li>
+<li><p><strong>design space inside a dictionary</strong></p></li>
+</ul>
 </dd>
 </dl>
-<p>Note:  the function should be completed at the subsclass</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="MfPml.DoE.Samplers.Sampler.SetSeed">
-<span class="sig-name descname"><span class="pre">SetSeed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">123456</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/MfPml/DoE/Samplers.html#Sampler.SetSeed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#MfPml.DoE.Samplers.Sampler.SetSeed" title="Permalink to this definition"></a></dt>
-<dd><dl class="simple">
-<dt>“</dt><dd><p>This function is used to get the design space info
+<span class="sig-name descname"><span class="pre">SetSeed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">123456</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="reference internal" href="_modules/MfPml/DoE/Samplers.html#Sampler.SetSeed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#MfPml.DoE.Samplers.Sampler.SetSeed" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function is used to get the design space info
 and the number of dimension of this problem</p>
-</dd>
-<dt>Arg:</dt><dd><p>design_space : a dict that contain the design space</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>seed</strong> (<em>int</em>) – seed for sampler, for data-replication</p>
 </dd>
 </dl>
-<p>Note:  the function should be completed at the subsclass</p>
 </dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MfPml.DoE.Samplers.Sampler.design_space">
+<span class="sig-name descname"><span class="pre">design_space</span></span><em class="property"> <span class="pre">=</span> <span class="pre">None</span></em><a class="headerlink" href="#MfPml.DoE.Samplers.Sampler.design_space" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MfPml.DoE.Samplers.Sampler.num_dim">
+<span class="sig-name descname"><span class="pre">num_dim</span></span><em class="property"> <span class="pre">=</span> <span class="pre">None</span></em><a class="headerlink" href="#MfPml.DoE.Samplers.Sampler.num_dim" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MfPml.DoE.Samplers.Sampler.num_outs">
+<span class="sig-name descname"><span class="pre">num_outs</span></span><em class="property"> <span class="pre">=</span> <span class="pre">None</span></em><a class="headerlink" href="#MfPml.DoE.Samplers.Sampler.num_outs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MfPml.DoE.Samplers.Sampler.num_samples">
+<span class="sig-name descname"><span class="pre">num_samples</span></span><em class="property"> <span class="pre">=</span> <span class="pre">None</span></em><a class="headerlink" href="#MfPml.DoE.Samplers.Sampler.num_samples" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MfPml.DoE.Samplers.Sampler.out_names">
+<span class="sig-name descname"><span class="pre">out_names</span></span><em class="property"> <span class="pre">=</span> <span class="pre">None</span></em><a class="headerlink" href="#MfPml.DoE.Samplers.Sampler.out_names" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MfPml.DoE.Samplers.Sampler.samples">
+<span class="sig-name descname"><span class="pre">samples</span></span><em class="property"> <span class="pre">=</span> <span class="pre">None</span></em><a class="headerlink" href="#MfPml.DoE.Samplers.Sampler.samples" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="MfPml.DoE.Samplers.Sampler.seed">
+<span class="sig-name descname"><span class="pre">seed</span></span><em class="property"> <span class="pre">=</span> <span class="pre">None</span></em><a class="headerlink" href="#MfPml.DoE.Samplers.Sampler.seed" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="MfPml.DoE.Samplers.SobolSequence">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">MfPml.DoE.Samplers.</span></span><span class="sig-name descname"><span class="pre">SobolSequence</span></span><a class="reference internal" href="_modules/MfPml/DoE/Samplers.html#SobolSequence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#MfPml.DoE.Samplers.SobolSequence" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#MfPml.DoE.Samplers.Sampler" title="MfPml.DoE.Samplers.Sampler"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sampler</span></code></a></p>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">MfPml.DoE.Samplers.</span></span><span class="sig-name descname"><span class="pre">SobolSequence</span></span><a class="reference internal" href="_modules/MfPml/DoE/Samplers.html#SobolSequence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#MfPml.DoE.Samplers.SobolSequence" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="source/MfPml.DoE.html#MfPml.DoE.Samplers.Sampler" title="MfPml.DoE.Samplers.Sampler"><code class="xref py py-class docutils literal notranslate"><span class="pre">MfPml.DoE.Samplers.Sampler</span></code></a></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="MfPml.DoE.Samplers.SobolSequence.GetSamples">
-<span class="sig-name descname"><span class="pre">GetSamples</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_samples</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="_modules/MfPml/DoE/Samplers.html#SobolSequence.GetSamples"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#MfPml.DoE.Samplers.SobolSequence.GetSamples" title="Permalink to this definition"></a></dt>
-<dd><dl class="simple">
-<dt>“</dt><dd><p>This function is used to get the samples</p>
-</dd>
-<dt>Arg:</dt><dd><p>num_samples : a dict that contain the design space</p>
+<span class="sig-name descname"><span class="pre">GetSamples</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_samples</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">numpy.ndarray</span><a class="reference internal" href="_modules/MfPml/DoE/Samplers.html#SobolSequence.GetSamples"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#MfPml.DoE.Samplers.SobolSequence.GetSamples" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the samples</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>num_samples</strong> (<em>int</em>) – number of samples</p>
 </dd>
 </dl>
-<p>Note:  the function should be completed at the subsclass</p>
+<p class="rubric">Notes</p>
+<p>The function should be completed at the sub-sclass</p>
 </dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="MfPml.DoE.Samplers.SobolSequence.Sampling">
-<span class="sig-name descname"><span class="pre">Sampling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_samples</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">design_space</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/MfPml/DoE/Samplers.html#SobolSequence.Sampling"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#MfPml.DoE.Samplers.SobolSequence.Sampling" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
 
 </dd></dl>
 
 </section>
 <section id="module-MfPml.DoE">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-MfPml.DoE" title="Permalink to this heading"></a></h2>
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-MfPml.DoE" title="Permalink to this headline">¶</a></h2>
 </section>
 </section>
 
 
-           </div>
           </div>
-          <footer>
-
-  <hr/>
-
-  <div role="contentinfo">
-    <p>&#169; Copyright 2022, JiaxiangYi.</p>
-  </div>
-
-  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    provided by <a href="https://readthedocs.org">Read the Docs</a>.
-   
-
-</footer>
+          
         </div>
       </div>
-    </section>
-  </div>
-  <script>
-      jQuery(function () {
-          SphinxRtdTheme.Navigation.enable(true);
-      });
-  </script> 
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">MfPmlDocs</a></h1>
 
-</body>
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2022, JiaxiangYi.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.0.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/MfPml.DoE.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
 </html>

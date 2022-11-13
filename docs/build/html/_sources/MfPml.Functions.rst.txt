@@ -1,13 +1,21 @@
 MfPml.Functions package
 =======================
 
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   MfPml.Functions.Core
+
 Submodules
 ----------
 
-MfPml.Functions.functions module
+MfPml.Functions.Functions module
 --------------------------------
 
-.. automodule:: MfPml.Functions.functions
+.. automodule:: MfPml.Functions.Functions
    :members:
    :undoc-members:
    :show-inheritance:

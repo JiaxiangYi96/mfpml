@@ -4,6 +4,14 @@ MfPml.DoE package
 Submodules
 ----------
 
+MfPml.DoE.DesignSpace module
+----------------------------
+
+.. automodule:: MfPml.DoE.DesignSpace
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 MfPml.DoE.Samplers module
 -------------------------
 

@@ -7,7 +7,8 @@
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 import os
 import sys
-import sphinx_rtd_theme
+
+# import sphinx_rtd_theme
 sys.path.insert(0, os.path.abspath('../..'))
 
 project = 'MfPmlDocs'
@@ -21,8 +22,7 @@ release = '0.0.1'
 extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.viewcode',
-    'sphinx.ext.napoleon',
-    "sphinx_rtd_theme",
+    'sphinx.ext.napoleon'
 ]
 
 templates_path = ['_templates']
@@ -33,10 +33,8 @@ napoleon_use_ivar = True
 
 bibtex_bibfiles = ["refs.bib"]
 
-
-
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
-html_theme = 'sphinx_rtd_theme'
+# html_theme = 'sphinx_rtd_theme'
 html_static_path = ['_static']
