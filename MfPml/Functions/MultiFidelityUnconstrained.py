@@ -31,9 +31,15 @@ class Forrester(Functions):
     optimum_scheme: list = [0.757248757841856]
     low_fidelity: list = ['low_a', 'low_b', 'low_c']
 
-    def __init__(self) -> None:
-
+    def __init__(self, cost=[1.0, 1.0]) -> None:
+        """
+        Parameters 
+        ----------
+        cost: list 
+            Cost coefficient for high- and low-fidelity respectively 
+        """
         self.fidelity = None
+        self.cost = cost
 
     def __call__(self, x: np.ndarray, fidelity: str = 'high') -> np.ndarray:
         """
