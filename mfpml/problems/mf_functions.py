@@ -1,5 +1,5 @@
 import numpy as np
-from MfPml.Core.Functions import Functions
+from mfpml.base.functions import Functions
 
 
 class Forrester(Functions):
@@ -24,22 +24,26 @@ class Forrester(Functions):
     num_dim: int = 1
     num_obj: int = 1
     num_cons: int = 0
-    low_bound: list = [0.0]
+    domain: list = [0.0]
     high_bound: list = [1.0]
     design_space: dict = {'x': [0.0, 1.0]}
     optimum: float = -6.020740
     optimum_scheme: list = [0.757248757841856]
     low_fidelity: list = ['low_a', 'low_b', 'low_c']
+    cost_ratio: float = None
 
-    def __init__(self, cost=[1.0, 1.0]) -> None:
+    def __init__(self, num_dim: int = 1) -> None:
         """
-        Parameters 
+        Initialization of Forrester function
+        Parameters
         ----------
-        cost: list 
-            Cost coefficient for high- and low-fidelity respectively 
+        num_dim
         """
+
         self.fidelity = None
-        self.cost = cost
+
+        if self.__class__.num_dim is None:
+            self.__class__.num_dim = num_dim
 
     def __call__(self, x: np.ndarray, fidelity: str = 'high') -> np.ndarray:
         """
@@ -58,9 +62,10 @@ class Forrester(Functions):
 
         """
         self.fidelity = fidelity
-        y = self._evaluate(x=x)
+        obj = self._evaluate(x=x)
+        obj.reshape((x.shape[0], 1))
 
-        return y
+        return obj
 
     def _evaluate(self, x: np.ndarray) -> np.ndarray:
         """
@@ -72,22 +77,21 @@ class Forrester(Functions):
 
         Returns
         -------
-        y: np.ndarray
+        obj: np.ndarray
         Responses of Forrester function
 
         """
 
         if self.fidelity == 'high':
-            y = (6 * x) ** 2 * np.sin(12 * x - 4)
+
+            obj = (6 * x - 2) ** 2 * np.sin(12 * x - 4)
         elif self.fidelity == 'low_a':
-            y = (6 * x) ** 2 * np.sin(12 * x - 4) - 5
+            obj = (6 * x - 2) ** 2 * np.sin(12 * x - 4) - 5
         elif self.fidelity == 'low_b':
-            y = 0.5 * ((6 * x) ** 2 * np.sin(12 * x - 4)) + 10 * (x - 0.5) - 5
+            obj = 0.5 * ((6 * x - 2) ** 2 * np.sin(12 * x - 4)) + 10 * (x - 0.5) - 5
         elif self.fidelity == 'low_c':
-            y = (6 * (x + 0.2) - 2) ** 2 * np.sin(12 * (x + 0.2) - 4)
+            obj = (6 * (x + 0.2) - 2) ** 2 * np.sin(12 * (x + 0.2) - 4)
         else:
-            print("Error!!! Please input the right!!! \n")
+            raise KeyError("Not defined fidelity!!! \n")
 
-        return y
-
-class
+        return obj
