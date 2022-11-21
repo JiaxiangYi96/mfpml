@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>mfpml.base.functions &mdash; mfpml 0.0.1 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> mfpml
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">mfpml</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">mfpml.base.functions</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for mfpml.base.functions</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+
+<div class="viewcode-block" id="Functions"><a class="viewcode-back" href="../../../mfpml.base.html#mfpml.base.functions.Functions">[docs]</a><span class="k">class</span> <span class="nc">Functions</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Functions.f"><a class="viewcode-back" href="../../../mfpml.base.html#mfpml.base.functions.Functions.f">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        x: np.ndarray</span>
+<span class="sd">            design scheme that needs to be evaluated</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        y: np.ndarray</span>
+<span class="sd">            responses from single fidelity functions</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        NotImplementedError</span>
+<span class="sd">            Raised when not implemented. Subclasses should implement this method.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Subclasses should implement this method.&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Functions.f_der"><a class="viewcode-back" href="../../../mfpml.base.html#mfpml.base.functions.Functions.f_der">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">f_der</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        x: np.ndarray</span>
+<span class="sd">            design scheme that needs to be evaluated</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        f_der: np.ndarray</span>
+<span class="sd">            responses from the single fidelity functions</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        NotImplementedError</span>
+<span class="sd">            Raised when not implemented. Subclasses should implement this method.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Subclasses should implement this method.&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Functions.hf"><a class="viewcode-back" href="../../../mfpml.base.html#mfpml.base.functions.Functions.hf">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">hf</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        x: np.ndarray</span>
+<span class="sd">            design scheme that needs to be evaluated</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        y_hf: np.ndarray</span>
+<span class="sd">            responses from the high fidelity functions</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        NotImplementedError</span>
+<span class="sd">            Raised when not implemented. Subclasses should implement this method.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Subclasses should implement this method.&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Functions.lf"><a class="viewcode-back" href="../../../mfpml.base.html#mfpml.base.functions.Functions.lf">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">lf</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">factor</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        low fidelity function</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        x: np.ndarray</span>
+<span class="sd">            design scheme that needs to be evaluated</span>
+<span class="sd">        factor: float</span>
+<span class="sd">            a factor to control generating low fidelity functions</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        y_lf: np.ndarray</span>
+<span class="sd">            responses from the low functions</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        NotImplementedError</span>
+<span class="sd">            Raised when not implemented. Subclasses should implement this method.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Subclasses should implement this method.&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Functions.hf_der"><a class="viewcode-back" href="../../../mfpml.base.html#mfpml.base.functions.Functions.hf_der">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">hf_der</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">           derivative of high fidelity function</span>
+
+<span class="sd">           Parameters</span>
+<span class="sd">           ----------</span>
+<span class="sd">           x: np.ndarray</span>
+<span class="sd">               design scheme that needs to be evaluated</span>
+
+<span class="sd">           Returns</span>
+<span class="sd">           -------</span>
+<span class="sd">           hf_der: np.ndarray</span>
+<span class="sd">               responses from the high fidelity functions</span>
+
+<span class="sd">           Raises</span>
+<span class="sd">           ------</span>
+<span class="sd">           NotImplementedError</span>
+<span class="sd">               Raised when not implemented. Subclasses should implement this method.</span>
+<span class="sd">           &quot;&quot;&quot;</span>
+
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Subclasses should implement this method.&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Functions.lf_der"><a class="viewcode-back" href="../../../mfpml.base.html#mfpml.base.functions.Functions.lf_der">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">lf_der</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">           derivative of high fidelity function</span>
+
+<span class="sd">           Parameters</span>
+<span class="sd">           ----------</span>
+<span class="sd">           x: np.ndarray</span>
+<span class="sd">               design scheme that needs to be evaluated</span>
+
+<span class="sd">           Returns</span>
+<span class="sd">           -------</span>
+<span class="sd">           lf_der: np.ndarray</span>
+<span class="sd">               responses from the low functions</span>
+
+<span class="sd">           Raises</span>
+<span class="sd">           ------</span>
+<span class="sd">           NotImplementedError</span>
+<span class="sd">               Raised when not implemented. Subclasses should implement this method.</span>
+<span class="sd">           &quot;&quot;&quot;</span>
+
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Subclasses should implement this method.&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Functions.f_cons"><a class="viewcode-back" href="../../../mfpml.base.html#mfpml.base.functions.Functions.f_cons">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">f_cons</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">           constrained functions of high-fidelity function</span>
+
+<span class="sd">           Parameters</span>
+<span class="sd">           ----------</span>
+<span class="sd">           x: np.ndarray</span>
+<span class="sd">               design scheme that needs to be evaluated</span>
+
+<span class="sd">           Returns</span>
+<span class="sd">           -------</span>
+<span class="sd">           f_cons: np.ndarray</span>
+<span class="sd">               constrained responses from the single fidelity functions</span>
+
+<span class="sd">           Raises</span>
+<span class="sd">           ------</span>
+<span class="sd">           NotImplementedError</span>
+<span class="sd">               Raised when not implemented. Subclasses should implement this method.</span>
+<span class="sd">           &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Subclasses should implement this method.&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Functions.hf_cons"><a class="viewcode-back" href="../../../mfpml.base.html#mfpml.base.functions.Functions.hf_cons">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">hf_cons</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">           constrained functions of high-fidelity function</span>
+
+<span class="sd">           Parameters</span>
+<span class="sd">           ----------</span>
+<span class="sd">           x: np.ndarray</span>
+<span class="sd">               design scheme that needs to be evaluated</span>
+
+<span class="sd">           Returns</span>
+<span class="sd">           -------</span>
+<span class="sd">           hf_cons: np.ndarray</span>
+<span class="sd">               constrained responses from the high fidelity functions</span>
+
+<span class="sd">           Raises</span>
+<span class="sd">           ------</span>
+<span class="sd">           NotImplementedError</span>
+<span class="sd">               Raised when not implemented. Subclasses should implement this method.</span>
+<span class="sd">           &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Subclasses should implement this method.&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Functions.lf_cons"><a class="viewcode-back" href="../../../mfpml.base.html#mfpml.base.functions.Functions.lf_cons">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">lf_cons</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            constrained functions of low-fidelity function</span>
+
+<span class="sd">            Parameters</span>
+<span class="sd">            ----------</span>
+<span class="sd">            x: np.ndarray</span>
+<span class="sd">                design scheme that needs to be evaluated</span>
+
+<span class="sd">            Returns</span>
+<span class="sd">            -------</span>
+<span class="sd">            lf_cons: np.ndarray</span>
+<span class="sd">                constrained responses from the low-fidelity functions</span>
+
+<span class="sd">            Raises</span>
+<span class="sd">            ------</span>
+<span class="sd">            NotImplementedError</span>
+<span class="sd">                Raised when not implemented. Subclasses should implement this method.</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Subclasses should implement this method.&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Functions.plot_function"><a class="viewcode-back" href="../../../mfpml.base.html#mfpml.base.functions.Functions.plot_function">[docs]</a>    <span class="k">def</span> <span class="nf">plot_function</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                      <span class="n">with_low_fidelity</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                      <span class="n">save_figure</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Function to visualize the landscape of the function s</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        with_low_fidelity: bool</span>
+<span class="sd">            plot low fidelity functions or not</span>
+<span class="sd">        save_figure : bool</span>
+<span class="sd">            save figure or not</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Subclasses should implement this method.&quot;</span><span class="p">)</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">_get_dimension</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get dimension of the function</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dimension: int</span>
+<span class="sd">            dimension of the problem</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">num_dim</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">_get_low_fidelity</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get names of low fidelity functions</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        name: list</span>
+<span class="sd">            name list of low fidelity functions</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">low_fidelity</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">get_optimum</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        optimum: float</span>
+<span class="sd">            name of the class</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">optimum</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">get_optimum_variable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        optimum_variable: list</span>
+<span class="sd">            Best design scheme</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">optimum_scheme</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">get_design_space</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        design_space:</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">design_space</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">get_input_domain</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">input_domain</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, JiaxiangYi, JiCheng.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
