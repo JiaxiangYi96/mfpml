@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>mfpml.base package &mdash; mfpml 0.0.1 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> mfpml
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">mfpml.base package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-mfpml.base.functions">mfpml.base.functions module</a></li>
+<li><a class="reference internal" href="#mfpml-base-model-module">mfpml.base.model module</a></li>
+<li><a class="reference internal" href="#mfpml-base-optimizer-module">mfpml.base.optimizer module</a></li>
+<li><a class="reference internal" href="#module-mfpml.base.sampler">mfpml.base.sampler module</a></li>
+<li><a class="reference internal" href="#module-mfpml.base.space">mfpml.base.space module</a></li>
+<li><a class="reference internal" href="#module-contents">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">mfpml</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a></li>
+      <li class="breadcrumb-item active">mfpml.base package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/mfpml.base.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="mfpml-base-package">
+<h1>mfpml.base package<a class="headerlink" href="#mfpml-base-package" title="Permalink to this headline"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline"></a></h2>
+</section>
+<section id="module-mfpml.base.functions">
+<span id="mfpml-base-functions-module"></span><h2>mfpml.base.functions module<a class="headerlink" href="#module-mfpml.base.functions" title="Permalink to this headline"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="mfpml.base.functions.Functions">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">mfpml.base.functions.</span></span><span class="sig-name descname"><span class="pre">Functions</span></span><a class="reference internal" href="_modules/mfpml/base/functions.html#Functions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.base.functions.Functions" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.base.functions.Functions.f">
+<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">f</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">numpy.ndarray</span><a class="reference internal" href="_modules/mfpml/base/functions.html#Functions.f"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.base.functions.Functions.f" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>x</strong> (<em>np.ndarray</em>) – design scheme that needs to be evaluated</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>y</strong> – responses from single fidelity functions</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>NotImplementedError</strong> – Raised when not implemented. Subclasses should implement this method.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.base.functions.Functions.f_cons">
+<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">f_cons</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">numpy.ndarray</span><a class="reference internal" href="_modules/mfpml/base/functions.html#Functions.f_cons"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.base.functions.Functions.f_cons" title="Permalink to this definition"></a></dt>
+<dd><p>constrained functions of high-fidelity function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>x</strong> (<em>np.ndarray</em>) – design scheme that needs to be evaluated</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>f_cons</strong> – constrained responses from the single fidelity functions</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>NotImplementedError</strong> – Raised when not implemented. Subclasses should implement this method.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.base.functions.Functions.f_der">
+<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">f_der</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">numpy.ndarray</span><a class="reference internal" href="_modules/mfpml/base/functions.html#Functions.f_der"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.base.functions.Functions.f_der" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>x</strong> (<em>np.ndarray</em>) – design scheme that needs to be evaluated</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>f_der</strong> – responses from the single fidelity functions</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>NotImplementedError</strong> – Raised when not implemented. Subclasses should implement this method.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mfpml.base.functions.Functions.get_design_space">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">get_design_space</span></span><em class="property"><span class="pre">:</span> <span class="pre">dict</span></em><a class="headerlink" href="#mfpml.base.functions.Functions.get_design_space" title="Permalink to this definition"></a></dt>
+<dd><p>returns:
+:rtype: design_space</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mfpml.base.functions.Functions.get_input_domain">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">get_input_domain</span></span><em class="property"><span class="pre">:</span> <span class="pre">numpy.ndarray</span></em><a class="headerlink" href="#mfpml.base.functions.Functions.get_input_domain" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mfpml.base.functions.Functions.get_optimum">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">get_optimum</span></span><em class="property"><span class="pre">:</span> <span class="pre">float</span></em><a class="headerlink" href="#mfpml.base.functions.Functions.get_optimum" title="Permalink to this definition"></a></dt>
+<dd><p>returns: <strong>optimum</strong> – name of the class
+:rtype: float</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mfpml.base.functions.Functions.get_optimum_variable">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">get_optimum_variable</span></span><em class="property"><span class="pre">:</span> <span class="pre">list</span></em><a class="headerlink" href="#mfpml.base.functions.Functions.get_optimum_variable" title="Permalink to this definition"></a></dt>
+<dd><p>returns: <strong>optimum_variable</strong> – Best design scheme
+:rtype: list</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.base.functions.Functions.hf">
+<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">hf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">numpy.ndarray</span><a class="reference internal" href="_modules/mfpml/base/functions.html#Functions.hf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.base.functions.Functions.hf" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>x</strong> (<em>np.ndarray</em>) – design scheme that needs to be evaluated</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>y_hf</strong> – responses from the high fidelity functions</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>NotImplementedError</strong> – Raised when not implemented. Subclasses should implement this method.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.base.functions.Functions.hf_cons">
+<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">hf_cons</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">numpy.ndarray</span><a class="reference internal" href="_modules/mfpml/base/functions.html#Functions.hf_cons"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.base.functions.Functions.hf_cons" title="Permalink to this definition"></a></dt>
+<dd><p>constrained functions of high-fidelity function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>x</strong> (<em>np.ndarray</em>) – design scheme that needs to be evaluated</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>hf_cons</strong> – constrained responses from the high fidelity functions</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>NotImplementedError</strong> – Raised when not implemented. Subclasses should implement this method.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.base.functions.Functions.hf_der">
+<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">hf_der</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">numpy.ndarray</span><a class="reference internal" href="_modules/mfpml/base/functions.html#Functions.hf_der"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.base.functions.Functions.hf_der" title="Permalink to this definition"></a></dt>
+<dd><p>derivative of high fidelity function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>x</strong> (<em>np.ndarray</em>) – design scheme that needs to be evaluated</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>hf_der</strong> – responses from the high fidelity functions</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>NotImplementedError</strong> – Raised when not implemented. Subclasses should implement this method.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.base.functions.Functions.lf">
+<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">lf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">factor</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">numpy.ndarray</span><a class="reference internal" href="_modules/mfpml/base/functions.html#Functions.lf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.base.functions.Functions.lf" title="Permalink to this definition"></a></dt>
+<dd><p>low fidelity function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>np.ndarray</em>) – design scheme that needs to be evaluated</p></li>
+<li><p><strong>factor</strong> (<em>float</em>) – a factor to control generating low fidelity functions</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>y_lf</strong> – responses from the low functions</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>NotImplementedError</strong> – Raised when not implemented. Subclasses should implement this method.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.base.functions.Functions.lf_cons">
+<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">lf_cons</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">numpy.ndarray</span><a class="reference internal" href="_modules/mfpml/base/functions.html#Functions.lf_cons"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.base.functions.Functions.lf_cons" title="Permalink to this definition"></a></dt>
+<dd><p>constrained functions of low-fidelity function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>x</strong> (<em>np.ndarray</em>) – design scheme that needs to be evaluated</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>lf_cons</strong> – constrained responses from the low-fidelity functions</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>NotImplementedError</strong> – Raised when not implemented. Subclasses should implement this method.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.base.functions.Functions.lf_der">
+<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">lf_der</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">numpy.ndarray</span><a class="reference internal" href="_modules/mfpml/base/functions.html#Functions.lf_der"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.base.functions.Functions.lf_der" title="Permalink to this definition"></a></dt>
+<dd><p>derivative of high fidelity function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>x</strong> (<em>np.ndarray</em>) – design scheme that needs to be evaluated</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>lf_der</strong> – responses from the low functions</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>NotImplementedError</strong> – Raised when not implemented. Subclasses should implement this method.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.base.functions.Functions.plot_function">
+<span class="sig-name descname"><span class="pre">plot_function</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">with_low_fidelity</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_figure</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="reference internal" href="_modules/mfpml/base/functions.html#Functions.plot_function"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.base.functions.Functions.plot_function" title="Permalink to this definition"></a></dt>
+<dd><p>Function to visualize the landscape of the function s
+:Parameters: * <strong>with_low_fidelity</strong> (<em>bool</em>) – plot low fidelity functions or not</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><strong>save_figure</strong> (<em>bool</em>) – save figure or not</p></li>
+</ul>
+</div></blockquote>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="mfpml-base-model-module">
+<h2>mfpml.base.model module<a class="headerlink" href="#mfpml-base-model-module" title="Permalink to this headline"></a></h2>
+</section>
+<section id="mfpml-base-optimizer-module">
+<h2>mfpml.base.optimizer module<a class="headerlink" href="#mfpml-base-optimizer-module" title="Permalink to this headline"></a></h2>
+</section>
+<section id="module-mfpml.base.sampler">
+<span id="mfpml-base-sampler-module"></span><h2>mfpml.base.sampler module<a class="headerlink" href="#module-mfpml.base.sampler" title="Permalink to this headline"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="mfpml.base.sampler.Sampler">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">mfpml.base.sampler.</span></span><span class="sig-name descname"><span class="pre">Sampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">design_space</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">123456</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/base/sampler.html#Sampler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.base.sampler.Sampler" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<p>Class for drawing samples from design space</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.base.sampler.Sampler.get_samples">
+<span class="sig-name descname"><span class="pre">get_samples</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_samples</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">dict</span><a class="reference internal" href="_modules/mfpml/base/sampler.html#Sampler.get_samples"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.base.sampler.Sampler.get_samples" title="Permalink to this definition"></a></dt>
+<dd><p>Get the samples</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>num_samples</strong> (<em>int</em>) – number of samples</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The function should be completed at the sub-sclass</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.base.sampler.Sampler.plot_samples">
+<span class="sig-name descname"><span class="pre">plot_samples</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">figure_name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_plot</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="reference internal" href="_modules/mfpml/base/sampler.html#Sampler.plot_samples"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.base.sampler.Sampler.plot_samples" title="Permalink to this definition"></a></dt>
+<dd><p>function to visualize the one dimension design of experiment
+:Parameters: * <strong>figure_name</strong> (<em>str</em>) – name of the figure file</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><strong>save_plot</strong> (<em>bool</em>) – operator to claim save the figure or not</p></li>
+</ul>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.base.sampler.Sampler.save_doe">
+<span class="sig-name descname"><span class="pre">save_doe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">json_name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'doe'</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="reference internal" href="_modules/mfpml/base/sampler.html#Sampler.save_doe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.base.sampler.Sampler.save_doe" title="Permalink to this definition"></a></dt>
+<dd><p>This function is used to save the design_of_experiment to Json files</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>json_name</strong> (<em>str</em>) – name for the Json.file</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-mfpml.base.space">
+<span id="mfpml-base-space-module"></span><h2>mfpml.base.space module<a class="headerlink" href="#module-mfpml.base.space" title="Permalink to this headline"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="mfpml.base.space.DesignSpace">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">mfpml.base.space.</span></span><span class="sig-name descname"><span class="pre">DesignSpace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">low_bound</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">high_bound</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/base/space.html#DesignSpace"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.base.space.DesignSpace" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py property">
+<dt class="sig sig-object py" id="mfpml.base.space.DesignSpace.design_space">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">design_space</span></span><em class="property"><span class="pre">:</span> <span class="pre">dict</span></em><a class="headerlink" href="#mfpml.base.space.DesignSpace.design_space" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mfpml.base.space.DesignSpace.input_domain">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">input_domain</span></span><em class="property"><span class="pre">:</span> <span class="pre">numpy.ndarray</span></em><a class="headerlink" href="#mfpml.base.space.DesignSpace.input_domain" title="Permalink to this definition"></a></dt>
+<dd><p>returns: <strong>input domain</strong> – design space in numpy array form
+:rtype: np.ndarray</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-contents">
+<h2>Module contents<a class="headerlink" href="#module-contents" title="Permalink to this headline"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, JiaxiangYi, JiCheng.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

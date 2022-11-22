@@ -1,10 +1,10 @@
-.. MfPmlDocs documentation master file, created by
-   sphinx-quickstart on Wed Nov  9 15:22:20 2022.
+.. mfpml documentation master file, created by
+   sphinx-quickstart on Mon Nov 21 09:41:45 2022.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to MfPmlDocs's documentation!
-=====================================
+Welcome to mfpml's documentation!
+=================================
 
 .. toctree::
    :maxdepth: 2

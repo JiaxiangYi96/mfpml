@@ -1,7 +1,7 @@
-MfPml
+mfpml
 =====
 
 .. toctree::
    :maxdepth: 4
 
-   MfPml
+   mfpml

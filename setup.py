@@ -8,7 +8,7 @@ LONG_DESCRIPTION = 'A package that used for establishing multi-fidelity probabil
 
 # Setting up
 setup(
-    name="MfPml",
+    name="mfpml",
     version=VERSION,
     author="Jiaxiang Yi (Delft University of Technology), Ji Cheng (City University of Hong Kong)",
     author_email="<yagafighting@gmail.com>",
@@ -17,9 +17,9 @@ setup(
     long_description_content_type="text/markdown",
     long_description=LONG_DESCRIPTION,
     packages=find_packages(),
-    readme= "README.md",
+    readme="README.md",
     install_requires=['numpy', 'pandas', 'SALib', 'matplotlib', 'scipy'],
-    keywords=['python', 'multi-fidelity machine learning', 'Bayesian Optimization', 'Reliability analysis'],
+    keywords=['python', 'multi-fidelity machine learning', 'Bayesian Optimization', 'reliability analysis'],
     classifiers=[
         "Development Status :: 1 - Planning",
         "License :: OSI Approved :: MIT License",
@@ -30,4 +30,3 @@ setup(
         "Operating System :: Microsoft :: Windows",
     ]
 )
-

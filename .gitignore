@@ -36,6 +36,7 @@
 ehthumbs.db
 Thumbs.db
 
+# folders 
 
 
 
@@ -48,6 +49,9 @@ venv
 *.vscode/ 
 *.ipynk_checkpoints
 *.ipynk_checkpoints/
+
+*.ipynb_checkpoints
+**/*.ipynb_checkpoints/
 
 
 # Byte-compiled / optimized / DLL files
