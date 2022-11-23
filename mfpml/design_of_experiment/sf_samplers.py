@@ -1,7 +1,6 @@
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
-import scienceplots
 from scipy.stats.qmc import Sobol, LatinHypercube
 # local modulus
 from mfpml.base.sampler import Sampler

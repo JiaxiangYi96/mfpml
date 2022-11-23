@@ -9,9 +9,8 @@ from mfpml.models.kernel import KRG, RBF
 
 
 class Kriging: 
-    """Kriging model 
-
-
+    """
+    Kriging model 
     """
     def __init__(self, kernel_mode, n_dim, mprior=0): 
         """_summary_
@@ -36,12 +35,13 @@ class Kriging:
     def getkernelparams(self): 
         pass 
 
-    def train(self, X, Y): 
+    def train(self, X: np.ndarray, Y: np.ndarray, n_start_optimizer: int=9) -> None: 
         """
         """
         self.X = X 
         self.Y = Y.reshape(-1, 1) 
-        self.optHyp(param_key=self.kernel.parameters, param_bounds=self.kernel.bounds)
+        self.optHyp(param_key=self.kernel.parameters, param_bounds=self.kernel.bounds,\
+            n_trials=n_start_optimizer)
 
     def optHyp(self, param_key, param_bounds, grads=None, n_trials=9): 
 
@@ -62,7 +62,7 @@ class Kriging:
         
         self._logLikelihood(opt_param, param_key) 
 
-    def predict(self, Xnew, return_std=False): 
+    def predict(self, Xnew: np.ndarray, return_std: bool=False): 
         """_summary_
 
         Parameters

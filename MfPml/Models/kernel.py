@@ -1,17 +1,17 @@
 import numpy as np  
 from scipy.spatial.distance import cdist
 
-default_bounds = {
+class kernel: 
+    """
+    Base class for kernel
+    """
+    default_bounds = {
         'l': [-5, 1], 
         'sigmaf': [-5, 1], 
         'sigman': [-5, 1], 
         'theta' : [-4, 3]
         }
 
-class kernel: 
-    """
-    Base class for kernel
-    """
     def set_params(self, params): 
         """
         Set the parameters of the kernel. 

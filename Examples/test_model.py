@@ -7,7 +7,7 @@ import numpy as np
 import matplotlib.pyplot as plt 
 from sklearn.gaussian_process import GaussianProcessRegressor
 from sklearn.gaussian_process.kernels import RBF 
-from MfPml.Models.mfSurrogates import Kriging, HierarchicalKriging, ScaledKRG
+from mfpml.models.mf_surrogates import Kriging, HierarchicalKriging, ScaledKRG
 
 def test_mfModels():
     X = np.linspace(start=0, stop=10, num=1_000).reshape(-1, 1)
