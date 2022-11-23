@@ -120,6 +120,12 @@ class mf_Hartman3(Functions):
     optimum_scheme: list = [0.1, 0.55592003, 0.85218259]
     low_fidelity: list = ['low'] 
 
+    def __call__(self, x: dict) -> dict: 
+        out = {}
+        out['hf'] = self.hf(x['hf'])
+        out['lf'] = self.lf(x['lf'])
+        return out
+
     @staticmethod 
     def hf(x: np.array) -> np.ndarray: 
         a = np.array([[3.0, 10.0, 30.0],
@@ -133,7 +139,6 @@ class mf_Hartman3(Functions):
         c = np.array([1, 1.2, 3, 3.2])
         num_samples = x.shape[0]
         obj = np.zeros((num_samples, 1))
-        print(obj)
         for i in range(num_samples):
             obj[i, :] = -np.dot(c, np.exp(-np.sum(a * (x[i, :] - p) ** 2, axis=1)))
         obj.reshape((x.shape[0], 1))
@@ -141,9 +146,9 @@ class mf_Hartman3(Functions):
 
     @staticmethod
     def lf(x: np.array) -> np.ndarray:
-        obj = 0.585 - 0.324 * x[:, 1] - 0.379 * x[:, 2] - 0.431 * x[:, 3] \
-            - 0.208 * x[:, 1] * x[:, 2] + 0.326 * x[:, 1] * x[:, 3] \
-            + 0.193 * x[:, 2] * x[:, 3] + 0.225 * x[:, 1] ** 2 \
-            + 0.263 * x[:, 2] ** 2 + 0.274 * x[:, 3] ** 2
+        obj = 0.585 - 0.324 * x[:, 0] - 0.379 * x[:, 1] - 0.431 * x[:, 2] \
+            - 0.208 * x[:, 0] * x[:, 1] + 0.326 * x[:, 0] * x[:, 2] \
+            + 0.193 * x[:, 1] * x[:, 2] + 0.225 * x[:, 0] ** 2 \
+            + 0.263 * x[:, 1] ** 2 + 0.274 * x[:, 2] ** 2
         return obj.reshape(-1, 1)
 

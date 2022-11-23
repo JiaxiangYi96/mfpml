@@ -124,13 +124,15 @@ class mf_model:
 
 
 class HierarchicalKriging(mf_model): 
-    def __init__(self, kernel_mode, n_dim): 
-        """
-        Hierarchical Kriging model class. 
-        
+    def __init__(self, kernel_mode: str, n_dim: int) -> None: 
+        """_summary_
+
         Parameters
-        -------
-        
+        ----------
+        kernel_mode : str
+            _description_
+        n_dim : int
+            _description_
         """
         if kernel_mode == 'KRG': 
             self.kernel = KRG(np.zeros(n_dim), bounds=[[-2,3]]) 
@@ -140,24 +142,32 @@ class HierarchicalKriging(mf_model):
         self.n_dim = n_dim 
         self.model_lf = Kriging(kernel_mode, n_dim)
 
-    def train(self, XH, YH, XL, YL): 
+    def train(self, X: dict, Y: dict) -> None: 
+        """_summary_
 
-        self.XH = XH 
-        self.YH = YH.reshape(-1, 1) 
-        self.model_lf.train(XL, YL) 
+        Parameters
+        ----------
+        X : dict
+            _description_
+        Y : dict
+            _description_
+        """
+        self.XH = X['hf']
+        self.YH = Y['hf'].reshape(-1, 1) 
+        self.model_lf.train(X['lf'], Y['lf']) 
         self.optHyp(param_key=self.kernel.parameters, param_bounds=self.kernel.bounds)
 
-    def train_hf(self, XH, YH): 
+    def train_hf(self, XH: np.ndarray, YH: np.ndarray) -> None: 
 
         self.XH = XH 
         self.YH = YH.reshape(-1, 1)
         self.optHyp(param_key=self.kernel.parameters, param_bounds=self.kernel.bounds)
 
-    def predict_lf(self, XLnew, return_std=False): 
+    def predict_lf(self, XLnew: np.ndarray, return_std: bool=False) -> np.ndarray: 
 
         return self.model_lf.predict(XLnew, return_std) 
 
-    def predict(self, XHnew, return_std=False): 
+    def predict(self, XHnew: np.ndarray, return_std: bool=False) -> np.ndarray: 
 
         XHnew = np.atleast_2d(XHnew) 
         knew = self.kernel(XHnew, self.XH) 
@@ -235,15 +245,15 @@ class ScaledKriging(mf_model):
         self.model_lf = Kriging(kernel_mode, n_dim)
         self.model_disc = Kriging(kernel_mode, n_dim)
 
-    def train(self, XH, YH, XL, YL): 
+    def train(self, X: dict, Y: dict) -> None: 
         """
         Build the low-fidelity surrogate
         """ 
-        self.XH = XH 
-        self.YH = YH.reshape(-1, 1)  
-        self.model_lf.train(XL, YL) 
+        self.XH = X['hf']
+        self.YH = Y['hf'].reshape(-1, 1)
+        self.model_lf.train(X['lf'] , Y['lf']) 
         self._getDisc()
-        self.model_disc.train(XH, self.disc) 
+        self.model_disc.train(X['hf'], self.disc) 
 
     def train_hf(self, XH, YH): 
         """
