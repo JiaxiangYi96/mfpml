@@ -111,8 +111,11 @@ class Kriging:
 
 class mf_model: 
 
-    def update(self, XHnew=None, YHnew=None, XLnew=None, YLnew=None): 
-
+    def update(self, Xnew: dict, Ynew: dict) -> None: 
+        XHnew = Xnew['hf']
+        YHnew = Ynew['hf']
+        XLnew = Xnew['lf']
+        YLnew = Ynew['lf']
         if XLnew and YLnew is not None: 
             XL = np.concatenate((self.model_lf.X, XLnew), axis=0) 
             YL = np.concatenate((self.model_lf.Y, YLnew), axis=0) 
