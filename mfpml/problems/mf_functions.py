@@ -95,3 +95,55 @@ class Forrester(Functions):
             raise KeyError("Not defined fidelity!!! \n")
 
         return obj
+
+
+class mf_Hartman3(Functions): 
+    """_summary_
+
+    Parameters
+    ----------
+    Functions : _type_
+        _description_
+    """
+    num_dim: int = 3
+    num_obj: int = 1
+    num_cons: int = 0
+    low_bound: list = [0.0, 0.0, 0.0]
+    high_bound: list = [1.0, 1.0, 1.0]
+    input_domain = np.array([[0.0, 1.0],
+                             [0.0, 1.0],
+                             [0.0, 1.0]])
+    design_space: dict = {'x1': [0.0, 1.0],
+                          'x2': [0.0, 1.0],
+                          'x3': [0.0, 1.0]}
+    optimum: float = -3.86278214782076
+    optimum_scheme: list = [0.1, 0.55592003, 0.85218259]
+    low_fidelity: list = ['low'] 
+
+    @staticmethod 
+    def hf(x: np.array) -> np.ndarray: 
+        a = np.array([[3.0, 10.0, 30.0],
+                      [0.1, 10.0, 35.0],
+                      [3.0, 10.0, 30.0],
+                      [0.1, 10.0, 35.0]])
+        p = np.array([[0.3689, 0.117, 0.2673],
+                      [0.4699, 0.4387, 0.747],
+                      [0.1091, 0.8732, 0.5547],
+                      [0.03815, 0.5743, 0.8828]])
+        c = np.array([1, 1.2, 3, 3.2])
+        num_samples = x.shape[0]
+        obj = np.zeros((num_samples, 1))
+        print(obj)
+        for i in range(num_samples):
+            obj[i, :] = -np.dot(c, np.exp(-np.sum(a * (x[i, :] - p) ** 2, axis=1)))
+        obj.reshape((x.shape[0], 1))
+        return obj 
+
+    @staticmethod
+    def lf(x: np.array) -> np.ndarray:
+        obj = 0.585 - 0.324 * x[:, 1] - 0.379 * x[:, 2] - 0.431 * x[:, 3] \
+            - 0.208 * x[:, 1] * x[:, 2] + 0.326 * x[:, 1] * x[:, 3] \
+            + 0.193 * x[:, 2] * x[:, 3] + 0.225 * x[:, 1] ** 2 \
+            + 0.263 * x[:, 2] ** 2 + 0.274 * x[:, 3] ** 2
+        return obj.reshape(-1, 1)
+

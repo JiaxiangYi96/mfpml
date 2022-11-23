@@ -1,17 +1,17 @@
 import numpy as np  
 from scipy.spatial.distance import cdist
 
-class kernel: 
-    """
-    Base class for kernel
-    """
-    default_bounds = {
+default_bounds = {
         'l': [-5, 1], 
         'sigmaf': [-5, 1], 
         'sigman': [-5, 1], 
         'theta' : [-4, 3]
-    }
+        }
 
+class kernel: 
+    """
+    Base class for kernel
+    """
     def set_params(self, params): 
         """
         Set the parameters of the kernel. 
@@ -97,7 +97,7 @@ class RBF(kernel):
     
 
 
-class krg(kernel): 
+class KRG(kernel): 
     def __init__(self, theta, parameters=['theta'], bounds=None): 
         """
         Kriging kernel
