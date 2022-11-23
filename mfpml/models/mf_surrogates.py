@@ -87,7 +87,7 @@ class Kriging:
             delta = solve(self.L.T, solve(self.L, knew.T))
             mse = self.sigma2 * (1 - np.diag(knew.dot(delta)) + \
                 (1 - one.T.dot(delta)) ** 2 / one.T.dot(self.beta))
-            return fmean.reshape(-1, 1), np.sqrt(np.maximum(mse, 0)).reshape(-1, 1)
+            return fmean.reshape(-1, 1), np.sqrt(mse).reshape(-1, 1)
 
     def _logLikelihood(self, param_vector, param_key): 
 
