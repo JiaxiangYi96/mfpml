@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
-from scipy.stats.qmc import Sobol, LatinHypercube
+from scipy.stats.qmc import LatinHypercube, Sobol
 
 # local modulus
 from mfpml.base.sampler import Sampler
@@ -22,8 +22,7 @@ class MultiFidelitySampler(Sampler):
         seed: int
             seed s
         """
-        super(MultiFidelitySampler, self).__init__(design_space=design_space,
-                                                   seed=seed)
+        super(MultiFidelitySampler, self).__init__(design_space=design_space, seed=seed)
 
         self._lf_samples = None
         self._hf_samples = None
@@ -38,26 +37,27 @@ class MultiFidelitySampler(Sampler):
         -------
 
         """
-        assert (self.num_lf_samples >= self.num_hf_samples), \
-            'samples of low fidelity should larger than tha of high fidelity'
+        assert (
+            self.num_lf_samples >= self.num_hf_samples
+        ), "samples of low fidelity should larger than tha of high fidelity"
 
     def get_samples(self, num_samples: int = None, **kwargs) -> dict:
         """
-          Get the samples
+        Get the samples
 
-          Parameters
-          ----------
-          num_samples: int
-              number of samples
+        Parameters
+        ----------
+        num_samples: int
+            number of samples
 
-          Returns
-          ---------
+        Returns
+        ---------
 
-          Notes
-          ---------
-          The function should be completed at the sub-sclass
+        Notes
+        ---------
+        The function should be completed at the sub-sclass
 
-          """
+        """
 
         raise NotImplementedError("Subclasses should implement this method.")
 
@@ -94,18 +94,16 @@ class MultiFidelitySampler(Sampler):
         """
         if self.num_dim == 2:
 
-            with plt.style.context(['ieee', 'science', 'high-contrast', 'grid']):
+            with plt.style.context(["ieee", "science", "high-contrast", "grid"]):
                 fig, ax = plt.subplots()
                 # plot the low fidelity samples
-                ax.plot(self.lf_samples.iloc[:, 0],
-                        self.lf_samples.iloc[:, 1], '*', label='LF Samples')
-                ax.plot(self.hf_samples.iloc[:, 0],
-                        self.hf_samples.iloc[:, 1], 'o', mfc='none', label='HF Samples')
+                ax.plot(self.lf_samples.iloc[:, 0], self.lf_samples.iloc[:, 1], "*", label="LF Samples")
+                ax.plot(self.hf_samples.iloc[:, 0], self.hf_samples.iloc[:, 1], "o", mfc="none", label="HF Samples")
                 ax.legend()
                 # legend = ax.legend(loc='upper right', shadow=True)
                 # legend.get_frame().set_facecolor('b')
-                ax.set(xlabel=r'$x_1$')
-                ax.set(ylabel=r'$x_2$')
+                ax.set(xlabel=r"$x_1$")
+                ax.set(ylabel=r"$x_2$")
                 # ax.autoscale(tight=True)
                 # plt.grid('--')
                 if save_plot is True:
@@ -113,22 +111,26 @@ class MultiFidelitySampler(Sampler):
                 plt.show(block=True)
                 plt.interactive(False)
         elif self.num_dim == 1:
-            with plt.style.context(['ieee', 'science', 'high-contrast', 'grid']):
+            with plt.style.context(["ieee", "science", "high-contrast", "grid"]):
                 fig, ax = plt.subplots()
-                ax.plot(self.lf_samples.iloc[:, 0],
-                        np.zeros((self.lf_samples.shape[0], 1)), '.', label='LF Samples')
-                ax.plot(self.hf_samples.iloc[:, 0],
-                        np.zeros((self.hf_samples.shape[0], 1)), 'o', mfc='none', label='HF Samples')
+                ax.plot(self.lf_samples.iloc[:, 0], np.zeros((self.lf_samples.shape[0], 1)), ".", label="LF Samples")
+                ax.plot(
+                    self.hf_samples.iloc[:, 0],
+                    np.zeros((self.hf_samples.shape[0], 1)),
+                    "o",
+                    mfc="none",
+                    label="HF Samples",
+                )
                 ax.legend()
-                ax.set(xlabel=r'$x$')
-                ax.set(ylabel=r'$y$')
+                ax.set(xlabel=r"$x$")
+                ax.set(ylabel=r"$y$")
                 ax.autoscale(tight=True)
                 if save_plot is True:
                     fig.savefig(figure_name, dpi=300)
                 plt.show(block=True)
                 plt.interactive(False)
         else:
-            raise Exception('Can not plot figure more than two dimension! \n ')
+            raise Exception("Can not plot figure more than two dimension! \n ")
 
         pass
 
@@ -166,8 +168,7 @@ class MultiFidelitySampler(Sampler):
             samples includes high fidelity and low fidelity
 
         """
-        return {'hf': self._hf_samples,
-                'lf': self._lf_samples}
+        return {"hf": self._hf_samples, "lf": self._lf_samples}
 
 
 class LatinHyperCube(MultiFidelitySampler):
@@ -176,27 +177,26 @@ class LatinHyperCube(MultiFidelitySampler):
     """
 
     def __init__(self, design_space: dict, nested: bool = False, seed: int = 123456) -> None:
-        super(LatinHyperCube, self).__init__(design_space=design_space,
-                                             seed=seed)
+        super(LatinHyperCube, self).__init__(design_space=design_space, seed=seed)
         self.nested = nested
 
     def get_samples(self, num_samples: int = None, **kwargs) -> dict:
-        self.num_lf_samples = kwargs['num_lf_samples']
-        self.num_hf_samples = kwargs['num_hf_samples']
+        self.num_lf_samples = kwargs["num_lf_samples"]
+        self.num_hf_samples = kwargs["num_hf_samples"]
         self._mf_samples_rules()
         # get the samples of low fidelity first
-        self.__get_lf_samples()
+        lf_sample = self.__get_lf_samples()
 
         # check the user wants nested samples of high fidelity or not
         if self.nested is True:
-            self.__get_nested_hf_samples()
+            hf_sample = self.__get_nested_hf_samples()
         else:
-            self.__get_non_nested_hf_samples()
+            hf_sample = self.__get_non_nested_hf_samples()
 
         # transfer samples into pd.DataFrame
         self._create_pandas_frame()
 
-        return self.data
+        return {"hf": hf_sample, "lf": lf_sample}
 
     def __get_lf_samples(self):
         """
@@ -214,6 +214,8 @@ class LatinHyperCube(MultiFidelitySampler):
             lf_sample[:, i] = lf_sample[:, i] * (bounds[1] - bounds[0]) + bounds[0]
         self._lf_samples = lf_sample
 
+        return lf_sample
+
     def __get_non_nested_hf_samples(self) -> None:
         """
         use  another LHS to generate samples for high fidelity
@@ -227,6 +229,8 @@ class LatinHyperCube(MultiFidelitySampler):
             hf_sample[:, i] = hf_sample[:, i] * (bounds[1] - bounds[0]) + bounds[0]
         self._hf_samples = hf_sample
 
+        return hf_sample
+
     def __get_nested_hf_samples(self) -> None:
         pass
 
@@ -236,12 +240,8 @@ class SobolSequence(MultiFidelitySampler):
     Multi-fidelity sobol sequence sampling
     """
 
-    def __init__(self, design_space: dict,
-                 nested: bool = False,
-                 seed: int = 123456,
-                 num_skip: int = None) -> None:
-        super(SobolSequence, self).__init__(design_space=design_space,
-                                            seed=seed)
+    def __init__(self, design_space: dict, nested: bool = False, seed: int = 123456, num_skip: int = None) -> None:
+        super(SobolSequence, self).__init__(design_space=design_space, seed=seed)
         self.nested = nested
         if num_skip is None:
             self.num_skip = len(design_space)
@@ -249,24 +249,24 @@ class SobolSequence(MultiFidelitySampler):
             self.num_skip = num_skip
 
     def get_samples(self, num_samples: int = None, **kwargs) -> dict:
-        self.num_lf_samples = kwargs['num_lf_samples']
-        self.num_hf_samples = kwargs['num_hf_samples']
+        self.num_lf_samples = kwargs["num_lf_samples"]
+        self.num_hf_samples = kwargs["num_hf_samples"]
         self._mf_samples_rules()
         # get the samples of low fidelity first
-        self.__get_lf_samples()
+        lf_sample = self.__get_lf_samples()
 
         # check the user wants nested samples of high fidelity or not
         if self.nested is True:
-            self.__get_nested_hf_samples()
+            hf_sample = self.__get_nested_hf_samples()
         else:
-            self.__get_non_nested_hf_samples()
+            hf_sample = self.__get_non_nested_hf_samples()
 
         # transfer samples into pd.DataFrame
         self._create_pandas_frame()
 
-        return self.data
+        return {"hf": hf_sample, "lf": lf_sample}
 
-    def __get_lf_samples(self):
+    def __get_lf_samples(self) -> np.ndarray:
         """
 
         Returns
@@ -282,6 +282,8 @@ class SobolSequence(MultiFidelitySampler):
             lf_sample[:, i] = lf_sample[:, i] * (bounds[1] - bounds[0]) + bounds[0]
         self._lf_samples = lf_sample
 
+        return lf_sample
+
     def __get_nested_hf_samples(self):
         """
 
@@ -289,7 +291,9 @@ class SobolSequence(MultiFidelitySampler):
         -------
 
         """
-        self._hf_samples = self._lf_samples[0:self.num_hf_samples, :]
+        hf_sample = self._lf_samples[0 : self.num_hf_samples, :]
+        self._hf_samples = hf_sample
+        return hf_sample
 
     def __get_non_nested_hf_samples(self):
         """
@@ -306,3 +310,5 @@ class SobolSequence(MultiFidelitySampler):
         for i, bounds in enumerate(self.design_space.values()):
             hf_sample[:, i] = hf_sample[:, i] * (bounds[1] - bounds[0]) + bounds[0]
         self._hf_samples = hf_sample
+
+        return hf_sample
