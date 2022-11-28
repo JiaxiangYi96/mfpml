@@ -15,6 +15,14 @@ class mfSingleObjAcf(mfAcqusitionFunction):
     Base class for multi-fidelity acqusition functions for Single Objective Opti. 
     
     """ 
+    @staticmethod
+    def initial_update(): 
+        update_x = {} 
+        update_x['hf'] = None
+        update_x['lf'] = None 
+        return update_x
+
+
     pass
 
 
@@ -31,13 +39,12 @@ class vfei(mfSingleObjAcf):
         Structural and Multidisciplinary Optimization, 58(4), 1431-1451.
     
     """ 
-    def __init__(self, problem, constraint=False): 
+    def __init__(self, constraint=False, opt_method='DE'): 
 
-        self.problem = problem
         self.constraint = constraint
+        self.opt_method = 'DE'
 
-    @classmethod
-    def eval(x, fmin, mf_surrogate, fidelity='high'): 
+    def eval(self, x, fmin, mf_surrogate, fidelity): 
         """
         Evaluates selected acqusition function at certain fidelity. 
         
@@ -56,9 +63,9 @@ class vfei(mfSingleObjAcf):
             Acqusition function value w.r.t corresponding fidelity level. 
         """
         pre, std = mf_surrogate.predict(x, return_std=True) 
-        if fidelity == 'high': 
+        if fidelity == 'hf': 
             s = std
-        elif fidelity == 'low': 
+        elif fidelity == 'lf': 
             _, std_lf = mf_surrogate.predict_lf(x, return_std=True) 
             s = mf_surrogate.mu * std_lf
         else: 
@@ -67,12 +74,21 @@ class vfei(mfSingleObjAcf):
         z = (fmin - pre) / std
         vfei = (fmin - pre) * norm.cdf(z) + std * norm.pdf(z) 
         vfei[s<np.finfo(float).eps] = 0.
-        return (- vfei)
+        return (- vfei).ravel()
     
-    def opt_acf(self, mf_surrogate, opt_method='DE'): 
+    def opt(self, fmin, mf_surrogate, bounds): 
+        
+        update_x = self.initial_update()
 
-        res_hf = differential_evolution(self.eval)
-        res_lf = 
+        res_hf = differential_evolution(self.eval, bounds=bounds, args=(fmin, mf_surrogate, 'hf'), maxiter=2000, popsize=40)
+        res_lf = differential_evolution(self.eval, bounds=bounds, args=(fmin, mf_surrogate, 'lf'), maxiter=2000, popsize=40)
+        if res_hf.fun <= res_lf.fun: 
+            update_x['hf'] = np.atleast_2d(res_hf.x)
+        else: 
+            update_x['lf'] = np.atleast_2d(res_lf.x)
+
+        return update_x
+
 
 
 
