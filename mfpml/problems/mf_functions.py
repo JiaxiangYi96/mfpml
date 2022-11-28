@@ -1,3 +1,7 @@
+import numpy as np
+from mfpml.base.functions import Functions
+
+
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -5,6 +9,7 @@ from mfpml.base.functions import Functions
 
 
 class MultiFidelityFunctions(Functions):
+
     def plot_function(self, save_figure: bool = True, with_low_fidelity: bool = False) -> None:
         num_dim = self._get_dimension
         num_plot = 200
@@ -55,6 +60,16 @@ class MultiFidelityFunctions(Functions):
         else:
             raise ValueError("Unexpected value of 'num_dimension'!", num_dim)
 
+    def __call__(self, x: dict) -> dict: 
+        out = {}
+        out["hf"] = None
+        out['lf'] = None
+        if x['hf'] is not None:
+            out['hf'] = self.hf(x['hf'])
+        if x['lf'] is not None:
+            out['lf'] = self.lf(x['lf'])
+        return out
+
 
 class Forrester_1a(MultiFidelityFunctions):
     """
@@ -64,7 +79,6 @@ class Forrester_1a(MultiFidelityFunctions):
         Forrester Alexander I.J, Sóbester András and Keane Andy J "Multi-fidelity
         Optimization via Surrogate Modelling", Proceedings of the Royal Society A,
         vol. 463, http://doi.org/10.1098/rspa.2007.1900
-
     Function definitions:
     .. math::
         f_h(x) = (6x-2)^2 \sin(12x-4)
@@ -78,6 +92,7 @@ class Forrester_1a(MultiFidelityFunctions):
     num_dim: int = 1
     num_obj: int = 1
     num_cons: int = 0
+    bounds = [[0., 1.]]
     input_domain: np.ndarray = np.array([[0.0, 1.0]])
     design_space: dict = {"x": [0.0, 1.0]}
     optimum: float = -6.020740
@@ -119,7 +134,6 @@ class Forrester_1b(MultiFidelityFunctions):
         Forrester Alexander I.J, Sóbester András and Keane Andy J "Multi-fidelity
         Optimization via Surrogate Modelling", Proceedings of the Royal Society A,
         vol. 463, http://doi.org/10.1098/rspa.2007.1900
-
     Function definitions:
     .. math::
         f_h(x) = (6x-2)^2 \sin(12x-4)
@@ -133,6 +147,7 @@ class Forrester_1b(MultiFidelityFunctions):
     num_dim: int = 1
     num_obj: int = 1
     num_cons: int = 0
+    bounds = [[0., 1.]]
     input_domain: np.ndarray = np.array([[0.0, 1.0]])
     design_space: dict = {"x": [0.0, 1.0]}
     optimum: float = -6.020740
@@ -174,7 +189,6 @@ class Forrester_1a(MultiFidelityFunctions):
         Forrester Alexander I.J, Sóbester András and Keane Andy J "Multi-fidelity
         Optimization via Surrogate Modelling", Proceedings of the Royal Society A,
         vol. 463, http://doi.org/10.1098/rspa.2007.1900
-
     Function definitions:
     .. math::
         f_h(x) = (6x-2)^2 \sin(12x-4)
@@ -188,6 +202,7 @@ class Forrester_1a(MultiFidelityFunctions):
     num_dim: int = 1
     num_obj: int = 1
     num_cons: int = 0
+    bounds = [[0., 1.]]
     input_domain: np.ndarray = np.array([[0.0, 1.0]])
     design_space: dict = {"x": [0.0, 1.0]}
     optimum: float = -6.020740
@@ -229,7 +244,6 @@ class Forrester_1c(MultiFidelityFunctions):
         Forrester Alexander I.J, Sóbester András and Keane Andy J "Multi-fidelity
         Optimization via Surrogate Modelling", Proceedings of the Royal Society A,
         vol. 463, http://doi.org/10.1098/rspa.2007.1900
-
     Function definitions:
     .. math::
         f_h(x) = (6x-2)^2 \sin(12x-4)
@@ -243,7 +257,8 @@ class Forrester_1c(MultiFidelityFunctions):
     num_dim: int = 1
     num_obj: int = 1
     num_cons: int = 0
-    input_domain: np.ndarray = np.array([0.0, 1.0])
+    bounds = [[0., 1.]]
+    input_domain: np.ndarray = np.array([[0.0, 1.0]])
     design_space: dict = {"x": [0.0, 1.0]}
     optimum: float = -6.020740
     optimum_scheme: list = [0.757248757841856]
@@ -274,3 +289,51 @@ class Forrester_1c(MultiFidelityFunctions):
         obj = (6 * (x + 0.2) - 2) ** 2 * np.sin(12 * (x + 0.2) - 4)
         obj = np.reshape(obj, (x.shape[0], 1))
         return obj
+
+class mf_Hartman3(MultiFidelityFunctions): 
+    """_summary_
+
+    Parameters
+    ----------
+    Functions : _type_
+        _description_
+    """
+    num_dim: int = 3
+    num_obj: int = 1
+    num_cons: int = 0
+    bounds = [[.0, 1.], [.0, 1.], [.0, 1.]]
+    design_space: dict = {'x1': [0.0, 1.0],
+                          'x2': [0.0, 1.0],
+                          'x3': [0.0, 1.0]}
+    optimum: float = -3.86278214782076
+    optimum_scheme: list = [0.1, 0.55592003, 0.85218259]
+    low_fidelity: list = ['low'] 
+
+
+
+    @staticmethod 
+    def hf(x: np.array) -> np.ndarray: 
+        a = np.array([[3.0, 10.0, 30.0],
+                      [0.1, 10.0, 35.0],
+                      [3.0, 10.0, 30.0],
+                      [0.1, 10.0, 35.0]])
+        p = np.array([[0.3689, 0.117, 0.2673],
+                      [0.4699, 0.4387, 0.747],
+                      [0.1091, 0.8732, 0.5547],
+                      [0.03815, 0.5743, 0.8828]])
+        c = np.array([1, 1.2, 3, 3.2])
+        num_samples = x.shape[0]
+        obj = np.zeros((num_samples, 1))
+        for i in range(num_samples):
+            obj[i, :] = -np.dot(c, np.exp(-np.sum(a * (x[i, :] - p) ** 2, axis=1)))
+        obj.reshape((x.shape[0], 1))
+        return obj 
+
+    @staticmethod
+    def lf(x: np.array) -> np.ndarray:
+        obj = 0.585 - 0.324 * x[:, 0] - 0.379 * x[:, 1] - 0.431 * x[:, 2] \
+            - 0.208 * x[:, 0] * x[:, 1] + 0.326 * x[:, 0] * x[:, 2] \
+            + 0.193 * x[:, 1] * x[:, 2] + 0.225 * x[:, 0] ** 2 \
+            + 0.263 * x[:, 1] ** 2 + 0.274 * x[:, 2] ** 2
+        return obj.reshape(-1, 1)
+

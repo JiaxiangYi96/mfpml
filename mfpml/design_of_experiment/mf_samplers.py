@@ -1,3 +1,4 @@
+
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
@@ -14,7 +15,6 @@ class MultiFidelitySampler(Sampler):
 
     def __init__(self, design_space: dict, seed: int) -> None:
         """
-
         Parameters
         ----------
         design_space: dict
@@ -35,7 +35,6 @@ class MultiFidelitySampler(Sampler):
         number of low fidelity samples should larger than high fidelity samples
         Returns
         -------
-
         """
         assert (
             self.num_lf_samples >= self.num_hf_samples
@@ -44,19 +43,15 @@ class MultiFidelitySampler(Sampler):
     def get_samples(self, num_samples: int = None, **kwargs) -> dict:
         """
         Get the samples
-
         Parameters
         ----------
         num_samples: int
             number of samples
-
         Returns
         ---------
-
         Notes
         ---------
         The function should be completed at the sub-sclass
-
         """
 
         raise NotImplementedError("Subclasses should implement this method.")
@@ -65,10 +60,8 @@ class MultiFidelitySampler(Sampler):
         """
         this function is used to create pandas framework for the doe
         the output will be added at the end of the pandas dataframe but without giving names
-
         Parameters
         ----------
-
         Returns
         -------
         samples: pd.DataFrame
@@ -87,10 +80,8 @@ class MultiFidelitySampler(Sampler):
             figure name
         save_plot: bool
             save figure or not
-
         Returns
         -------
-
         """
         if self.num_dim == 2:
 
@@ -142,7 +133,6 @@ class MultiFidelitySampler(Sampler):
         -------
         lf_samples: pd.DataFrame
             low fidelity samples
-
         """
         return self._lf_samples
 
@@ -154,7 +144,6 @@ class MultiFidelitySampler(Sampler):
         -------
         hf_samples: pd.DataFrame
             high fidelity samples
-
         """
         return self._hf_samples
 
@@ -166,7 +155,6 @@ class MultiFidelitySampler(Sampler):
         -------
         data: dict
             samples includes high fidelity and low fidelity
-
         """
         return {"hf": self._hf_samples, "lf": self._lf_samples}
 
@@ -201,13 +189,11 @@ class LatinHyperCube(MultiFidelitySampler):
     def __get_lf_samples(self):
         """
         Generate low fidelity samples using LHS
-
         Returns
         -------
-
         """
 
-        lhs_sampler = LatinHypercube(d=self.num_dim, seed=self.seed, optimization="random-cd")
+        lhs_sampler = LatinHypercube(d=self.num_dim, seed=self.seed)
 
         lf_sample = lhs_sampler.random(n=self.num_lf_samples)
         for i, bounds in enumerate(self.design_space.values()):
@@ -221,9 +207,8 @@ class LatinHyperCube(MultiFidelitySampler):
         use  another LHS to generate samples for high fidelity
         Returns
         -------
-
         """
-        lhs_sampler = LatinHypercube(d=self.num_dim, seed=self.seed + 1, optimization="random-cd")
+        lhs_sampler = LatinHypercube(d=self.num_dim, seed=self.seed + 1)
         hf_sample = lhs_sampler.random(n=self.num_hf_samples)
         for i, bounds in enumerate(self.design_space.values()):
             hf_sample[:, i] = hf_sample[:, i] * (bounds[1] - bounds[0]) + bounds[0]
@@ -268,10 +253,8 @@ class SobolSequence(MultiFidelitySampler):
 
     def __get_lf_samples(self) -> np.ndarray:
         """
-
         Returns
         -------
-
         """
         sobol_sampler = Sobol(d=self.num_dim, seed=self.seed)
         _ = sobol_sampler.reset()
@@ -286,10 +269,8 @@ class SobolSequence(MultiFidelitySampler):
 
     def __get_nested_hf_samples(self):
         """
-
         Returns
         -------
-
         """
         hf_sample = self._lf_samples[0 : self.num_hf_samples, :]
         self._hf_samples = hf_sample
@@ -297,10 +278,8 @@ class SobolSequence(MultiFidelitySampler):
 
     def __get_non_nested_hf_samples(self):
         """
-
         Returns
         -------
-
         """
         sobol_sampler = Sobol(d=self.num_dim, seed=self.seed + 1)
         _ = sobol_sampler.reset()
