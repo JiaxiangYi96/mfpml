@@ -149,7 +149,7 @@ class GoldPrice(SingleFidelityFunctions):
         obj = (1 + (x1 + x2 + 1) ** 2 * (19 - 14 * x1 + 3 * x1**2 - 14 * x2 + 6 * x1 * x2 + 3 * x2**2)) * (
             30 + (2 * x1 - 3 * x2) ** 2 * (18 - 32 * x1 + 12 * x1**2 + 48 * x2 - 36 * x1 * x2 + 27 * x2**2)
         )
-        obj.reshape((x.shape[0], 1))
+        obj = np.reshape(obj, (x.shape[0], 1))
         return obj
 
 
@@ -204,7 +204,7 @@ class Sixhump(SingleFidelityFunctions):
         term3 = (-4 + 4 * x2**2) * x2**2
 
         obj = term1 + term2 + term3
-        obj.reshape((x.shape[0], 1))
+        obj = np.reshape(obj, (x.shape[0], 1))
         return obj
 
 
@@ -255,7 +255,7 @@ class Sasena(SingleFidelityFunctions):
             + 2 * (2 - x2) ** 2
             + 7 * np.sin(0.5 * x1) * np.sin(0.7 * x1 * x2)
         )
-        obj.reshape((x.shape[0], 1))
+        obj = np.reshape(obj, (x.shape[0], 1))
         return obj
 
 
@@ -306,10 +306,9 @@ class Hartman3(SingleFidelityFunctions):
         c = np.array([1, 1.2, 3, 3.2])
         num_samples = x.shape[0]
         obj = np.zeros((num_samples, 1))
-        print(obj)
         for i in range(num_samples):
             obj[i, :] = -np.dot(c, np.exp(-np.sum(a * (x[i, :] - p) ** 2, axis=1)))
-        obj.reshape((x.shape[0], 1))
+        obj = np.reshape(obj, (x.shape[0], 1))
         return obj
 
 
@@ -343,7 +342,7 @@ class Hartman6(SingleFidelityFunctions):
         "x5": [0.0, 1.0],
         "x6": [0.0, 1.0],
     }
-    optimum: float = -3.32236801141551
+    optimum: float = -np.log(3.32236801141551)
     optimum_scheme: list = [0.20168952, 0.15001069, 0.47687398, 0.27533243, 0.31165162, 0.65730054]
     low_fidelity: list = None
 
@@ -381,10 +380,9 @@ class Hartman6(SingleFidelityFunctions):
         c = np.array([1.0, 1.2, 3.0, 3.2])
         num_samples = x.shape[0]
         obj = np.zeros((num_samples, 1))
-        print(obj)
         for i in range(num_samples):
             obj[i, :] = -np.dot(c, np.exp(-np.sum(a * (x[i, :] - p) ** 2, axis=1)))
-        obj.reshape((x.shape[0], 1))
+        obj = np.reshape(obj, (x.shape[0], 1))
         return -np.log(-obj)
 
 
@@ -419,7 +417,7 @@ class Thevenot(SingleFidelityFunctions):
     low_fidelity: list = None
 
     @classmethod
-    def is_dim_compatible(cls, d)->any:
+    def is_dim_compatible(cls, d) -> any:
         assert (d is None) or (
             isinstance(d, int) and (not d < 0)
         ), "The dimension d must be None or a positive integer"
@@ -456,6 +454,7 @@ class Thevenot(SingleFidelityFunctions):
                 res = np.exp(-np.sum((X / self.beta) ** (2 * self.m)))
                 res = res - 2 * np.exp(-np.prod(X**2)) * np.prod(np.cos(X) ** 2)
                 obj[ii, 0] = res
+            obj = np.reshape(obj, (x.shape[0], 1))
 
         return obj
 
@@ -473,7 +472,7 @@ class Thevenot(SingleFidelityFunctions):
         for ii in range(self.input_domain.shape[0]):
             self.__class__.design_space[f"x{ii + 1}"] = self.input_domain[ii, :].tolist()
         self.__class__.optimum_scheme = np.array([0 for i in range(1, self.num_dim + 1)]).tolist()
-        self.__class__.optimum = self.hf(np.array([0 for i in range(1, self.num_dim + 1)]))
+        self.__class__.optimum = self.f(np.array([0 for i in range(1, self.num_dim + 1)]))
         self.__class__.input_domain = self.input_domain
 
 
@@ -499,9 +498,10 @@ class Ackley(SingleFidelityFunctions):
     num_dim: int = None
     num_obj: int = 1
     num_cons: int = 0
-    low_bound: list = None
-    high_bound: list = None
+    # low_bound: list = None
+    # high_bound: list = None
     design_space: dict = {}
+    input_domain: np.ndarray = None
     optimum: float = None
     optimum_scheme: list = None
     low_fidelity: list = None
@@ -536,7 +536,7 @@ class Ackley(SingleFidelityFunctions):
         # update the information of function class
         self.__update_parameters()
 
-    def get_param(self):
+    def get_param(self) -> dict[str, float]:
         return {"a": self.a, "b": self.b, "c": self.c}
 
     def f(self, x: np.ndarray) -> np.ndarray:
@@ -554,7 +554,7 @@ class Ackley(SingleFidelityFunctions):
                 obj[ii, 0] = res
         return obj
 
-    def __update_parameters(self):
+    def __update_parameters(self) -> None:
         """
         update the class variable information
         Returns
@@ -568,7 +568,7 @@ class Ackley(SingleFidelityFunctions):
         for ii in range(self.input_domain.shape[0]):
             self.__class__.design_space[f"x{ii + 1}"] = self.input_domain[ii, :].tolist()
         self.__class__.optimum_scheme = np.array([0 for _ in range(1, self.num_dim + 1)]).tolist()
-        self.__class__.optimum = self.hf(np.array([0 for _ in range(1, self.num_dim + 1)]))
+        self.__class__.optimum = self.f(np.array([0 for _ in range(1, self.num_dim + 1)]))
         self.__class__.input_domain = self.input_domain
 
 
