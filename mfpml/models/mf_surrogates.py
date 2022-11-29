@@ -1,11 +1,5 @@
-import time
-from collections import OrderedDict
-
 import numpy as np
-# import pyswarms as ps
 from scipy.linalg import cholesky, solve
-from scipy.optimize import minimize
-from scipy.spatial.distance import cdist
 
 from mfpml.models.corrfunc import KRG
 from mfpml.utils.pso import PSO
@@ -43,7 +37,7 @@ class Kriging:
         self.sample_X = X
         self.X = (X - self.low_bound) / (self.high_bound - self.low_bound)
         self.Y = Y.reshape(-1, 1)
-        self.optHyp(param_bounds=self.kernel.bounds, n_iter=n_iter)
+        self.optHyp(n_iter=n_iter)
         self.kernel.set_params(self.opt_param)
 
         self.K = self.kernel.K(self.X, self.X)
@@ -56,33 +50,12 @@ class Kriging:
         self.sigma2 = np.dot((self.Y - self.mu).T, self.gamma) / self.X.shape[0]
         self.logp = (-0.5 * self.X.shape[0] * np.log(self.sigma2) - np.sum(np.log(np.diag(self.L)))).ravel()
 
-    def optHyp(self, param_bounds, n_iter, grads=None):
+    def optHyp(self, n_iter: int, grads=None):
 
-        # opt_fs = float('inf')
-        # for trial in range(n_trials):
-
-        #     x0 = np.zeros((1, self.kernel.num_para))
-        #     for i in range(x0.shape[1]):
-        #         x0[0, i] = np.random.uniform(param_bounds[i][0], param_bounds[i][1])
-
-        #     if grads is None:
-        #         optout = minimize(self._logLikelihood, x0=x0, method='L-BFGS-B', bounds=param_bounds)
-        #     else:
-        #         pass
-        #     if optout.fun < opt_fs:
-        #         opt_param = optout.x
-        #         opt_fs = optout.fun
-        # options = {"c1": 0.5, "c2": 0.3, "w": 0.9}
-        # bounds = np.array([self.low_bound, self.high_bound])
-        start_time = time.time()
-        optimizer = PSO(num_gen=50, num_pop=20)
+        optimizer = PSO(num_gen=n_iter, num_pop=20)
         opt_results = optimizer.run_optimizer(
             func=self._logLikelihood, num_dim=self.num_dim, design_space=self.bounds, print_info=False
         )
-        end_time = time.time() 
-        print(f'time usages for sf:{end_time-start_time}')
-        # optimizer = ps.single.GlobalBestPSO(n_particles=20, dimensions=self.num_dim, options=options, bounds=bounds)
-        # opt_fs, opt_param = optimizer.optimize(self._logLikelihood, iters=n_iter)
         self.opt_param = opt_results["best_x"]
 
     def predict(self, Xinput: np.ndarray, return_std: bool = False):
@@ -194,7 +167,7 @@ class HierarchicalKriging(mf_model):
         self.YH = Y["hf"].reshape(-1, 1)
         self.model_lf.train(X["lf"], Y["lf"], n_iter=n_iter)
         self.F = self.model_lf.predict(self.sample_XH)
-        self.optHyp(param_bounds=self.kernel.bounds, n_iter=n_iter)
+        self.optHyp(n_iter=n_iter)
         self.kernel.set_params(self.opt_param)
 
         self.K = self.kernel.K(self.XH, self.XH)
@@ -211,7 +184,7 @@ class HierarchicalKriging(mf_model):
         self.F = self.model_lf.predict(self.sample_XH)
         self.XH = (self.sample_XH - self.low_bound) / (self.high_bound - self.low_bound)
         self.YH = YH.reshape(-1, 1)
-        self.optHyp(param_bounds=self.kernel.bounds, n_iter=n_iter)
+        self.optHyp(n_iter=n_iter)
         self.kernel.set_params(self.opt_param)
 
         self.K = self.kernel.K(self.XH, self.XH)
@@ -245,38 +218,11 @@ class HierarchicalKriging(mf_model):
             )
             return fmean.reshape(-1, 1), np.sqrt(np.maximum(mse, 0)).reshape(-1, 1)
 
-    def optHyp(self, param_bounds, n_iter, grads=None):
+    def optHyp(self, n_iter: int, grads=None):
 
-        # opt_fs = float('inf')
-        # for trial in range(n_trials):
-
-        #     x0 = np.zeros((1, self.kernel.num_para))
-        #     for i in range(x0.shape[1]):
-        #         x0[0, i] = np.random.uniform(param_bounds[i][0], param_bounds[i][1])
-
-        #     if grads is None:
-        #         optout = minimize(self._logLikelihood, x0=x0, method='L-BFGS-B', bounds=param_bounds)
-        #     else:
-        #         pass
-        #     if optout.fun < opt_fs:
-        #         opt_param = optout.x
-        #         opt_fs = optout.fun
-
-        # self.kernel.set_params(opt_param)
-        # options = {"c1": 0.5, "c2": 0.3, "w": 0.9}
-        # bounds = (np.array(self.low_bound), np.array(self.high_bound))
-        # optimizer = ps.single.GlobalBestPSO(n_particles=10, dimensions=self.num_dim, options=options, bounds=bounds)
-        # opt_fs, opt_param = optimizer.optimize(self._logLikelihood, iters=n_iter)
-        start_time = time.time()
-        optimizer = PSO(num_gen=50, num_pop=20)
+        optimizer = PSO(num_gen=n_iter, num_pop=20)
         opt_results = optimizer.run_optimizer(func=self._logLikelihood, num_dim=self.num_dim, design_space=self.bounds)
-        # optimizer = ps.single.GlobalBestPSO(n_particles=20, dimensions=self.num_dim, options=options, bounds=bounds)
-        # opt_fs, opt_param = optimizer.optimize(self._logLikelihood, iters=n_iter)
-        end_time = time.time() 
-        print(f'time usage for mf: {end_time-start_time}')
         self.opt_param = opt_results["best_x"]
-
-        # self.opt_param = opt_param
 
     def _logLikelihood(self, params):
         out = np.zeros(params.shape[0])
