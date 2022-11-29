@@ -128,6 +128,7 @@ class PSO:
         self.__location_initialzer()
         self.__velocity_initialzer()
         self.obj = self.func(self.x)
+        self.obj = np.reshape(self.obj, (self.num_pop, 1))
 
         # find the best values for individuals
         self.pop_best = self.obj
@@ -157,6 +158,7 @@ class PSO:
     def __update_obj(self) -> None:
 
         self.obj = self.func(self.x)
+        self.obj = np.reshape(self.obj, (self.num_pop, 1))
 
     def __update_pop_optimum(self) -> None:
         """update the population optimum information"""

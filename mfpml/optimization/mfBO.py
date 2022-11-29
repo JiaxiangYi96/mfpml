@@ -1,5 +1,7 @@
-import numpy as np 
 from collections import OrderedDict
+
+import numpy as np
+
 
 class MFSOBO: 
     """
@@ -32,7 +34,7 @@ class MFSOBO:
 
         iter = 0
         equal_cost = 0
-        while iter<max_iter and equal_cost<max_iter:
+        while iter<max_iter and equal_cost<max_cost:
             update_x = acqusition.opt(fmin=self.best, mf_surrogate=self.mf_model, bounds=self.problem.bounds)
             update_y = self.problem(update_x)
             self.update_para(iter=iter, update_x=update_x, update_y=update_y)
