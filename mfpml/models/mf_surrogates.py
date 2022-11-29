@@ -21,7 +21,7 @@ class Kriging:
             a list of size #dimension where each entry is a list 
             describe the bound for the variable on specfic dimension
         mprior : int, optional
-            _description_, by default 0
+            mean value for the prior, by default 0
         """
         self.num_dim = len(bounds)
         self.kernel = KRG(theta=np.zeros((1, self.num_dim)))
@@ -34,12 +34,22 @@ class Kriging:
         pass 
 
     def train(self, X: np.ndarray, Y: np.ndarray, n_iter: int = 500) -> None: 
-        """
+        """Train the Kriging model
+
+        Parameters
+        ----------
+        X : np.ndarray
+            sample array of sample
+        Y : np.ndarray
+            responses of the sample
+        n_iter : int, optional
+            number of iteration for the optimization of the hyperparameters
+            , by default 500
         """
         self.sample_X = X
         self.X = (X - self.low_bound) / (self.high_bound - self.low_bound)
         self.Y = Y.reshape(-1, 1)
-        self.optHyp(n_iter=n_iter)
+        self._optHyp(n_iter=n_iter)
         self.kernel.set_params(self.opt_param)
 
         self.K = self.kernel.K(self.X, self.X) 
@@ -51,28 +61,22 @@ class Kriging:
         self.gamma = solve(self.L.T, solve(self.L, (self.Y - self.mu))) 
         self.sigma2 = np.dot((self.Y - self.mu).T, self.gamma) / self.X.shape[0]
         self.logp = (-.5 * self.X.shape[0] * np.log(self.sigma2) - np.sum(np.log(np.diag(self.L)))).ravel()
-        
-    def optHyp(self, n_iter, grads=None): 
-        options = {'c1': 0.5, 'c2': 0.3, 'w':0.9}
-        bounds = (np.array(self.low_bound), np.array(self.high_bound))
-        optimizer = ps.single.GlobalBestPSO(n_particles=20, dimensions=self.num_dim, options=options, bounds=bounds)
-        opt_fs, opt_param = optimizer.optimize(self._logLikelihood, iters=n_iter, verbose=False)
-        self.opt_param = opt_param
 
     def predict(self, Xinput: np.ndarray, return_std: bool=False): 
-        """_summary_
+        """Predict responses through the Kriging model
 
         Parameters
         ----------
-        Xnew : _type_
-            _description_
+        Xinput : np.ndarray
+            new sample need to predict
         return_std : bool, optional
-            _description_, by default False
+            whether return the standard deviation
+            , by default False
 
         Returns
         -------
-        _type_
-            _description_
+        np.ndarray
+            return the prediction with shape (#Xinput, 1)
         """
         Xnew = (Xinput - self.low_bound) / (self.high_bound - self.low_bound)
         Xnew = np.atleast_2d(Xnew)
@@ -86,6 +90,13 @@ class Kriging:
             mse = self.sigma2 * (1 - np.diag(np.dot(knew.T, delta)) + \
                 np.diag((1 - knew.T.dot(delta)) ** 2 / one.T.dot(self.beta)))
             return fmean.reshape(-1, 1), np.sqrt(np.maximum(mse, 0)).reshape(-1, 1)
+        
+    def _optHyp(self, n_iter: int, grads: bool = None): 
+        options = {'c1': 0.5, 'c2': 0.3, 'w':0.9}
+        bounds = (np.array(self.low_bound), np.array(self.high_bound))
+        optimizer = ps.single.GlobalBestPSO(n_particles=20, dimensions=self.num_dim, options=options, bounds=bounds)
+        opt_fs, opt_param = optimizer.optimize(self._logLikelihood, iters=n_iter, verbose=False)
+        self.opt_param = opt_param
 
     def _logLikelihood(self, params): 
         out = np.zeros(params.shape[0])
@@ -105,6 +116,9 @@ class Kriging:
 
 
 class mf_model: 
+
+    def plotMfmodels_1D(self):
+        pass
 
     def update(self, Xnew: dict, Ynew: dict) -> None: 
         XHnew = Xnew['hf']
