@@ -12,15 +12,14 @@ class Kriging:
     """
     Kriging model 
     """
-    def __init__(self, bounds, mprior=0): 
-        """_summary_
+    def __init__(self, bounds: list, mprior: int = 0): 
+        """Initialize the Kriging model
 
         Parameters
         ----------
-        kernel_mode : _type_
-            _description_
-        num_dim : _type_
-            _description_
+        bounds : list
+            a list of size #dimension where each entry is a list 
+            describe the bound for the variable on specfic dimension
         mprior : int, optional
             _description_, by default 0
         """
@@ -40,7 +39,7 @@ class Kriging:
         self.sample_X = X
         self.X = (X - self.low_bound) / (self.high_bound - self.low_bound)
         self.Y = Y.reshape(-1, 1)
-        self.optHyp(param_bounds=self.kernel.bounds, n_iter=n_iter)
+        self.optHyp(n_iter=n_iter)
         self.kernel.set_params(self.opt_param)
 
         self.K = self.kernel.K(self.X, self.X) 
@@ -53,26 +52,11 @@ class Kriging:
         self.sigma2 = np.dot((self.Y - self.mu).T, self.gamma) / self.X.shape[0]
         self.logp = (-.5 * self.X.shape[0] * np.log(self.sigma2) - np.sum(np.log(np.diag(self.L)))).ravel()
         
-    def optHyp(self, param_bounds, n_iter, grads=None): 
-
-        # opt_fs = float('inf')
-        # for trial in range(n_trials): 
-
-        #     x0 = np.zeros((1, self.kernel.num_para))
-        #     for i in range(x0.shape[1]): 
-        #         x0[0, i] = np.random.uniform(param_bounds[i][0], param_bounds[i][1])
-
-        #     if grads is None: 
-        #         optout = minimize(self._logLikelihood, x0=x0, method='L-BFGS-B', bounds=param_bounds)
-        #     else: 
-        #         pass
-        #     if optout.fun < opt_fs: 
-        #         opt_param = optout.x 
-        #         opt_fs = optout.fun
+    def optHyp(self, n_iter, grads=None): 
         options = {'c1': 0.5, 'c2': 0.3, 'w':0.9}
         bounds = (np.array(self.low_bound), np.array(self.high_bound))
         optimizer = ps.single.GlobalBestPSO(n_particles=20, dimensions=self.num_dim, options=options, bounds=bounds)
-        opt_fs, opt_param = optimizer.optimize(self._logLikelihood, iters=n_iter)
+        opt_fs, opt_param = optimizer.optimize(self._logLikelihood, iters=n_iter, verbose=False)
         self.opt_param = opt_param
 
     def predict(self, Xinput: np.ndarray, return_std: bool=False): 
@@ -127,8 +111,8 @@ class mf_model:
         YHnew = Ynew['hf']
         XLnew = Xnew['lf']
         YLnew = Ynew['lf']
-        if XLnew and YLnew is not None: 
-            if XHnew and YHnew is not None: 
+        if XLnew is not None and YLnew is not None: 
+            if XHnew is not None and YHnew is not None: 
                 X = {}
                 Y = {}
                 X['hf'] = np.concatenate((self.sample_XH, XHnew))
@@ -145,7 +129,7 @@ class mf_model:
                 Y['lf'] = np.concatenate((self.model_lf.Y, YLnew))
                 self.train(X, Y)
         else: 
-            if XHnew and YHnew is not None: 
+            if XHnew is not None and YHnew is not None: 
                 XH = np.concatenate((self.sample_XH, XHnew)) 
                 YH = np.concatenate((self.YH, YHnew))
                 self.train_hf(XH, YH)
@@ -184,7 +168,7 @@ class HierarchicalKriging(mf_model):
         self.YH = Y['hf'].reshape(-1, 1) 
         self.model_lf.train(X['lf'], Y['lf'], n_iter=n_iter)
         self.F = self.model_lf.predict(self.sample_XH)
-        self.optHyp(param_bounds=self.kernel.bounds, n_iter=n_iter)
+        self.optHyp(n_iter=n_iter)
         self.kernel.set_params(self.opt_param)
         
         self.K = self.kernel.K(self.XH, self.XH) 
@@ -201,7 +185,7 @@ class HierarchicalKriging(mf_model):
         self.F = self.model_lf.predict(self.sample_XH)
         self.XH = (self.sample_XH - self.low_bound) / (self.high_bound - self.low_bound)
         self.YH = YH.reshape(-1, 1)
-        self.optHyp(param_bounds=self.kernel.bounds, n_iter=n_iter)
+        self.optHyp(n_iter=n_iter)
         self.kernel.set_params(self.opt_param)
         
         self.K = self.kernel.K(self.XH, self.XH) 
@@ -231,28 +215,11 @@ class HierarchicalKriging(mf_model):
                 np.diag(np.dot((knew.dot(self.beta) - pre_lf), (knew.dot(self.beta) - pre_lf).T)) / self.F.T.dot(self.beta))
             return fmean.reshape(-1, 1), np.sqrt(np.maximum(mse, 0)).reshape(-1, 1)
 
-    def optHyp(self, param_bounds, n_iter, grads=None): 
-
-        # opt_fs = float('inf')
-        # for trial in range(n_trials): 
-
-        #     x0 = np.zeros((1, self.kernel.num_para))
-        #     for i in range(x0.shape[1]): 
-        #         x0[0, i] = np.random.uniform(param_bounds[i][0], param_bounds[i][1])
-
-        #     if grads is None: 
-        #         optout = minimize(self._logLikelihood, x0=x0, method='L-BFGS-B', bounds=param_bounds)
-        #     else: 
-        #         pass
-        #     if optout.fun < opt_fs: 
-        #         opt_param = optout.x 
-        #         opt_fs = optout.fun
-
-        # self.kernel.set_params(opt_param) 
+    def optHyp(self, n_iter, grads=None): 
         options = {'c1': 0.5, 'c2': 0.3, 'w':0.9}
         bounds = (np.array(self.low_bound), np.array(self.high_bound))
         optimizer = ps.single.GlobalBestPSO(n_particles=10, dimensions=self.num_dim, options=options, bounds=bounds)
-        opt_fs, opt_param = optimizer.optimize(self._logLikelihood, iters=n_iter)
+        opt_fs, opt_param = optimizer.optimize(self._logLikelihood, verbose=False, iters=n_iter)
         self.opt_param = opt_param
 
     def _logLikelihood(self, params): 
