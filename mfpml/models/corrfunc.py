@@ -18,6 +18,55 @@ class corrfunc:
 
         pass 
 
+    def _get_num_para(self) -> int:
+        """Return number of parameters of the kernel
+
+        Returns
+        -------
+        int
+            number of parameters
+        """
+        return self.num_para 
+    
+    def _get_bounds(self) -> np.ndarray: 
+        """Get the parameters' bounds
+
+        Returns
+        -------
+        np.ndarray
+            design bounds of the parameters
+        """
+        return self.bounds
+
+    def _get_bounds_list(self) -> list: 
+        """Get the parameters' bounds with list
+
+        Returns
+        -------
+        list
+            design bounds of the parameters
+        """
+        return self.bounds.tolist()
+
+    def _get_low_bound(self) -> list: 
+        """Get the low bound of the parameters
+
+        Returns
+        -------
+        list
+            low bound of kernel's parameters
+        """
+        return self.bounds[:, 0].tolist()
+
+    def _get_high_bound(self) -> list: 
+        """Get the high bound of the parameters
+
+        Returns
+        -------
+        list
+            high bound of kernel's parameters
+        """
+        return self.bounds[:, 1].tolist()
 
 class KRG(corrfunc): 
     def __init__(
