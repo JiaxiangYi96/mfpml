@@ -6,15 +6,16 @@ from sklearn.gaussian_process import GaussianProcessRegressor
 from sklearn.gaussian_process.kernels import RBF 
 
 
-from mfpml.models.mf_surrogates import Kriging, HierarchicalKriging, ScaledKriging
+from mfpml.models.kriging import Kriging
+from mfpml.models.mf_surrogates import HierarchicalKriging, ScaledKriging
 from mfpml.design_of_experiment.mf_samplers import LatinHyperCube
-from mfpml.problems.mf_functions import mf_Hartman3
+from mfpml.problems.mf_functions import Forrester_1a, mf_Hartman3
+from mfpml.utils.pso import PSO
 
-func = mf_Hartman3() 
-design_space = func.design_space
+func = Forrester_1a() 
 
-sampler = LatinHyperCube(design_space=design_space, seed=7)
-sample_x = sampler.get_samples(num_hf_samples=10, num_lf_samples=15) 
+sampler = LatinHyperCube(design_space=func._design_space, seed=17)
+sample_x = sampler.get_samples(num_hf_samples=5, num_lf_samples=15) 
 test_x = sampler.get_samples(num_hf_samples=3, num_lf_samples=3) 
 test_x = test_x['hf']
 # print('sample x:', sample_x)
@@ -25,17 +26,17 @@ test_y = func.hf(test_x)
 #print('sample y:', sample_y) 
 #print('test y', test_y)
 
-print(func.bounds)
-sfK = Kriging(bounds=func.bounds)
+sfK = Kriging(bounds=func._input_domain)
 rbf = 1. * RBF(length_scale=1.0, length_scale_bounds=(1e-2, 1e2)) 
 gaussian_process = GaussianProcessRegressor(kernel=rbf, n_restarts_optimizer=9)
-HK = HierarchicalKriging(bounds=func.bounds)
-ScK = ScaledKriging(bounds=func.bounds)
+HK = HierarchicalKriging(bounds=func._input_domain)
+ScK = ScaledKriging(bounds=func._input_domain)
+pso_opt = PSO(num_gen=200, num_pop=40)
 
-sfK.train(sample_x['hf'], sample_y['hf'])
+sfK.train(sample_x['hf'], sample_y['hf'], pso_opt)
 gaussian_process.fit(sample_x['hf'], sample_y['hf'])
-HK.train(sample_x, sample_y)
-ScK.train(sample_x, sample_y)
+HK.train(sample_x, sample_y, pso_opt)
+ScK.train(sample_x, sample_y, pso_opt)
 
 sf_pre, sf_std = sfK.predict(test_x, return_std=True)
 sf_pre_2, sf_std_2 = gaussian_process.predict(test_x, return_std=True)

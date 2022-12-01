@@ -87,7 +87,6 @@ class Forrester_1a(MultiFidelityFunctions):
     num_dim: int = 1
     num_obj: int = 1
     num_cons: int = 0
-    bounds = [[0.0, 1.0]]
     input_domain: np.ndarray = np.array([[0.0, 1.0]])
     design_space: dict = {"x": [0.0, 1.0]}
     optimum: float = -6.020740
@@ -142,7 +141,6 @@ class Forrester_1b(MultiFidelityFunctions):
     num_dim: int = 1
     num_obj: int = 1
     num_cons: int = 0
-    bounds = [[0.0, 1.0]]
     input_domain: np.ndarray = np.array([[0.0, 1.0]])
     design_space: dict = {"x": [0.0, 1.0]}
     optimum: float = -6.020740
@@ -197,7 +195,6 @@ class Forrester_1c(MultiFidelityFunctions):
     num_dim: int = 1
     num_obj: int = 1
     num_cons: int = 0
-    bounds = [[0.0, 1.0]]
     input_domain: np.ndarray = np.array([[0.0, 1.0]])
     design_space: dict = {"x": [0.0, 1.0]}
     optimum: float = -6.020740
@@ -243,11 +240,23 @@ class mf_Hartman3(MultiFidelityFunctions):
     num_dim: int = 3
     num_obj: int = 1
     num_cons: int = 0
-    bounds = [[0.0, 1.0], [0.0, 1.0], [0.0, 1.0]]
+    input_domain: np.ndarray = np.array([[0.0, 1.0], [0.0, 1.0], [0.0, 1.0]])
     design_space: dict = {"x1": [0.0, 1.0], "x2": [0.0, 1.0], "x3": [0.0, 1.0]}
     optimum: float = -3.86278214782076
     optimum_scheme: list = [0.1, 0.55592003, 0.85218259]
     low_fidelity: list = ["low"]
+
+    @classmethod
+    def is_dim_compatible(cls, num_dim):
+        assert num_dim == cls.num_dim, f"Can not change dimension for {cls.__name__} function"
+
+        return num_dim
+
+    def __init__(self, num_dim: int = 3, cost: list = [1.0, 0.2]) -> None:
+        # check the dimension
+        self.is_dim_compatible(num_dim=num_dim)
+        self.cost = cost
+        self.cr = round(cost[0] / cost[1])
 
     @staticmethod
     def hf(x: np.array) -> np.ndarray:
