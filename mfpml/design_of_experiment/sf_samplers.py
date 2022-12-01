@@ -1,7 +1,8 @@
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
-from scipy.stats.qmc import Sobol, LatinHypercube
+from scipy.stats.qmc import LatinHypercube, Sobol
+
 # local modulus
 from mfpml.base.sampler import Sampler
 
@@ -9,19 +10,18 @@ from mfpml.base.sampler import Sampler
 class SingleFidelitySampler(Sampler):
     def __init__(self, design_space: dict, seed: int) -> None:
         """
-                    
+
         Parameters
         ----------
-        design_space: dict 
-            design space 
-        seed: int 
+        design_space: dict
+            design space
+        seed: int
             seed
         Returns
         ----------
 
         """
-        super(SingleFidelitySampler, self).__init__(design_space=design_space,
-                                                    seed=seed)
+        super(SingleFidelitySampler, self).__init__(design_space=design_space, seed=seed)
 
     def _create_pandas_frame(self) -> None:
         """
@@ -33,25 +33,25 @@ class SingleFidelitySampler(Sampler):
         """
         self._samples = pd.DataFrame(self._samples, columns=list(self.design_space.keys()))
 
-    def get_samples(self, num_samples: int, **kwargs) -> pd.DataFrame:
+    def get_samples(self, num_samples: int, **kwargs) -> np.ndarray:
         """
-          Get the samples
+        Get the samples
 
-          Parameters
-          ----------
-          num_samples: int
-              number of samples
+        Parameters
+        ----------
+        num_samples: int
+            number of samples
 
-          Returns
-          ---------
-          samples: pd.DataFrame
-            samples generated from sampling methods
+        Returns
+        ---------
+        samples: np.ndarray
+          samples generated from sampling methods
 
-          Notes
-          ---------
-          The function should be completed at the sub-sclass
+        Notes
+        ---------
+        The function should be completed at the sub-sclass
 
-          """
+        """
 
         raise NotImplementedError("Subclasses should implement this method.")
 
@@ -72,14 +72,14 @@ class SingleFidelitySampler(Sampler):
 
         if self.num_dim == 2:
 
-            with plt.style.context(['ieee', 'science', 'high-contrast', 'grid']):
+            with plt.style.context(["ieee", "science", "high-contrast", "grid"]):
                 fig, ax = plt.subplots()
-                ax.plot(self.samples.iloc[:, 0], self.samples.iloc[:, 1], '*', label='Samples')
+                ax.plot(self.samples.iloc[:, 0], self.samples.iloc[:, 1], "*", label="Samples")
                 ax.legend()
                 # legend = ax.legend(loc='upper right', shadow=True)
                 # legend.get_frame().set_facecolor('b')
-                ax.set(xlabel=r'$x_1$')
-                ax.set(ylabel=r'$x_2$')
+                ax.set(xlabel=r"$x_1$")
+                ax.set(ylabel=r"$x_2$")
                 # ax.autoscale(tight=True)
                 # plt.grid('--')
                 if save_plot is True:
@@ -87,27 +87,27 @@ class SingleFidelitySampler(Sampler):
                 plt.show(block=True)
                 plt.interactive(False)
         elif self.num_dim == 1:
-            with plt.style.context(['ieee', 'science', 'high-contrast', 'grid']):
+            with plt.style.context(["ieee", "science", "high-contrast", "grid"]):
                 fig, ax = plt.subplots()
-                ax.plot(self.samples.iloc[:, 0], np.zeros((self.samples.shape[0], 1)), '.', label='Samples')
+                ax.plot(self.samples.iloc[:, 0], np.zeros((self.samples.shape[0], 1)), ".", label="Samples")
                 ax.legend()
-                ax.set(xlabel=r'$x$')
-                ax.set(ylabel=r'$y$')
+                ax.set(xlabel=r"$x$")
+                ax.set(ylabel=r"$y$")
                 ax.autoscale(tight=True)
                 if save_plot is True:
                     fig.savefig(figure_name, dpi=300)
                 plt.show(block=True)
                 plt.interactive(False)
         else:
-            raise Exception('Can not plot figure more than two dimension! \n ')
+            raise Exception("Can not plot figure more than two dimension! \n ")
 
     @property
-    def samples(self):
+    def samples(self) -> pd.DataFrame:
         return self._samples
 
     @property
-    def data(self):
-        return {'inputs': self._samples}
+    def data(self) -> dict[str, pd.DataFrame]:
+        return {"inputs": self._samples}
 
 
 class FixNumberSampler(SingleFidelitySampler):
@@ -145,7 +145,7 @@ class FixNumberSampler(SingleFidelitySampler):
         self._samples = np.repeat(fixed_value[0], num_samples)
         self._create_pandas_frame()
 
-        return self.data
+        return self._samples
 
 
 class LatinHyperCube(SingleFidelitySampler):
@@ -173,7 +173,7 @@ class LatinHyperCube(SingleFidelitySampler):
 
         self._samples = sample
         self._create_pandas_frame()
-        return self.data
+        return sample
 
 
 class RandomSampler(SingleFidelitySampler):
@@ -201,7 +201,7 @@ class RandomSampler(SingleFidelitySampler):
 
         self._samples = sample
         self._create_pandas_frame()
-        return self.data
+        return sample
 
 
 class SobolSequence(SingleFidelitySampler):
@@ -209,9 +209,7 @@ class SobolSequence(SingleFidelitySampler):
     Sobol Sequence sampling
     """
 
-    def __init__(self, design_space: dict,
-                 seed: int,
-                 num_skip: int = None) -> None:
+    def __init__(self, design_space: dict, seed: int, num_skip: int = None) -> None:
         """
 
         Parameters
@@ -223,8 +221,7 @@ class SobolSequence(SingleFidelitySampler):
         num_skip: int
             cut the first several samples s
         """
-        super(SobolSequence, self).__init__(design_space=design_space,
-                                            seed=seed)
+        super(SobolSequence, self).__init__(design_space=design_space, seed=seed)
         if num_skip is None:
             self.num_skip = len(design_space)
         else:
@@ -245,4 +242,4 @@ class SobolSequence(SingleFidelitySampler):
         self._samples = sample
         self._create_pandas_frame()
 
-        return self.data
+        return sample

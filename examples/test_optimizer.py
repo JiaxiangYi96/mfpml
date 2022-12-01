@@ -1,16 +1,27 @@
 import os
 import sys
+import time
 
-from collections import OrderedDict
+folder_path = "/home/jiaxiangyi/mfpml"
+sys.path.insert(0, folder_path)
 
-from mfpml.design_of_experiment.design_space import CreateDesignSpace
-from mfpml.design_of_experiment.LantinHypeCube import LatinHyperCube
-from mfpml.problems.mf_functions import Forrester
-from mfpml.optimization import DE
 
-function = Forrester()
-design_space = function.design_space
+from mfpml.problems.sf_functions import *
+from mfpml.utils.pso import PSO
 
-bound = [(function.low_bound[0], function.high_bound[0])]
-
-results = DE().optimize(fun=function, design_space=design_space)
+start_time = time.time()
+function = Ackley(num_dim=10)
+design_space = function._input_domain
+# print(design_space)
+# print(function.optimum)
+# define the optimizer
+pso_opt = PSO(num_gen=50, num_pop=50)
+opt_results = pso_opt.run_optimizer(
+    func=function.f, num_dim=function.num_dim, design_space=design_space, print_info=False
+)
+print(opt_results)
+print(function.optimum)
+# pso_opt.plot_optimization_history()
+# print(pso_opt.gen_best)
+end_time = time.time()
+print(f"time usages:{end_time-start_time}")

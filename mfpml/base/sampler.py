@@ -1,5 +1,6 @@
 # third-party
 from abc import ABC
+
 import pandas as pd
 
 
@@ -24,7 +25,7 @@ class Sampler(ABC):
         self.num_dim = len(design_space)
         self._samples = None
 
-    def get_samples(self, num_samples: int, **kwargs) -> dict:
+    def get_samples(self, num_samples: int, **kwargs) -> any:
         """
         Get the samples
 
@@ -32,9 +33,14 @@ class Sampler(ABC):
         ----------
         num_samples: int
             number of samples
+        kwargs: int,int
+            num_lf_samples: int
+            num_hf_samples: int
 
         Returns
         ---------
+        samples: any
+            samples
 
         Notes
         ---------
@@ -60,7 +66,7 @@ class Sampler(ABC):
         # transfer the variables to a pandas dataframe
         raise NotImplementedError("Subclasses should implement this method.")
 
-    def save_doe(self, json_name: str = 'doe') -> None:
+    def save_doe(self, json_name: str = "doe") -> None:
         """
         This function is used to save the design_of_experiment to Json files
 
@@ -74,7 +80,7 @@ class Sampler(ABC):
 
         """
 
-        self._samples.to_json(json_name + '.json', index=True)
+        self._samples.to_json(json_name + ".json", index=True)
 
     def plot_samples(self, figure_name: str = None, save_plot: bool = False) -> None:
         """

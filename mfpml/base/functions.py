@@ -1,10 +1,10 @@
-import numpy as np
 from abc import ABC
+
 import matplotlib.pyplot as plt
+import numpy as np
 
 
 class Functions(ABC):
-
     @staticmethod
     def f(x: np.ndarray) -> np.ndarray:
         """
@@ -97,118 +97,116 @@ class Functions(ABC):
     @staticmethod
     def hf_der(x: np.ndarray) -> np.ndarray:
         """
-           derivative of high fidelity function
+        derivative of high fidelity function
 
-           Parameters
-           ----------
-           x: np.ndarray
-               design scheme that needs to be evaluated
+        Parameters
+        ----------
+        x: np.ndarray
+            design scheme that needs to be evaluated
 
-           Returns
-           -------
-           hf_der: np.ndarray
-               responses from the high fidelity functions
+        Returns
+        -------
+        hf_der: np.ndarray
+            responses from the high fidelity functions
 
-           Raises
-           ------
-           NotImplementedError
-               Raised when not implemented. Subclasses should implement this method.
-           """
+        Raises
+        ------
+        NotImplementedError
+            Raised when not implemented. Subclasses should implement this method.
+        """
 
         raise NotImplementedError("Subclasses should implement this method.")
 
     @staticmethod
     def lf_der(x: np.ndarray) -> np.ndarray:
         """
-           derivative of high fidelity function
+        derivative of high fidelity function
 
-           Parameters
-           ----------
-           x: np.ndarray
-               design scheme that needs to be evaluated
+        Parameters
+        ----------
+        x: np.ndarray
+            design scheme that needs to be evaluated
 
-           Returns
-           -------
-           lf_der: np.ndarray
-               responses from the low functions
+        Returns
+        -------
+        lf_der: np.ndarray
+            responses from the low functions
 
-           Raises
-           ------
-           NotImplementedError
-               Raised when not implemented. Subclasses should implement this method.
-           """
+        Raises
+        ------
+        NotImplementedError
+            Raised when not implemented. Subclasses should implement this method.
+        """
 
         raise NotImplementedError("Subclasses should implement this method.")
 
     @staticmethod
     def f_cons(x: np.ndarray) -> np.ndarray:
         """
-           constrained functions of high-fidelity function
+        constrained functions of high-fidelity function
 
-           Parameters
-           ----------
-           x: np.ndarray
-               design scheme that needs to be evaluated
+        Parameters
+        ----------
+        x: np.ndarray
+            design scheme that needs to be evaluated
 
-           Returns
-           -------
-           f_cons: np.ndarray
-               constrained responses from the single fidelity functions
+        Returns
+        -------
+        f_cons: np.ndarray
+            constrained responses from the single fidelity functions
 
-           Raises
-           ------
-           NotImplementedError
-               Raised when not implemented. Subclasses should implement this method.
-           """
+        Raises
+        ------
+        NotImplementedError
+            Raised when not implemented. Subclasses should implement this method.
+        """
         raise NotImplementedError("Subclasses should implement this method.")
 
     @staticmethod
     def hf_cons(x: np.ndarray) -> np.ndarray:
         """
-           constrained functions of high-fidelity function
+        constrained functions of high-fidelity function
 
-           Parameters
-           ----------
-           x: np.ndarray
-               design scheme that needs to be evaluated
+        Parameters
+        ----------
+        x: np.ndarray
+            design scheme that needs to be evaluated
 
-           Returns
-           -------
-           hf_cons: np.ndarray
-               constrained responses from the high fidelity functions
+        Returns
+        -------
+        hf_cons: np.ndarray
+            constrained responses from the high fidelity functions
 
-           Raises
-           ------
-           NotImplementedError
-               Raised when not implemented. Subclasses should implement this method.
-           """
+        Raises
+        ------
+        NotImplementedError
+            Raised when not implemented. Subclasses should implement this method.
+        """
         raise NotImplementedError("Subclasses should implement this method.")
 
     @staticmethod
     def lf_cons(x: np.ndarray) -> np.ndarray:
         """
-            constrained functions of low-fidelity function
+        constrained functions of low-fidelity function
 
-            Parameters
-            ----------
-            x: np.ndarray
-                design scheme that needs to be evaluated
+        Parameters
+        ----------
+        x: np.ndarray
+            design scheme that needs to be evaluated
 
-            Returns
-            -------
-            lf_cons: np.ndarray
-                constrained responses from the low-fidelity functions
+        Returns
+        -------
+        lf_cons: np.ndarray
+            constrained responses from the low-fidelity functions
 
-            Raises
-            ------
-            NotImplementedError
-                Raised when not implemented. Subclasses should implement this method.
-            """
+        Raises
+        ------
+        NotImplementedError
+            Raised when not implemented. Subclasses should implement this method.
+        """
         raise NotImplementedError("Subclasses should implement this method.")
 
-    def plot_function(self,
-                      with_low_fidelity: bool = False,
-                      save_figure: bool = True) -> None:
+    def plot_function(self, with_low_fidelity: bool = False, save_figure: bool = True) -> None:
         """
         Function to visualize the landscape of the function s
         Parameters
@@ -250,7 +248,7 @@ class Functions(ABC):
         return self.__class__.low_fidelity
 
     @property
-    def get_optimum(self) -> float:
+    def _optimum(self) -> float:
         """
 
         Returns
@@ -262,7 +260,7 @@ class Functions(ABC):
         return self.__class__.optimum
 
     @property
-    def get_optimum_variable(self) -> list:
+    def _optimum_variable(self) -> list:
         """
 
         Returns
@@ -274,7 +272,7 @@ class Functions(ABC):
         return self.__class__.optimum_scheme
 
     @property
-    def get_design_space(self) -> dict:
+    def _design_space(self) -> dict:
         """
 
         Returns
@@ -286,7 +284,7 @@ class Functions(ABC):
         return self.__class__.design_space
 
     @property
-    def get_input_domain(self) -> np.ndarray:
+    def _input_domain(self) -> np.ndarray:
         """
 
         Returns
