@@ -9,37 +9,72 @@ class MFSOBO:
     """
     def __init__(
         self,
-        mf_surrogate) -> None: 
+        func: any) -> None: 
         """Initialize the multi-fidelity Bayesian optimization
 
         Parameters
         ----------
-        mf_surrogate : _type_
-            _description_
+        func : any
+            optimization problem
         """
-        self.problem = problem
-        self.mf_model = mf_surrogate
+        self.func = func
 
-    def _
+    def change_func(self, func: any) -> None: 
+        """Change the function for optimization
+
+        Parameters
+        ----------
+        func : any
+            optimization problem
+        """
+        self.func = func
+
+    def _initialization(self) -> None:
+        """Initialize parameters
+        """
         self.iter = 0 
-        self.n_hf = 0 
-        self.n_lf = 0
+        self.params = {}
         self.best = None
-        self.best_history = []
+        self.history_best = []
         self.best_x = None
         self.log = OrderedDict()
+        self.params['design_space'] = self.func._input_domain()
 
-    def run(self, acqusition, max_iter=float('inf'), max_cost=float('inf')): 
+    def run_optimizer(self, 
+                    acqusition: any, 
+                    max_iter: float = float('inf'), 
+                    max_cost: float = float('inf'), 
+                    print_info: bool = True, 
+                    resume: bool = False) -> None: 
+        """Multi-fidelity Bayesian optimization 
 
+        Parameters
+        ----------
+        acqusition : any
+            instance of multi-fidelity acqusition
+        max_iter : float, optional
+            stop condition of iteration, by default float('inf')
+        max_cost : float, optional
+            stop condition of cost, by default float('inf')
+        print_info : bool, optional
+            whether to print information during the optimization 
+            process, by default True
+        resume : bool, optional
+            whether to proceed optimization with the last run
+            , by default True
+        """
+        if not resume: 
+            self._initialization()
         iter = 0
         equal_cost = 0
         while iter<max_iter and equal_cost<max_cost:
             update_x = acqusition.opt(fmin=self.best, mf_surrogate=self.mf_model, bounds=self.problem.bounds)
             update_y = self.problem(update_x)
-            self.update_para(iter=iter, update_x=update_x, update_y=update_y)
+            self.update_para(update_x, update_y)
             self.mf_model.update(update_x, update_y)
-            self._printCurrent(iter)
             iter += 1 
+            if print_info:
+                self._print_info(iter)
             equal_cost = self.n_hf + self.n_lf / self.problem.cr
 
     def plotIterativeBest(self, save_figure=False): 
@@ -52,7 +87,7 @@ class MFSOBO:
             fig.savefig(self.__class__.__name__, dpi=300)
         plt.show()
 
-    def _first_run(self, X: dict, Y: dict, print_info: bool = True): 
+    def first_run(self, X: dict, Y: dict, print_info: bool = True): 
         """Initialize parameters in the Bayesian optimization
 
         Parameters
@@ -98,7 +133,7 @@ class MFSOBO:
         num_hf: int
             number of high-fidelity samples
         """
-        return self.n['hf']
+        return self.params['n_hf']
 
     def _get_num_lf(self) -> int: 
         """Return the number of low-fidelity samples
@@ -108,20 +143,41 @@ class MFSOBO:
         num_lf: int
             number of low-fidelity samples
         """
-        return self.n['lf']
+        return self.params['n_lf']
+
+    def best_objective(self) -> float:
+        """Get the best design of current iteration
+
+        Returns
+        -------
+        float
+            Minimum observed objective
+        """
+        return self.params['fmin']
+
+    def best_design_scheme(self) -> np.ndarray:
+        """Get the best design scheme of current iteration
+
+        Returns
+        -------
+        np.ndarray
+            Best design scheme
+        """
+        return self.params['best_scheme']
     
-    def update_para(self, iter, update_x, update_y): 
+    def _update_para(self, update_x, update_y): 
 
         self.iter += 1
         self.log[self.iter] = (update_x, update_y)
         if update_x['hf'] is not None: 
             min_y = np.min(update_y['hf'])
             min_index = np.argmin(update_y['hf'], axis=1)
-            self.n_hf += update_x['hf'].shape[0]
-            if min_y < self.best: 
+            self.params['n_hf'] += update_x['hf'].shape[0]
+            if min_y < self.params['fmin']: 
                 self.best = min_y
-                self.best_x = update_x['hf'][min_index]
+                self.params['fmin'] = min_y
+                self.params['best_scheme'] = update_x['hf'][min_index]
         elif update_x['lf'] is not None: 
-            self.n_lf += update_x['lf'].shape[0]
-        self.best_history.append(self.best)
+            self.params['n_lf'] += update_x['lf'].shape[0]
+        self.history_best.append(self.params['fmin'])
 

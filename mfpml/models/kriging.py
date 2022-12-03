@@ -49,19 +49,19 @@ class Kriging:
         """
         self.sample_X = X
         self.X = self.normalize_input(X, self.bounds)
-        self.Y = Y.reshape(-1, 1)
+        self.sample_Y = Y.reshape(-1, 1)
         #optimizer hyperparameters
         self._optHyp()
         self.kernel.set_params(self.opt_param)
         #update parameters with optimized hyperparameters
         self.K = self.kernel.K(self.X, self.X)
         self.L = cholesky(self.K, lower=True)
-        self.alpha = solve(self.L.T, solve(self.L, self.Y))
+        self.alpha = solve(self.L.T, solve(self.L, self.sample_Y))
         one = np.ones((self.X.shape[0], 1))
         self.beta = solve(self.L.T, solve(self.L, one))
         self.mu = np.asscalar(np.dot(one.T, self.alpha) / np.dot(one.T, self.beta))
-        self.gamma = solve(self.L.T, solve(self.L, (self.Y - self.mu)))
-        self.sigma2 = np.asscalar(np.dot((self.Y - self.mu).T, self.gamma) / self.X.shape[0])
+        self.gamma = solve(self.L.T, solve(self.L, (self.sample_Y - self.mu)))
+        self.sigma2 = np.asscalar(np.dot((self.sample_Y - self.mu).T, self.gamma) / self.X.shape[0])
         self.logp = np.asscalar(-.5 * self.X.shape[0] * np.log(self.sigma2) - np.sum(np.log(np.diag(self.L))))
 
     def predict(self, Xinput: np.ndarray, return_std: bool=False): 
@@ -139,14 +139,14 @@ class Kriging:
             K = self.kernel(self.X, self.X, param)
             L = cholesky(K, lower=True)
             #R^(-1)Y
-            alpha = solve(L.T, solve(L, self.Y))
+            alpha = solve(L.T, solve(L, self.sample_Y))
             one = np.ones((self.X.shape[0], 1))
             #R^(-1)1
             beta = solve(L.T, solve(L, one))
             #1R^(-1)Y / 1R^(-1)vector(1)
             mu = (np.dot(one.T, alpha) / np.dot(one.T, beta)).squeeze()
-            gamma = solve(L.T, solve(L, (self.Y - mu))) 
-            sigma2 = np.dot((self.Y - mu).T, gamma) / self.X.shape[0]
+            gamma = solve(L.T, solve(L, (self.sample_Y - mu))) 
+            sigma2 = np.dot((self.sample_Y - mu).T, gamma) / self.X.shape[0]
             logp = -.5 * self.X.shape[0] * np.log(sigma2) - np.sum(np.log(np.diag(L)))
             out[i] = logp.ravel()
         return (- out)
@@ -182,3 +182,12 @@ class Kriging:
     def getkernelparams(self): 
         pass 
         
+    def _num_X(self) -> int: 
+        """Return the number of samples
+
+        Returns
+        -------
+        int
+            #samples
+        """
+        return self.sample_X.shape[0]

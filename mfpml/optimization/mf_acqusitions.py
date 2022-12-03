@@ -39,27 +39,39 @@ class vfei(mfSingleObjAcf):
         Structural and Multidisciplinary Optimization, 58(4), 1431-1451.
     
     """ 
-    def __init__(self, constraint=False, opt_method='DE'): 
+    def __init__(
+        self, 
+        optimizer: any, 
+        constraint: bool = False) -> None: 
+        """Initialize the multi-fidelity acqusition
 
+        Parameters
+        ----------
+        optimizer : any
+            optimizer instance
+        constraint : bool, optional
+            whether to use for constrained optimization
+        """
         self.constraint = constraint
-        self.opt_method = 'DE'
+        self.optimizer = optimizer
 
-    def eval(self, x, fmin, mf_surrogate, fidelity): 
+    @staticmethod
+    def eval(x, fmin: float, mf_surrogate: any, fidelity: str) -> np.ndarray: 
         """
         Evaluates selected acqusition function at certain fidelity. 
         
         Parameters: 
         -----------------
         fmin: float
-            Best observed function evaluation. 
-        surr_hf: instance 
-            Multi-fidelity surrogate instance.
+            best observed function evaluation. 
+        mf_surrogate: any 
+            multi-fidelity surrogate instance.
         fidelity: str
             str indicating fidelity level.
         
         Returns
         -----------------
-        float 
+        np.ndarray
             Acqusition function value w.r.t corresponding fidelity level. 
         """
         pre, std = mf_surrogate.predict(x, return_std=True) 
@@ -76,17 +88,31 @@ class vfei(mfSingleObjAcf):
         vfei[s<np.finfo(float).eps] = 0.
         return (- vfei).ravel()
     
-    def opt(self, fmin, mf_surrogate, bounds): 
-        
-        update_x = self.initial_update()
+    def query(self, mf_surrogate: any, params: dict) -> dict: 
+        """Query the vfei acqusition function
 
-        res_hf = differential_evolution(self.eval, bounds=bounds, args=(fmin, mf_surrogate, 'hf'), maxiter=2000, popsize=40)
-        res_lf = differential_evolution(self.eval, bounds=bounds, args=(fmin, mf_surrogate, 'lf'), maxiter=2000, popsize=40)
+        Parameters
+        ----------
+        mf_surrogate : any
+            multi-fidelity surrogate instance
+        params : dict
+            parameters of Bayesian Optimization
+
+        Returns
+        -------
+        dict
+            contains two values where 'hf' is the update points 
+            for high-fidelity and 'lf' for low-fidelity
+        """
+        update_x = self.initial_update()
+        res_hf = differential_evolution(self.eval, bounds=params['design_space'], 
+                args=(params['fmin'], mf_surrogate, 'hf'), maxiter=2000, popsize=40)
+        res_lf = differential_evolution(self.eval, bounds=params['design_space'], 
+                args=(params['fmin'], mf_surrogate, 'lf'), maxiter=2000, popsize=40)
         if res_hf.fun <= res_lf.fun: 
             update_x['hf'] = np.atleast_2d(res_hf.x)
         else: 
             update_x['lf'] = np.atleast_2d(res_lf.x)
-
         return update_x
 
 

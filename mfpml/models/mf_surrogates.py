@@ -19,7 +19,7 @@ class mf_model:
     def plotMfmodels_1D(self):
         pass
 
-    def update(self, Xnew: dict, Ynew: dict) -> None:
+    def _update_model(self, Xnew: dict, Ynew: dict) -> None:
         """Update the multi-fidelity model with new samples
 
         Parameters
@@ -39,22 +39,22 @@ class mf_model:
                 X = {}
                 Y = {}
                 X['hf'] = np.concatenate((self.sample_XH, XHnew))
-                Y['hf'] = np.concatenate((self.YH, YHnew))
+                Y['hf'] = np.concatenate((self.sample_YH, YHnew))
                 X['lf'] = np.concatenate((self.model_lf.sample_X, XLnew))
-                Y['lf'] = np.concatenate((self.model_lf.Y, YLnew))
+                Y['lf'] = np.concatenate((self.model_lf.sample_Y, YLnew))
                 self.train(X, Y)
             else:
                 X = {}
                 Y = {}
                 X['hf'] = self.sample_XH
-                Y['hf'] = self.YH
+                Y['hf'] = self.sample_YH
                 X['lf'] = np.concatenate((self.model_lf.sample_X, XLnew))
-                Y['lf'] = np.concatenate((self.model_lf.Y, YLnew))
+                Y['lf'] = np.concatenate((self.model_lf.sample_Y, YLnew))
                 self.train(X, Y)
         else: 
             if XHnew is not None and YHnew is not None: 
                 XH = np.concatenate((self.sample_XH, XHnew)) 
-                YH = np.concatenate((self.YH, YHnew))
+                YH = np.concatenate((self.sample_YH, YHnew))
                 self.train_hf(XH, YH)
 
     def _update_optimizer_hf(self, optimizer: any) -> None: 
@@ -86,6 +86,26 @@ class mf_model:
             low-fidelity model instance
         """
         return self.lf_model
+
+    def _num_XH(self) -> int:
+        """Return the number of high-fidelity samples
+
+        Returns
+        -------
+        int
+            #high-fidelity samples
+        """
+        return self.sample_XH.shape[0]
+
+    def _num_XL(self) -> int: 
+        """Return the number of low-fidelity samples
+
+        Returns
+        -------
+        int
+            #low-fidelity samples
+        """
+        return self.lf_model._num_X()
 
     def _train_lf(self, X: np.ndarray, Y: np.ndarray) -> None: 
         """Train the low-fidelity model
@@ -188,7 +208,7 @@ class HierarchicalKriging(mf_model):
         """
         self.sample_XH = X['hf']
         self.XH = self.normalize_input(self.sample_XH, self.bounds)
-        self.YH = Y['hf'].reshape(-1, 1)
+        self.sample_YH = Y['hf'].reshape(-1, 1)
         #train the low-fidelity model
         self._train_lf(X['lf'], Y['lf'])
         #predict lf responses at hf samples
@@ -216,7 +236,7 @@ class HierarchicalKriging(mf_model):
         #train the low-fidelity model
         self.F = self.predict_lf(self.sample_XH)
         self.XH = self.normalize_input(self.sample_XH, self.bounds)
-        self.YH = YH.reshape(-1, 1)
+        self.sample_YH = YH.reshape(-1, 1)
         #optimize the hyperparameters
         self._optHyp()
         self.kernel.set_params(self.opt_param)
@@ -294,11 +314,11 @@ class HierarchicalKriging(mf_model):
             param = params[i, :]      
             K = self.kernel(self.XH, self.XH, param) 
             L = cholesky(K, lower=True)
-            alpha = solve(L.T, solve(L, self.YH)) 
+            alpha = solve(L.T, solve(L, self.sample_YH)) 
             beta = solve(L.T, solve(L, self.F))
             mu = (np.dot(self.F.T, alpha) / np.dot(self.F.T, beta)).squeeze()
-            gamma = solve(L.T, solve(L, (self.YH - mu * self.F))) 
-            sigma2 = (np.dot((self.YH - mu * self.F).T, gamma).squeeze() / self.XH.shape[0]).squeeze()
+            gamma = solve(L.T, solve(L, (self.sample_YH - mu * self.F))) 
+            sigma2 = (np.dot((self.sample_YH - mu * self.F).T, gamma).squeeze() / self.XH.shape[0]).squeeze()
             logp = (-self.XH.shape[0] * np.log(sigma2) - np.sum(np.log(np.diag(L))))
             out[i] = logp.squeeze()
         return (- out)      
@@ -308,11 +328,11 @@ class HierarchicalKriging(mf_model):
         """
         self.K = self.kernel.K(self.XH, self.XH) 
         self.L = cholesky(self.K, lower=True)
-        self.alpha = solve(self.L.T, solve(self.L, self.YH)) 
+        self.alpha = solve(self.L.T, solve(self.L, self.sample_YH)) 
         self.beta = solve(self.L.T, solve(self.L, self.F)) 
         self.mu = np.asscalar(np.dot(self.F.T, self.alpha) / np.dot(self.F.T, self.beta))
-        self.gamma = solve(self.L.T, solve(self.L, (self.YH - self.mu * self.F))) 
-        self.sigma2 = np.asscalar(np.dot((self.YH - self.mu * self.F).T, self.gamma).squeeze() / self.XH.shape[0])
+        self.gamma = solve(self.L.T, solve(self.L, (self.sample_YH - self.mu * self.F))) 
+        self.sigma2 = np.asscalar(np.dot((self.sample_YH - self.mu * self.F).T, self.gamma).squeeze() / self.XH.shape[0])
         self.logp = np.asscalar(-self.XH.shape[0] * np.log(self.sigma2) - np.sum(np.log(np.diag(self.L))))
 
 
@@ -325,7 +345,8 @@ class ScaledKriging(mf_model):
         optimizer: any = None, 
         kernel_bound: list = [-3., 2.], 
         rho_optimize: bool = False, 
-        rho_bound: list = [1e-1, 1e1], 
+        rho_method: str = 'error', 
+        rho_bound: list = [1e-2, 1e1], 
         rho_optimizer: any = None) -> None: 
         """Multi-fidelity Kriging model with scaled function
 
@@ -353,6 +374,8 @@ class ScaledKriging(mf_model):
         rho_optimize : bool, optional
             whether to optimize the scale factor, if not the scale 
             factor is 1, by default False
+        rho_method : str, optional
+            method to choose rho, can choose from ['error', 'bumpiness']
         rho_bound : list, optional
             bound for the factor rho if optimizing rho, by default [1e-1, 1e1]
         rho_optimizer : any, optional
@@ -364,6 +387,7 @@ class ScaledKriging(mf_model):
         self.rho_optimize = rho_optimize 
         self.rho = 1.0
         self.rho_bound = rho_bound
+        self.rho_method = rho_method
         self.rho_optimizer = rho_optimizer
 
         self.num_dim = design_space.shape[0]
@@ -393,10 +417,8 @@ class ScaledKriging(mf_model):
             dict with two keys, 'hf' contains high-fidelity
             responses and 'lf' contains low-fidelity ones
         """
-        self.sample_XH = X['hf']
-        self.YH = Y['hf'].reshape(-1, 1)
         self._train_lf(X['lf'] , Y['lf'])
-        self.disc_model.train(X['hf'], self._getDisc())
+        self.train_hf(X['hf'], Y['hf'])
 
     def train_hf(self, XH: np.ndarray, YH: np.ndarray) -> None: 
         """Train the discrepancy model in mf models
@@ -409,7 +431,9 @@ class ScaledKriging(mf_model):
             array of high-fidelity responses
         """ 
         self.sample_XH = XH 
-        self.YH = YH.reshape(-1, 1)
+        self.sample_YH = YH.reshape(-1, 1)
+        if self.rho_optimize: 
+            self._rho_optimize()
         self.disc_model.train(self.sample_XH, self._getDisc())
 
     def predict(self, Xnew: np.ndarray, return_std: bool = False) -> np.ndarray: 
@@ -435,8 +459,16 @@ class ScaledKriging(mf_model):
             mse =  self.rho ** 2 * std_lf ** 2 + std_disc ** 2
             return self.rho * pre_lf + pre_disc, np.sqrt(mse)
         
-    def _getDisc(self): 
-        return self.YH - self.rho * self.lf_model.predict(self.sample_XH)
+    def _getDisc(self) -> np.ndarray: 
+        """Compute the discrepancy between low-fidelity prediction 
+        at high-fidelity samples and high-fidelity responses
+
+        Returns
+        -------
+        np.ndarray
+            discrepancy
+        """
+        return self.sample_YH - self.rho * self.lf_model.predict(self.sample_XH)
 
     def _update_optimizer_hf(self, optimizer: any) -> None: 
         """Change the optimizer for high-fidelity hyperparameters
@@ -447,3 +479,41 @@ class ScaledKriging(mf_model):
             instance of optimizer
         """
         self.disc_model.optimizer = optimizer
+
+    def _rho_optimize(self) -> None: 
+        """Optimize the rho value
+        """
+        if self.rho_optimizer is None:
+            if self.rho_method == 'error':
+                x0 = np.random.uniform(self.rho_bound[0], self.rho_bound[1], 1)
+                optRes = minimize(self._eval_error, x0=x0, method='L-BFGS-B',
+                    bounds=np.array([self.rho_bound]))
+            else:
+                pass
+            self.rho = optRes.x
+        else:
+            if self.rho_method == 'error':
+                optRes = self.rho_optimizer.run_optimizer(self._eval_error, 
+                    num_dim=1, design_space=np.array([self.rho_bound]))
+            else:
+                pass
+            self.rho = optRes['best_x']
+   
+    def _eval_error(self, rho: np.ndarray) -> np.ndarray:
+        """Evaluate the summation of squared error for high-fidelity samples
+
+        Parameters
+        ----------
+        rho : np.ndarray
+            array of rho
+
+        Returns
+        -------
+        np.ndarray
+            sum of error
+        """
+        rho.reshape(-1, 1)
+        rho = np.tile(rho, (1, self._num_XH()))
+        error = (rho * self.predict_lf(self.sample_XH).ravel() - self.sample_YH.ravel())
+        sum_error2 = np.sum(error ** 2, axis=1)
+        return sum_error2
