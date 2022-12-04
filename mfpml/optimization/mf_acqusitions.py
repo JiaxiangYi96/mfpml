@@ -13,10 +13,9 @@ class mfAcqusitionFunction:
 class mfSingleObjAcf(mfAcqusitionFunction): 
     """
     Base class for multi-fidelity acqusition functions for Single Objective Opti. 
-    
     """ 
     @staticmethod
-    def initial_update(): 
+    def _initial_update(): 
         update_x = {} 
         update_x['hf'] = None
         update_x['lf'] = None 
@@ -41,7 +40,7 @@ class vfei(mfSingleObjAcf):
     """ 
     def __init__(
         self, 
-        optimizer: any, 
+        optimizer: any = None, 
         constraint: bool = False) -> None: 
         """Initialize the multi-fidelity acqusition
 
@@ -55,19 +54,18 @@ class vfei(mfSingleObjAcf):
         self.constraint = constraint
         self.optimizer = optimizer
 
-    @staticmethod
-    def eval(x, fmin: float, mf_surrogate: any, fidelity: str) -> np.ndarray: 
+    def eval(self, x, fmin: float, mf_surrogate: any, fidelity: str) -> np.ndarray: 
         """
-        Evaluates selected acqusition function at certain fidelity. 
+        Evaluates selected acqusition function at certain fidelity
         
         Parameters: 
         -----------------
         fmin: float
-            best observed function evaluation. 
+            best observed function evaluation
         mf_surrogate: any 
-            multi-fidelity surrogate instance.
+            multi-fidelity surrogate instance
         fidelity: str
-            str indicating fidelity level.
+            str indicating fidelity level
         
         Returns
         -----------------
@@ -104,15 +102,22 @@ class vfei(mfSingleObjAcf):
             contains two values where 'hf' is the update points 
             for high-fidelity and 'lf' for low-fidelity
         """
-        update_x = self.initial_update()
-        res_hf = differential_evolution(self.eval, bounds=params['design_space'], 
-                args=(params['fmin'], mf_surrogate, 'hf'), maxiter=2000, popsize=40)
-        res_lf = differential_evolution(self.eval, bounds=params['design_space'], 
-                args=(params['fmin'], mf_surrogate, 'lf'), maxiter=2000, popsize=40)
-        if res_hf.fun <= res_lf.fun: 
-            update_x['hf'] = np.atleast_2d(res_hf.x)
+        update_x = self._initial_update()
+        if self.optimizer is None:
+            res_hf = differential_evolution(self.eval, bounds=params['design_space'], 
+                    args=(params['fmin'], mf_surrogate, 'hf'), maxiter=2000, popsize=40)
+            res_lf = differential_evolution(self.eval, bounds=params['design_space'], 
+                    args=(params['fmin'], mf_surrogate, 'lf'), maxiter=2000, popsize=40)
+            opt_hf = res_hf.fun
+            x_hf = res_hf.x
+            opt_lf = res_lf.fun
+            x_lf = res_lf.x
+        else:
+            pass
+        if opt_hf <= opt_lf: 
+            update_x['hf'] = np.atleast_2d(x_hf)
         else: 
-            update_x['lf'] = np.atleast_2d(res_lf.x)
+            update_x['lf'] = np.atleast_2d(x_lf)
         return update_x
 
 
@@ -122,46 +127,88 @@ class vflcb(mfSingleObjAcf):
     """
     Variable-fidelity Lower Confidence Bound function for single 
     objective bayesian optimization. 
-    
-        
-    Parameters: 
+
+    Reference 
     -------
-    mode: str. Define the behaviour of the multi-fidelity acquisition strategy. 
-        Currently supported values: 
-        'VF-EI': Zhang, Y., Han, Z. H., & Zhang, K. S. (2018). Variable-fidelity expected 
-                improvement method for efficient global optimization of expensive functions.
-                Structural and Multidisciplinary Optimization, 58(4), 1431-1451.
-        'VF-LCB': Jiang, P., Cheng, J., Zhou, Q., Shu, L., & Hu, J. (2019). Variable-fidelity 
-                lower confidence bounding approach for engineering optimization problems with 
-                expensive simulations. AIAA Journal, 57(12), 5416-5430.
-    eps: Small floating value. 
-    params: Extra parameters needed for certain acqusition functions. 
+    [1] Jiang, P., Cheng, J., Zhou, Q., Shu, L., & Hu, J. (2019). Variable-fidelity 
+        lower confidence bounding approach for engineering optimization problems with 
+        expensive simulations. AIAA Journal, 57(12), 5416-5430.
     """
+    def __init__(
+        self, 
+        optimizer: any = None, 
+        kappa: list = [1., 1.96], 
+        constraint: bool = False) -> None:
+        """Initialize the vflcb acqusition
 
-    def __call__(self, x, surr_mf, cost, kappa=1.96, fidelity='high'):
+        Parameters
+        ----------
+        optimizer : any, optional
+            optimizer instance, by default 'L-BFGS-B'
+        kappa : list, optional
+            balance factors for exploitation and exploration respectively
+            , by default [1., 1.96]
+        constraint : bool, optional
+            use for constrained problem or not, by default False
         """
-        Evaluate the acqusition function values
+        super().__init__()
+        self.optimizer = optimizer
+        self.kappa = kappa
+        self.constraint = constraint
+    
+    def eval(
+        self, 
+        x: np.ndarray, 
+        mf_surrogate: any, 
+        cost_ratio: float, 
+        fidelity: str) -> np.ndarray:
+        """Evaluate vflcb function values at certain fidelity
 
-        Parameters: 
+        Parameters
+        ----------
+        x : np.ndarray
+            point to evaluate
+        mf_surrogate : any
+            multi-fidelity surrogate model instance
+        cost_ratio : float
+            ratio of high-fidelity cost to low-fidelity cost
+        fidelity : str
+            str indicating fidelity level
+
+        Returns
         -------
-        surr_hf: instance 
-            Multi-fidelity surrogate instance.
-        cost: list
-            Corresponding cost for 'high'(cost[0]) and 'low'(cost[1]) fidelity.
-        kappa: float
-            balance coefficient btw exploration and exploitation
-        fidelity: str
-            str indicating fidelity level.
+        np.ndarray
+            acqusition function values
         """
-        cr = cost[0] / cost[1] 
-        mean_hf, std_hf = surr_mf.predict(x, return_std=True) 
-        _, std_lf = surr_mf.predict_lf(x, return_std=True) 
-
-        if fidelity == 'high': 
-            vflcb = mean_hf - kappa * std_hf 
-        elif fidelity == 'low': 
-            vflcb = mean_hf - kappa * std_lf * cr 
-        else: 
+        cr = cost_ratio 
+        mean_hf, std_hf = mf_surrogate.predict(x, return_std=True) 
+        _, std_lf = mf_surrogate.predict_lf(x, return_std=True) 
+        if fidelity == 'hf': 
+            std = std_hf 
+        elif fidelity == 'lf': 
+            std = std_lf * cr 
+        else:
             ValueError('Unknown fidelity input.')
-        
-        return vflcb 
+        vflcb = self.kappa[0] * mean_hf - self.kappa[1] * std
+        return vflcb.ravel()
+
+    def query(self, mf_surrogate: any, params: dict) -> dict: 
+
+        update_x = self._initial_update()
+        if self.optimizer is None:
+            res_hf = differential_evolution(self.eval, bounds=params['design_space'], 
+                    args=(mf_surrogate, params['cr'], 'hf'), maxiter=2000, popsize=40)
+            res_lf = differential_evolution(self.eval, bounds=params['design_space'], 
+                    args=(mf_surrogate, params['cr'], 'lf'), maxiter=2000, popsize=40)
+            opt_hf = res_hf.fun
+            x_hf = res_hf.x
+            opt_lf = res_lf.fun
+            x_lf = res_lf.x
+        else:
+            pass
+        if opt_hf <= opt_lf: 
+            update_x['hf'] = np.atleast_2d(x_hf)
+        else: 
+            update_x['lf'] = np.atleast_2d(x_lf)
+        return update_x
+            

@@ -16,10 +16,28 @@ class mf_model:
         ) -> None:
         pass
 
+    def train(self, X: dict, Y: dict) -> None: 
+        """Train the hierarchical Kriging model
+
+        Parameters
+        ----------
+        X : dict
+            dict with two keys, 'hf' contains np.ndarray of 
+            high-fidelity sample points and 'lf' contains 
+            low-fidelity
+        Y : dict
+            dict with two keys, 'hf' contains high-fidelity
+            responses and 'lf' contains low-fidelity ones
+        """
+        #train the low-fidelity model
+        self._train_lf(X['lf'], Y['lf'])
+        #train high-fidelity model
+        self._train_hf(X['hf'], Y['hf'])
+
     def plotMfmodels_1D(self):
         pass
 
-    def _update_model(self, Xnew: dict, Ynew: dict) -> None:
+    def update_model(self, Xnew: dict, Ynew: dict) -> None:
         """Update the multi-fidelity model with new samples
 
         Parameters
@@ -55,7 +73,7 @@ class mf_model:
             if XHnew is not None and YHnew is not None: 
                 XH = np.concatenate((self.sample_XH, XHnew)) 
                 YH = np.concatenate((self.sample_YH, YHnew))
-                self.train_hf(XH, YH)
+                self._train_hf(XH, YH)
 
     def _update_optimizer_hf(self, optimizer: any) -> None: 
         """Change the optimizer for high-fidelity hyperparameters
@@ -193,32 +211,7 @@ class HierarchicalKriging(mf_model):
         else: 
             self.lf_model = Kriging(design_space=design_space, optimizer=optimizer)
 
-    def train(self, X: dict, Y: dict) -> None: 
-        """Train the hierarchical Kriging model
-
-        Parameters
-        ----------
-        X : dict
-            dict with two keys, 'hf' contains np.ndarray of 
-            high-fidelity sample points and 'lf' contains 
-            low-fidelity
-        Y : dict
-            dict with two keys, 'hf' contains high-fidelity
-            responses and 'lf' contains low-fidelity ones
-        """
-        self.sample_XH = X['hf']
-        self.XH = self.normalize_input(self.sample_XH, self.bounds)
-        self.sample_YH = Y['hf'].reshape(-1, 1)
-        #train the low-fidelity model
-        self._train_lf(X['lf'], Y['lf'])
-        #predict lf responses at hf samples
-        self.F = self.predict_lf(self.sample_XH)
-        #optimize the hyperparameters of the hf models
-        self._optHyp()
-        self.kernel.set_params(self.opt_param)
-        self._update_parameters()
-
-    def _train_hf(self, XH: np.ndarray, YH: np.ndarray, optimizer) -> None:
+    def _train_hf(self, XH: np.ndarray, YH: np.ndarray) -> None:
         """Train the high-fidelity model
 
         Parameters
@@ -227,16 +220,12 @@ class HierarchicalKriging(mf_model):
             array of high-fidelity samples
         YH : np.ndarray
             array of high-fidelity responses
-        optimizer : instance of optimizer
-            optimizing the hyperparameters with the use style
-            optimizer.run_optimizer(objective function, 
-            number of dimension, design space of variables)
         """
         self.sample_XH = XH
-        #train the low-fidelity model
-        self.F = self.predict_lf(self.sample_XH)
         self.XH = self.normalize_input(self.sample_XH, self.bounds)
         self.sample_YH = YH.reshape(-1, 1)
+        #prediction of low-fidelity at high-fidelity locations
+        self.F = self.predict_lf(self.sample_XH)
         #optimize the hyperparameters
         self._optHyp()
         self.kernel.set_params(self.opt_param)
@@ -404,23 +393,7 @@ class ScaledKriging(mf_model):
             self._update_optimizer_hf(optimizer)
             self._update_optimizer_lf(optimizer)
 
-    def train(self, X: dict, Y: dict) -> None: 
-        """Train the Scaled multi-fidelity Kriging model
-
-        Parameters
-        ----------
-        X : dict
-            dict with two keys, 'hf' contains np.ndarray of 
-            high-fidelity sample points and 'lf' contains 
-            low-fidelity
-        Y : dict
-            dict with two keys, 'hf' contains high-fidelity
-            responses and 'lf' contains low-fidelity ones
-        """
-        self._train_lf(X['lf'] , Y['lf'])
-        self.train_hf(X['hf'], Y['hf'])
-
-    def train_hf(self, XH: np.ndarray, YH: np.ndarray) -> None: 
+    def _train_hf(self, XH: np.ndarray, YH: np.ndarray) -> None: 
         """Train the discrepancy model in mf models
         
         Parameters: 
