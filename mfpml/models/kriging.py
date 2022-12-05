@@ -182,6 +182,7 @@ class Kriging:
     def getkernelparams(self): 
         pass 
         
+    @property
     def _num_X(self) -> int: 
         """Return the number of samples
 

@@ -94,6 +94,7 @@ class mf_model:
         """
         self.lf_model._update_optimizer(optimizer)
 
+    @property
     def _get_lf_model(self) -> any: 
         """Get the low-fidelity model
 
@@ -104,6 +105,7 @@ class mf_model:
         """
         return self.lf_model
 
+    @property
     def _num_XH(self) -> int:
         """Return the number of high-fidelity samples
 
@@ -114,6 +116,7 @@ class mf_model:
         """
         return self.sample_XH.shape[0]
 
+    @property
     def _num_XL(self) -> int: 
         """Return the number of low-fidelity samples
 
@@ -122,7 +125,29 @@ class mf_model:
         int
             #low-fidelity samples
         """
-        return self.lf_model._num_X()
+        return self.lf_model._num_X
+
+    @property
+    def _get_sample_hf(self) -> np.ndarray:
+        """Return samples of high-fidelity
+
+        Returns
+        -------
+        np.ndarray
+            high-fidelity samples
+        """
+        return self.sample_XH
+
+    @property
+    def _get_sample_lf(self) -> np.ndarray:
+        """Return samples of high-fidelity
+
+        Returns
+        -------
+        np.ndarray
+            high-fidelity samples
+        """
+        return self.sample_XL
 
     def _train_lf(self, X: np.ndarray, Y: np.ndarray) -> None: 
         """Train the low-fidelity model
