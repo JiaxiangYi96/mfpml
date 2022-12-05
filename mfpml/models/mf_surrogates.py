@@ -11,8 +11,7 @@ from .kriging import Kriging
 class mf_model: 
 
     def __init__(
-        self, 
-        lf_model, 
+        self
         ) -> None:
         pass
 
@@ -136,6 +135,9 @@ class mf_model:
             low-fidelity responses
         """
         self.lf_model.train(X, Y)
+        self.sample_XL = X
+        self.XL = self.normalize_input(X, self.bounds)
+        self.sample_YL = Y
         
     def predict_lf(self, XLnew: np.ndarray, return_std: bool=False) -> np.ndarray: 
         """Predict low-fidelity responses
@@ -178,7 +180,6 @@ class HierarchicalKriging(mf_model):
     def __init__(
         self, 
         design_space: np.ndarray,
-        lf_model: any = None, 
         optimizer: any = None, 
         kernel_bound: list = [-4., 2.]) -> None: 
         """Initialize hierarchical Kriging model
@@ -188,11 +189,6 @@ class HierarchicalKriging(mf_model):
         design_space: np.ndarray
             array of shape=((num_dim,2)) where each row describes
             the bound for the variable on specfic dimension.
-        lf_model: any, optional
-            instance of low-fidelity model, the model should have the method of 
-            train(x: np.ndarray, y: np.ndarray), 
-            predict(x: np.ndarray, return_std: bool). If not assigned, a Kriging 
-            model is fitted to be the low-fidelity model.
         optimizer: any, optional
             instance of the optimizer used to optimize the hyperparameters
             with the use style optimizer.run_optimizer(objective function, 
@@ -205,11 +201,9 @@ class HierarchicalKriging(mf_model):
         self.bounds = design_space
         self.optimizer = optimizer
         self.num_dim = design_space.shape[0]
-        self.kernel = KRG(theta=np.zeros((1, self.num_dim)), bounds=kernel_bound)
-        if lf_model is not None:
-            self.lf_model = lf_model
-        else: 
-            self.lf_model = Kriging(design_space=design_space, optimizer=optimizer)
+        self.kernel = KRG(theta=np.zeros( self.num_dim), bounds=kernel_bound)
+
+        self.lf_model = Kriging(design_space=design_space, optimizer=optimizer)
 
     def _train_hf(self, XH: np.ndarray, YH: np.ndarray) -> None:
         """Train the high-fidelity model
@@ -231,12 +225,12 @@ class HierarchicalKriging(mf_model):
         self.kernel.set_params(self.opt_param)
         self._update_parameters()
 
-    def predict(self, Xinput: np.ndarray, return_std: bool=False) -> np.ndarray: 
+    def predict(self, Xnew: np.ndarray, return_std: bool=False) -> np.ndarray: 
         """Predict high-fidelity responses
 
         Parameters
         ----------
-        Xinput : np.ndarray
+        Xnew : np.ndarray
             array of high-fidelity to be predicted
         return_std : bool, optional
             whether to return std values, by default False
@@ -246,9 +240,8 @@ class HierarchicalKriging(mf_model):
         np.ndarray
             prediction of high-fidelity
         """
-        XHnew = self.normalize_input(Xinput, self.bounds)
-        XHnew = np.atleast_2d(XHnew) 
-        pre_lf = self.predict_lf(Xinput)
+        pre_lf = self.predict_lf(Xnew)
+        XHnew = np.atleast_2d(self.normalize_input(Xnew, self.bounds)) 
         knew = self.kernel.K(XHnew, self.XH) 
         fmean = self.mu * pre_lf + np.dot(knew, self.gamma)
         if not return_std: 
@@ -271,21 +264,21 @@ class HierarchicalKriging(mf_model):
             n_trials = 6
             opt_fs = float('inf')
             for trial in range(n_trials): 
-                x0 = np.random.uniform(self.kernel._get_low_bound(), 
-                    self.kernel._get_high_bound(), self.kernel._get_num_para())
+                x0 = np.random.uniform(self.kernel._get_low_bound, 
+                    self.kernel._get_high_bound, self.kernel._get_num_para)
                 optRes = minimize(self._logLikelihood, x0=x0, method='L-BFGS-B',
-                    bounds=self.kernel._get_bounds_list())
+                    bounds=self.kernel._get_bounds_list)
                 if optRes.fun < opt_fs:
                     opt_param = optRes.x
                     opt_fs = optRes.fun
         else:
             optRes = self.optimizer.run_optimizer(self._logLikelihood, 
-                num_dim=self.kernel._get_num_para(), design_space=self.kernel._get_bounds())
+                num_dim=self.kernel._get_num_para, design_space=self.kernel._get_bounds)
             opt_param = optRes['best_x']
         self.opt_param = opt_param
 
     def _logLikelihood(self, params): 
-        """Compute the concentrated likelihood
+        """Compute the concentrated ln-likelihood
 
         Parameters
         ----------
@@ -308,7 +301,7 @@ class HierarchicalKriging(mf_model):
             mu = (np.dot(self.F.T, alpha) / np.dot(self.F.T, beta)).squeeze()
             gamma = solve(L.T, solve(L, (self.sample_YH - mu * self.F))) 
             sigma2 = (np.dot((self.sample_YH - mu * self.F).T, gamma).squeeze() / self.XH.shape[0]).squeeze()
-            logp = (-self.XH.shape[0] * np.log(sigma2) - np.sum(np.log(np.diag(L))))
+            logp = (-self.XH.shape[0] * np.log(sigma2) - 2 * np.sum(np.log(np.diag(L))))
             out[i] = logp.squeeze()
         return (- out)      
 
@@ -332,7 +325,7 @@ class ScaledKriging(mf_model):
         lf_model: any = None, 
         disc_model: any = None, 
         optimizer: any = None, 
-        kernel_bound: list = [-3., 2.], 
+        kernel_bound: list = [-4., 3.], 
         rho_optimize: bool = False, 
         rho_method: str = 'error', 
         rho_bound: list = [1e-2, 1e1], 
@@ -380,7 +373,7 @@ class ScaledKriging(mf_model):
         self.rho_optimizer = rho_optimizer
 
         self.num_dim = design_space.shape[0]
-        self.kernel = KRG(theta=np.zeros((1, self.num_dim)), bounds=kernel_bound)
+        self.kernel = KRG(theta=np.zeros(self.num_dim), bounds=kernel_bound)
         if lf_model is None: 
             self.lf_model = Kriging(design_space=design_space, optimizer=optimizer)
         else: 
@@ -414,7 +407,7 @@ class ScaledKriging(mf_model):
 
         Parameters
         ----------
-        Xinput : np.ndarray
+        Xnew : np.ndarray
             array of high-fidelity to be predicted
         return_std : bool, optional
             whether to return std values, by default False
@@ -490,3 +483,171 @@ class ScaledKriging(mf_model):
         error = (rho * self.predict_lf(self.sample_XH).ravel() - self.sample_YH.ravel())
         sum_error2 = np.sum(error ** 2, axis=1)
         return sum_error2
+
+    
+class CoKriging(mf_model): 
+    def __init__(
+        self, 
+        design_space: np.ndarray,
+        optimizer: any = None, 
+        kernel_bound: list = [-4., 3.], 
+        rho_bound: list = [1e-2, 1e2]) -> None:
+        """Co-Kriging model
+
+        Parameters
+        ----------
+        design_space : np.ndarray
+            array of shape=((num_dim,2)) where each row describes
+            the bound for the variable on specfic dimension
+        optimizer : any, optional
+            instance of the optimizer used to optimize the hyperparameters
+            with the use style optimizer.run_optimizer(objective function, 
+            number of dimension, design space of variables), if not assigned,
+            the 'L-BFGS-B' method in scipy is used
+        kernel_bound : list, optional
+            log bound of the kernel for difference Gaussian process model, 
+            by default [-4, 3]
+        rho_bound : list, optional
+            bound for scale factor, by default [1e-2, 1e2]
+        """
+        super().__init__()
+        self.bounds = design_space
+        self.optimizer = optimizer
+        self.num_dim = design_space.shape[0]
+        self.rho_bound = rho_bound
+        #initialize kernel and low-fidelity model
+        self.kernel = KRG(theta=np.zeros(self.num_dim), bounds=kernel_bound)
+        self.lf_model = Kriging(design_space=design_space, optimizer=optimizer)
+
+    def _train_hf(self, XH: np.ndarray, YH: np.ndarray) -> None:
+        """Train the high-fidelity model
+
+        Parameters
+        ----------
+        XH : np.ndarray
+            array of high-fidelity samples
+        YH : np.ndarray
+            array of high-fidelity responses
+        """
+        self.sample_XH = XH
+        self.XH = self.normalize_input(self.sample_XH, self.bounds)
+        self.sample_YH = YH.reshape(-1, 1)
+        #prediction of low-fidelity at high-fidelity locations
+        self.F = self.predict_lf(self.sample_XH)
+        #optimize the hyperparameters
+        self._optHyp()
+        self.rho = self.opt_param[0]
+        self.kernel.set_params(self.opt_param[1:])
+        self._update_parameters()
+
+    def predict(self, Xnew: np.ndarray, return_std: bool = False) -> np.ndarray:
+        """Predict high-fidelity responses
+
+        Parameters
+        ----------
+        Xnew : np.ndarray
+            array of high-fidelity to be predicted
+        return_std : bool, optional
+            whether to return std values, by default False
+
+        Returns
+        -------
+        np.ndarray
+            prediction of high-fidelity
+        """
+        Xnew = np.atleast_2d(self.normalize_input(Xnew))
+        c = np.concatenate(
+            (self.rho*self.lf_model.sigma2*self.lf_model.kernel.K(self.XL, Xnew), 
+            self.rho**2*self.lf_model.sigma2*self.lf_model.kernel.K(self.XH, Xnew)+self.sigma2*self.kernel.K(self.XH, Xnew)),
+            axis=0)
+        fmean = self.mu + c.T.dot(solve(self.LC.T, solve(self.LC, (self.y - self.mu))))
+        if not return_std: 
+            return fmean.reshape(-1, 1)
+        else:
+            s2 = self.rho ** 2 * self.lf_model.sigma2 + self.sigma2\
+                - c.T.dot(solve(self.LC.T, solve(self.LC, c)))
+            std = np.sqrt(np.maximum(np.diag(s2), 0))
+            return fmean.reshape(-1, 1), std.reshape(-1, 1)
+
+    def _optHyp(self) -> None:
+        """Optimize the hyperparameters
+        """
+        bounds = np.concatenate((np.array([self.rho_bound]), 
+                                self.kernel._get_bounds), axis=0)
+        if self.optimizer is None:
+            n_trials = 6
+            opt_fs = float('inf')
+            for trial in range(n_trials): 
+                x0 = np.random.uniform(bounds[:, 0], bounds[:, 1], bounds.shape[0])
+                optRes = minimize(self._logLikelihood, x0=x0, method='L-BFGS-B',
+                    bounds=bounds)
+                if optRes.fun < opt_fs:
+                    opt_param = optRes.x
+                    opt_fs = optRes.fun
+        else:
+            optRes = self.optimizer.run_optimizer(self._logLikelihood, 
+                num_dim=bounds.shape[0], design_space=bounds)
+            opt_param = optRes['best_x']
+        self.opt_param = opt_param.squeeze()
+
+    def _logLikelihood(self, params: np.ndarray) -> np.ndarray:
+        """Compute the concentrated ln-likelihood
+
+        Parameters
+        ----------
+        params : np.ndarray
+            parameters of the kernel
+
+        Returns
+        -------
+        np.ndarray
+            log likelihood
+        """
+        params = np.atleast_2d(params)
+        out = np.zeros(params.shape[0])
+        for i in range(params.shape[0]):
+            rho = params[i, 0]
+            theta = params[i, 1:]
+            #correlation matrix R
+            K = self.kernel(self.XH, self.XH, theta)
+            L = cholesky(K, lower=True)
+            #R^(-1)Y
+            d = self.sample_YH - rho * self.F
+            alpha = solve(L.T, solve(L, d))
+            one = np.ones((self.XH.shape[0], 1))
+            #R^(-1)1
+            beta = solve(L.T, solve(L, one))
+            #1R^(-1)Y / 1R^(-1)vector(1)
+            mu = (np.dot(one.T, alpha) / np.dot(one.T, beta)).squeeze()
+            gamma = solve(L.T, solve(L, (d - mu))) 
+            sigma2 = np.dot((d - mu).T, gamma) / self.XH.shape[0]
+            logp = -.5 * self.XH.shape[0] * np.log(sigma2) - np.sum(np.log(np.diag(L)))
+            out[i] = logp.ravel()
+        return (- out)
+
+    def _update_parameters(self) -> None:
+        """Update parameters of the model
+        """
+        #correlation matrix R
+        K = self.kernel.K(self.XH, self.XH)
+        L = cholesky(K, lower=True)
+        #R^(-1)Y
+        self.d = self.sample_YH - self.rho * self.F
+        alpha = solve(L.T, solve(L, self.d))
+        one = np.ones((self.XH.shape[0], 1))
+        #R^(-1)1
+        beta = solve(L.T, solve(L, one))
+        #1R^(-1)Y / 1R^(-1)vector(1)
+        self.mu_d = np.asscalar(np.dot(one.T, alpha) / np.dot(one.T, beta))
+        gamma = solve(L.T, solve(L, (self.d - self.mu_d))) 
+        self.sigma2 = np.asscalar(np.dot((self.d - self.mu_d).T, gamma) / self.XH.shape[0])
+        self.logp = np.asscalar(-.5 * self.XH.shape[0] * np.log(self.sigma2) - np.sum(np.log(np.diag(L))))
+        #cov matrix for Co-Kriging
+        self.C = np.concatenate(
+                (np.concatenate((self.lf_model.sigma2*self.lf_model.K, self.rho*self.lf_model.sigma2*self.lf_model.kernel.K(self.XL,self.XH)), axis=1), 
+                np.concatenate((self.rho*self.lf_model.sigma2*self.lf_model.kernel.K(self.XH,self.XL), self.rho**2*self.lf_model.sigma2*self.lf_model.kernel.K(self.XH, self.XH)+self.sigma2*K), axis=1)), 
+                axis=0)
+        self.y = np.concatenate((self.sample_YL, self.sample_YH), axis=0)
+        self.LC = cholesky(self.C, lower=True)
+        oneC = np.ones((self.C.shape[0], 1))
+        self.mu = oneC.T.dot(solve(self.LC.T, solve(self.LC, self.y))) / oneC.T.dot(solve(self.LC.T, solve(self.LC, oneC)))

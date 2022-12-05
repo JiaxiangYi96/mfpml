@@ -32,7 +32,7 @@ class Kriging:
             mean value for the prior, by default 0
         """
         self.num_dim = design_space.shape[0]
-        self.kernel = KRG(theta=np.zeros((1, self.num_dim)), bounds=kernel_bound)
+        self.kernel = KRG(theta=np.zeros(self.num_dim), bounds=kernel_bound)
         self.bounds = design_space
         self.optimizer = optimizer
         self.mprior = mprior
@@ -105,21 +105,21 @@ class Kriging:
             n_trials = 9
             opt_fs = float('inf')
             for trial in range(n_trials): 
-                x0 = np.random.uniform(self.kernel._get_low_bound(), 
-                    self.kernel._get_high_bound(), self.kernel._get_num_para())
+                x0 = np.random.uniform(self.kernel._get_low_bound, 
+                    self.kernel._get_high_bound, self.kernel._get_num_para)
                 optRes = minimize(self._logLikelihood, x0=x0, method='L-BFGS-B',
-                    bounds=self.kernel._get_bounds_list())
+                    bounds=self.kernel._get_bounds_list)
                 if optRes.fun < opt_fs:
                     opt_param = optRes.x
                     opt_fs = optRes.fun
         else:
             optRes = self.optimizer.run_optimizer(self._logLikelihood, 
-                num_dim=self.kernel._get_num_para(), design_space=self.kernel._get_bounds())
+                num_dim=self.kernel._get_num_para, design_space=self.kernel._get_bounds)
             opt_param = optRes['best_x']
         self.opt_param = opt_param
 
     def _logLikelihood(self, params: np.ndarray) -> np.ndarray:
-        """Compute the concentrated likelihood
+        """Compute the concentrated ln-likelihood
 
         Parameters
         ----------

@@ -5,19 +5,14 @@ class corrfunc:
     """
     Base class for kernel
     """ 
-    @property
-    def n_dims(self): 
-
-        pass
-
     @property 
     def hyperparameters(self): 
         """
         Returns a list of all hyperparameters specifications
         """
+        return self.param.tolist()
 
-        pass 
-
+    @property
     def _get_num_para(self) -> int:
         """Return number of parameters of the kernel
 
@@ -27,7 +22,8 @@ class corrfunc:
             number of parameters
         """
         return self.num_para 
-    
+
+    @property
     def _get_bounds(self) -> np.ndarray: 
         """Get the parameters' bounds
 
@@ -38,6 +34,7 @@ class corrfunc:
         """
         return self.bounds
 
+    @property
     def _get_bounds_list(self) -> list: 
         """Get the parameters' bounds with list
 
@@ -48,6 +45,7 @@ class corrfunc:
         """
         return self.bounds.tolist()
 
+    @property
     def _get_low_bound(self) -> list: 
         """Get the low bound of the parameters
 
@@ -58,6 +56,7 @@ class corrfunc:
         """
         return self.bounds[:, 0].tolist()
 
+    @property
     def _get_high_bound(self) -> list: 
         """Get the high bound of the parameters
 
@@ -88,7 +87,7 @@ class KRG(corrfunc):
         self.param = 10 ** theta
         self.parameters = parameters
         self.bounds = [] 
-        self.num_para = theta.shape[1]
+        self.num_para = theta.size
         for i in range(self.num_para): 
             self.bounds.append(bounds)
         self.bounds = np.array(self.bounds)
