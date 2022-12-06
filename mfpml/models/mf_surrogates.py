@@ -337,10 +337,10 @@ class HierarchicalKriging(mf_model):
         self.L = cholesky(self.K, lower=True)
         self.alpha = solve(self.L.T, solve(self.L, self.sample_YH)) 
         self.beta = solve(self.L.T, solve(self.L, self.F)) 
-        self.mu = np.asscalar(np.dot(self.F.T, self.alpha) / np.dot(self.F.T, self.beta))
+        self.mu = (np.dot(self.F.T, self.alpha) / np.dot(self.F.T, self.beta)).item()
         self.gamma = solve(self.L.T, solve(self.L, (self.sample_YH - self.mu * self.F))) 
-        self.sigma2 = np.asscalar(np.dot((self.sample_YH - self.mu * self.F).T, self.gamma).squeeze() / self.XH.shape[0])
-        self.logp = np.asscalar(-self.XH.shape[0] * np.log(self.sigma2) - np.sum(np.log(np.diag(self.L))))
+        self.sigma2 = (np.dot((self.sample_YH - self.mu * self.F).T, self.gamma).squeeze() / self.XH.shape[0]).item()
+        self.logp = (-self.XH.shape[0] * np.log(self.sigma2) - np.sum(np.log(np.diag(self.L)))).item()
 
 
 class ScaledKriging(mf_model): 
@@ -459,7 +459,7 @@ class ScaledKriging(mf_model):
         np.ndarray
             discrepancy
         """
-        return self.sample_YH - self.rho * self.lf_model.predict(self.sample_XH)
+        return self.sample_YH - self.rho * self.predict_lf(self.sample_XH)
 
     def _update_optimizer_hf(self, optimizer: any) -> None: 
         """Change the optimizer for high-fidelity hyperparameters
@@ -479,12 +479,19 @@ class ScaledKriging(mf_model):
                 x0 = np.random.uniform(self.rho_bound[0], self.rho_bound[1], 1)
                 optRes = minimize(self._eval_error, x0=x0, method='L-BFGS-B',
                     bounds=np.array([self.rho_bound]))
+            elif self.rho_method == 'bumpiness':
+                x0 = np.random.uniform(self.rho_bound[0], self.rho_bound[1], 1)
+                optRes = minimize(self._eval_bumpiness, x0=x0, method='L-BFGS-B',
+                    bounds=np.array([self.rho_bound]))
             else:
                 pass
             self.rho = optRes.x
         else:
             if self.rho_method == 'error':
                 optRes = self.rho_optimizer.run_optimizer(self._eval_error, 
+                    num_dim=1, design_space=np.array([self.rho_bound]))
+            elif self.rho_method == 'bumpiness':
+                optRes = self.rho_optimizer.run_optimizer(self._eval_bumpiness, 
                     num_dim=1, design_space=np.array([self.rho_bound]))
             else:
                 pass
@@ -503,11 +510,33 @@ class ScaledKriging(mf_model):
         np.ndarray
             sum of error
         """
-        rho.reshape(-1, 1)
-        rho = np.tile(rho, (1, self._num_XH()))
+        rho = np.tile(rho.reshape(-1, 1), (1, self._num_XH))
         error = (rho * self.predict_lf(self.sample_XH).ravel() - self.sample_YH.ravel())
         sum_error2 = np.sum(error ** 2, axis=1)
         return sum_error2
+
+    def _eval_bumpiness(self, rho: np.ndarray) -> np.ndarray:
+        """Evaluate the bumpiness
+
+        Parameters
+        ----------
+        rho : np.ndarray
+            array of rho
+
+        Returns
+        -------
+        np.ndarray
+            measure of bumpiness
+        """
+        rho = rho.reshape(-1, 1)
+        out = np.zeros(rho.shape[0])
+        for i in range(rho.shape[0]):
+            sum_error2 = self._eval_error(rho[i, :])
+            self.disc_model.train(self.sample_XH, self.sample_YH - rho[i, :] * self.predict_lf(self.sample_XH))
+            theta = self.disc_model.kernel._get_param
+            out[i] = sum_error2 * np.linalg.norm(theta)
+        return out
+
 
     
 class CoKriging(mf_model): 
@@ -580,7 +609,7 @@ class CoKriging(mf_model):
         np.ndarray
             prediction of high-fidelity
         """
-        Xnew = np.atleast_2d(self.normalize_input(Xnew))
+        Xnew = np.atleast_2d(self.normalize_input(Xnew, self.bounds))
         c = np.concatenate(
             (self.rho*self.lf_model.sigma2*self.lf_model.kernel.K(self.XL, Xnew), 
             self.rho**2*self.lf_model.sigma2*self.lf_model.kernel.K(self.XH, Xnew)+self.sigma2*self.kernel.K(self.XH, Xnew)),
@@ -663,10 +692,10 @@ class CoKriging(mf_model):
         #R^(-1)1
         beta = solve(L.T, solve(L, one))
         #1R^(-1)Y / 1R^(-1)vector(1)
-        self.mu_d = np.asscalar(np.dot(one.T, alpha) / np.dot(one.T, beta))
+        self.mu_d = (np.dot(one.T, alpha) / np.dot(one.T, beta)).item()
         gamma = solve(L.T, solve(L, (self.d - self.mu_d))) 
-        self.sigma2 = np.asscalar(np.dot((self.d - self.mu_d).T, gamma) / self.XH.shape[0])
-        self.logp = np.asscalar(-.5 * self.XH.shape[0] * np.log(self.sigma2) - np.sum(np.log(np.diag(L))))
+        self.sigma2 = (np.dot((self.d - self.mu_d).T, gamma) / self.XH.shape[0]).item()
+        self.logp = (-.5 * self.XH.shape[0] * np.log(self.sigma2) - np.sum(np.log(np.diag(L)))).item()
         #cov matrix for Co-Kriging
         self.C = np.concatenate(
                 (np.concatenate((self.lf_model.sigma2*self.lf_model.K, self.rho*self.lf_model.sigma2*self.lf_model.kernel.K(self.XL,self.XH)), axis=1), 

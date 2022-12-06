@@ -59,10 +59,10 @@ class Kriging:
         self.alpha = solve(self.L.T, solve(self.L, self.sample_Y))
         one = np.ones((self.X.shape[0], 1))
         self.beta = solve(self.L.T, solve(self.L, one))
-        self.mu = np.asscalar(np.dot(one.T, self.alpha) / np.dot(one.T, self.beta))
+        self.mu = (np.dot(one.T, self.alpha) / np.dot(one.T, self.beta)).item()
         self.gamma = solve(self.L.T, solve(self.L, (self.sample_Y - self.mu)))
-        self.sigma2 = np.asscalar(np.dot((self.sample_Y - self.mu).T, self.gamma) / self.X.shape[0])
-        self.logp = np.asscalar(-.5 * self.X.shape[0] * np.log(self.sigma2) - np.sum(np.log(np.diag(self.L))))
+        self.sigma2 = (np.dot((self.sample_Y - self.mu).T, self.gamma) / self.X.shape[0]).item()
+        self.logp = (-.5 * self.X.shape[0] * np.log(self.sigma2) - np.sum(np.log(np.diag(self.L)))).item()
 
     def predict(self, Xinput: np.ndarray, return_std: bool=False): 
         """Predict responses through the Kriging model

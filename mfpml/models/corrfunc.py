@@ -67,6 +67,17 @@ class corrfunc:
         """
         return self.bounds[:, 1].tolist()
 
+    @property
+    def _get_param(self) -> np.ndarray:
+        """Get the parameters of the corelation 
+
+        Returns
+        -------
+        np.ndarray
+            parameters
+        """
+        return self.param
+
 class KRG(corrfunc): 
     def __init__(
         self, 
