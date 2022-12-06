@@ -6,7 +6,7 @@ import numpy as np
 from mfpml.problems.mf_functions import Forrester_1a, mf_Hartman3
 from mfpml.design_of_experiment.mf_samplers import LatinHyperCube
 from mfpml.models.mf_surrogates import HierarchicalKriging
-from mfpml.optimization.mf_acqusitions import vfei, vflcb, augmentedEI
+from mfpml.optimization.mf_acqusitions import vfei, vflcb, augmentedEI, extendedPI
 from mfpml.optimization.mfBO import MFSOBO
 
 func = mf_Hartman3()
@@ -19,8 +19,9 @@ HK = HierarchicalKriging(design_space=func._input_domain)
 acf1 = vfei()
 acf2 = augmentedEI()
 acf3 = vflcb()
+acf4 = extendedPI()
 
 opti = MFSOBO(problem=func)
 
-opti.run_optimizer(mf_surrogate=HK, acqusition=acf1, max_iter=5, init_X=sample_x, init_Y=sample_y)
+opti.run_optimizer(mf_surrogate=HK, acqusition=acf4, max_iter=5, init_X=sample_x, init_Y=sample_y)
 opti.historical_plot()

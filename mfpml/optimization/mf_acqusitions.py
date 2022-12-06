@@ -383,4 +383,133 @@ class vflcb(mfSingleObjAcf):
         else: 
             update_x['lf'] = np.atleast_2d(x_lf)
         return update_x
-            
+    
+
+class extendedPI(mfSingleObjAcf):
+    """Extended Probability Improvement acqusition function 
+
+    Reference 
+    -------
+    [1] Ruan, X., Jiang, P., Zhou, Q., Hu, J., & Shu, L. (2020). 
+    Variable-fidelity probability of improvement method for 
+    efficient global optimization of expensive black-box problems. 
+    Structural and Multidisciplinary Optimization, 62(6), 3021-3052.
+    
+    """
+    def __init__(
+        self, 
+        optimizer: any = None, 
+        constraint: bool = False) -> None:
+        """Initialize the multi-fidelity acqusition
+
+        Parameters
+        ----------
+        optimizer : any
+            optimizer instance
+        constraint : bool, optional
+            whether to use for constrained optimization
+        """
+        super().__init__()
+        self.optimizer = optimizer
+        self.constraint = constraint
+
+    def eval(self, 
+        x: np.ndarray, 
+        mf_surrogate: any, 
+        fmin: np.ndarray, 
+        cost_ratio: dict, 
+        fidelity: str) -> np.ndarray:
+        """Evaluates selected acqusition function at certain fidelity
+
+        Parameters
+        ----------
+        x : np.ndarray
+            point to evaluate
+        mf_surrogate : any
+            multi-fidelity surrogate instance
+        fmin : np.ndarray
+            best prediction of multi-fidelity model
+        cost_ratio : float
+            ratio of high-fidelity cost to low-fidelity cost
+        fidelity : str
+            str indicating fidelity level
+
+        Returns
+        -------
+        np.ndarray
+            acqusition function values
+        """
+        pre, std = mf_surrogate.predict(x, return_std=True)
+        z = (fmin - pre) / std
+        pi = norm.cdf(z)
+        pi[std<np.finfo(float).eps] = 0
+        corr = self.corr(x, mf_surrogate, fidelity)
+        if fidelity == 'hf':
+            cr = 1
+            eta = np.prod(mf_surrogate._eval_corr(x, mf_surrogate._get_sample_hf), axis=1)
+        elif fidelity == 'lf':
+            cr = cost_ratio
+            eta = np.prod(mf_surrogate._eval_corr(x, mf_surrogate._get_sample_lf, fidelity='lf'), axis=1)
+        return -pi*corr*cr*eta
+
+    def query(self, mf_surrogate: any, params: dict) -> dict:
+        """Query the acqusition function
+
+        Parameters
+        ----------
+        mf_surrogate : any
+            multi-fidelity surrogate instance
+        params : dict
+            parameters of Bayesian Optimization
+
+        Returns
+        -------
+        dict
+            contains two values where 'hf' is the update points 
+            for high-fidelity and 'lf' for low-fidelity
+        """
+        premin = differential_evolution(mf_surrogate.predict, bounds=params['design_space'], 
+                maxiter=250, popsize=40)
+        update_x = self._initial_update()
+        if self.optimizer is None:
+            res_hf = differential_evolution(self.eval, bounds=params['design_space'], 
+                    args=(mf_surrogate, premin.fun, params['cr'], 'hf'), maxiter=500, popsize=40)
+            res_lf = differential_evolution(self.eval, bounds=params['design_space'], 
+                    args=(mf_surrogate, premin.fun, params['cr'], 'lf'), maxiter=500, popsize=40)
+            opt_hf = res_hf.fun
+            x_hf = res_hf.x
+            opt_lf = res_lf.fun
+            x_lf = res_lf.x
+        else:
+            pass
+        if opt_hf <= opt_lf: 
+            update_x['hf'] = np.atleast_2d(x_hf)
+        else: 
+            update_x['lf'] = np.atleast_2d(x_lf)
+        return update_x
+
+    @staticmethod
+    def corr(x: np.ndarray, mf_surrogate: any, fidelity: str) -> np.ndarray:
+        """Evaluate correlation between different fidelity
+
+        Parameters
+        ----------
+        x : np.ndarray
+            point to evaluate
+        mf_surrogate : any
+            multi-fidelity surrogate instance
+        fidelity : str
+            str indicating fidelity level
+
+        Returns
+        -------
+        np.ndarray
+            correlation values
+        """
+        x = np.atleast_2d(x)
+        if fidelity == 'hf':
+            return np.ones((x.shape[0], 1))
+        elif fidelity == 'lf':
+            pre, std = mf_surrogate.predict(x, return_std=True)
+            pre_lf, std_lf = mf_surrogate.predict_lf(x, return_std=True)
+            return std_lf / (np.abs(pre - pre_lf).reshape(-1, 1) + std)

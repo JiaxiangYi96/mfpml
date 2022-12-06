@@ -57,16 +57,16 @@ class mf_model:
                 Y = {}
                 X['hf'] = np.concatenate((self.sample_XH, XHnew))
                 Y['hf'] = np.concatenate((self.sample_YH, YHnew))
-                X['lf'] = np.concatenate((self.model_lf.sample_X, XLnew))
-                Y['lf'] = np.concatenate((self.model_lf.sample_Y, YLnew))
+                X['lf'] = np.concatenate((self.sample_XL, XLnew))
+                Y['lf'] = np.concatenate((self.sample_YL, YLnew))
                 self.train(X, Y)
             else:
                 X = {}
                 Y = {}
                 X['hf'] = self.sample_XH
                 Y['hf'] = self.sample_YH
-                X['lf'] = np.concatenate((self.model_lf.sample_X, XLnew))
-                Y['lf'] = np.concatenate((self.model_lf.sample_Y, YLnew))
+                X['lf'] = np.concatenate((self.sample_XL, XLnew))
+                Y['lf'] = np.concatenate((self.sample_YL, YLnew))
                 self.train(X, Y)
         else: 
             if XHnew is not None and YHnew is not None: 
@@ -161,7 +161,7 @@ class mf_model:
         """
         self.lf_model.train(X, Y)
         self.sample_XL = X
-        self.XL = self.normalize_input(X, self.bounds)
+        self.XL = self.normalize_input(X)
         self.sample_YL = Y
         
     def predict_lf(self, XLnew: np.ndarray, return_std: bool=False) -> np.ndarray: 
@@ -181,23 +181,46 @@ class mf_model:
         """
         return self.lf_model.predict(XLnew, return_std) 
 
-    @staticmethod
-    def normalize_input(X: np.ndarray, bounds: np.ndarray) -> np.ndarray: 
+    def _eval_corr(self, X: np.ndarray, Xprime: np.ndarray, fidelity='hf') -> np.ndarray:
+        """Evaluate the correlation values based on current multi-
+        fidelity model
+
+        Parameters
+        ----------
+        X : np.ndarray
+            x
+        Xprime : np.ndarray
+            x'
+        fidelity : str, optional
+            str indicating fidelity level, by default 'hf'
+
+        Returns
+        -------
+        np.ndarray
+            correlation matrix
+        """
+        X = self.normalize_input(X)
+        Xprime = self.normalize_input(Xprime)
+        if fidelity == 'hf':
+            return self.kernel.K(X, Xprime)
+        elif fidelity == 'lf':
+            return self.lf_model.kernel.K(X, Xprime)
+        else:
+            ValueError('Unknown fidelity input.')
+
+    def normalize_input(self, X: np.ndarray) -> np.ndarray: 
         """Normalize samples to range [0, 1]
 
         Parameters
         ----------
         X : np.ndarray
             samples to scale
-        bounds : np.ndarray
-            bounds with shape=((num_dim, 2))
-
         Returns
         -------
         np.ndarray
             normalized samples
         """
-        return (X - bounds[:, 0]) / (bounds[:, 1] - bounds[:, 0])
+        return (X - self.bounds[:, 0]) / (self.bounds[:, 1] - self.bounds[:, 0])
 
 
 
@@ -241,7 +264,7 @@ class HierarchicalKriging(mf_model):
             array of high-fidelity responses
         """
         self.sample_XH = XH
-        self.XH = self.normalize_input(self.sample_XH, self.bounds)
+        self.XH = self.normalize_input(self.sample_XH)
         self.sample_YH = YH.reshape(-1, 1)
         #prediction of low-fidelity at high-fidelity locations
         self.F = self.predict_lf(self.sample_XH)
@@ -266,7 +289,7 @@ class HierarchicalKriging(mf_model):
             prediction of high-fidelity
         """
         pre_lf = self.predict_lf(Xnew)
-        XHnew = np.atleast_2d(self.normalize_input(Xnew, self.bounds)) 
+        XHnew = np.atleast_2d(self.normalize_input(Xnew)) 
         knew = self.kernel.K(XHnew, self.XH) 
         fmean = self.mu * pre_lf + np.dot(knew, self.gamma)
         if not return_std: 
@@ -584,7 +607,7 @@ class CoKriging(mf_model):
             array of high-fidelity responses
         """
         self.sample_XH = XH
-        self.XH = self.normalize_input(self.sample_XH, self.bounds)
+        self.XH = self.normalize_input(self.sample_XH)
         self.sample_YH = YH.reshape(-1, 1)
         #prediction of low-fidelity at high-fidelity locations
         self.F = self.predict_lf(self.sample_XH)
@@ -609,7 +632,7 @@ class CoKriging(mf_model):
         np.ndarray
             prediction of high-fidelity
         """
-        Xnew = np.atleast_2d(self.normalize_input(Xnew, self.bounds))
+        Xnew = np.atleast_2d(self.normalize_input(Xnew))
         c = np.concatenate(
             (self.rho*self.lf_model.sigma2*self.lf_model.kernel.K(self.XL, Xnew), 
             self.rho**2*self.lf_model.sigma2*self.lf_model.kernel.K(self.XH, Xnew)+self.sigma2*self.kernel.K(self.XH, Xnew)),
