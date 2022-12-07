@@ -206,7 +206,9 @@ class Functions(ABC):
         """
         raise NotImplementedError("Subclasses should implement this method.")
 
-    def plot_function(self, with_low_fidelity: bool = False, save_figure: bool = True) -> None:
+    def plot_function(
+        self, with_low_fidelity: bool = False, save_figure: bool = True
+    ) -> None:
         """
         Function to visualize the landscape of the function s
         Parameters
@@ -292,3 +294,26 @@ class Functions(ABC):
 
         """
         return self.__class__.input_domain
+
+
+class FunctionWrapper:
+    """
+    Object to wrap user's function, allowing picklability
+    """
+
+    def __init__(self, function: any, args: tuple = ()) -> None:
+        """function wrapper
+
+        Parameters
+        ----------
+        function : any
+            function
+        args : tuple, optional
+            additional parameters , by default ()
+        """
+        self.function = function
+
+        self.args = [] if args is None else args
+
+    def __call__(self, x):
+        return self.function(x, *self.args)
