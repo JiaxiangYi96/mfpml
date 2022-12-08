@@ -6,9 +6,10 @@ from scipy.optimize import minimize
 
 from mfpml.models.corrfunc import KRG
 from .kriging import Kriging
+from ..base.model import model
 
 
-class mf_model: 
+class mf_model(model): 
 
     def __init__(
         self
@@ -263,6 +264,7 @@ class HierarchicalKriging(mf_model):
         YH : np.ndarray
             array of high-fidelity responses
         """
+        XH, YH = self.drop_neighbor(XH, YH)
         self.sample_XH = XH
         self.XH = self.normalize_input(self.sample_XH)
         self.sample_YH = YH.reshape(-1, 1)
@@ -444,6 +446,7 @@ class ScaledKriging(mf_model):
         YH : np.ndarray
             array of high-fidelity responses
         """ 
+        XH, YH = self.drop_neighbor(XH, YH)
         self.sample_XH = XH 
         self.sample_YH = YH.reshape(-1, 1)
         if self.rho_optimize: 
@@ -606,6 +609,7 @@ class CoKriging(mf_model):
         YH : np.ndarray
             array of high-fidelity responses
         """
+        XH, YH = self.drop_neighbor(XH, YH)
         self.sample_XH = XH
         self.XH = self.normalize_input(self.sample_XH)
         self.sample_YH = YH.reshape(-1, 1)

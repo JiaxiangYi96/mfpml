@@ -3,8 +3,9 @@ from scipy.linalg import cholesky, solve
 from scipy.optimize import minimize
 
 from .corrfunc import KRG
+from ..base.model import model
 
-class Kriging: 
+class Kriging(model): 
     """
     Kriging model 
     """
@@ -47,6 +48,7 @@ class Kriging:
         Y : np.ndarray
             responses of the sample
         """
+        X, Y = self.drop_neighbor(X, Y)
         self.sample_X = X
         self.X = self.normalize_input(X, self.bounds)
         self.sample_Y = Y.reshape(-1, 1)

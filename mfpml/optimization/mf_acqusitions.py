@@ -1,5 +1,6 @@
 import numpy as np  
 from scipy.stats import norm
+from scipy.spatial.distance import cdist
 from scipy.optimize import differential_evolution
 
 
@@ -14,6 +15,17 @@ class mfSingleObjAcf(mfAcqusitionFunction):
     """
     Base class for multi-fidelity acqusition functions for Single Objective Opti. 
     """ 
+
+    
+
+    def acf_uncertain(self, x: np.ndarray, mf_surrogate: any, fidelity: str) -> np.ndarray:
+
+        if fidelity == 'hf':
+            _, s = mf_surrogate.predict(x, return_std=True)
+        elif fidelity == 'lf':
+            _, s = mf_surrogate.predict_lf(x, return_std=True)
+        return s
+
     @staticmethod
     def _initial_update(): 
         update_x = {} 
@@ -378,9 +390,9 @@ class vflcb(mfSingleObjAcf):
             x_lf = res_lf.x
         else:
             pass
-        if opt_hf <= opt_lf: 
+        if opt_hf <= opt_lf:
             update_x['hf'] = np.atleast_2d(x_hf)
-        else: 
+        else:
             update_x['lf'] = np.atleast_2d(x_lf)
         return update_x
     
