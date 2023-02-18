@@ -2,18 +2,17 @@ import os
 import sys
 import time
 
-folder_path = "/home/jiaxiangyi/mfpml"
+folder_path = "/home/yaga/Documents/GitHub/mfpml"
 sys.path.insert(0, folder_path)
 
 
-from mfpml.problems.sf_functions import *
-from mfpml.utils.evolutionary_algorithms import DE, PSO
+from mfpml.problems.sf_functions import Ackley
+from mfpml.optimization.evolutionary_algorithms import DE, PSO
 
 start_time = time.time()
-function = Ackley(num_dim=100)
+function = Ackley(num_dim=10)
 design_space = function._input_domain
-# print(design_space)
-# print(function.optimum)
+
 # define the optimizer
 pso_opt = DE(num_gen=1000, num_pop=50)
 opt_results = pso_opt.run_optimizer(

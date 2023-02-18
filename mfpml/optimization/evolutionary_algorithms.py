@@ -3,7 +3,7 @@ from operator import index
 import matplotlib.pyplot as plt
 import numpy as np
 
-from mfpml.base.functions import FunctionWrapper
+from mfpml.problems.functions import FunctionWrapper
 
 
 class EABase:

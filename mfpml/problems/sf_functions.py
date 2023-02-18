@@ -3,7 +3,7 @@ from abc import ABC
 import matplotlib.pyplot as plt
 import numpy as np
 
-from mfpml.base.functions import Functions
+from mfpml.problems.functions import Functions
 
 
 class SingleFidelityFunctions(Functions):

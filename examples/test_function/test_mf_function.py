@@ -4,11 +4,11 @@ import sys
 
 # import local libraries
 # path of local project
-folder_path = "/home/jiaxiangyi/mfpml"
+folder_path = "/home/yaga/GitHub/mfpml"
 sys.path.insert(0, folder_path)
 from mfpml.design_of_experiment.mf_samplers import SobolSequence
 from mfpml.problems.mf_functions import *
-from mfpml.utils.plot_figures import plot_mf_sampling
+from mfpml.design_of_experiment.plot_figures import plot_mf_sampling
 
 # define function
 function = Forrester_1b()
@@ -24,4 +24,6 @@ sample_y = {}
 sample_y["hf"] = function.hf(samples["hf"])
 sample_y["lf"] = function.lf(samples["lf"])
 
-plot_mf_sampling(samples=samples, responses=sample_y, function=function, save_figure=True)
+plot_mf_sampling(
+    samples=samples, responses=sample_y, function=function, save_figure=True
+)
