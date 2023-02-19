@@ -2,6 +2,7 @@ from abc import ABC
 
 import matplotlib.pyplot as plt
 import numpy as np
+import torch
 
 
 class Functions(ABC):

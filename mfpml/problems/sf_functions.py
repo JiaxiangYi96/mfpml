@@ -7,28 +7,49 @@ from mfpml.problems.functions import Functions
 
 
 class SingleFidelityFunctions(Functions):
-    def plot_function(self, save_figure: bool = True, with_low_fidelity: bool = False) -> None:
+    def plot_function(
+        self, save_figure: bool = True, with_low_fidelity: bool = False
+    ) -> None:
         num_dim = self._get_dimension
         num_plot = 200
         if num_dim == 1:
             # draw the samples from design space
-            x_plot = np.linspace(start=self._input_domain[0, 0], stop=self._input_domain[0, 1], num=num_plot)
+            x_plot = np.linspace(
+                start=self._input_domain[0, 0],
+                stop=self._input_domain[0, 1],
+                num=num_plot,
+            )
 
             with plt.style.context(["ieee", "science"]):
                 fig, ax = plt.subplots()
-                ax.plot(x_plot, self.f(x=x_plot), label=f"{self.__class__.__name__}")
+                ax.plot(
+                    x_plot,
+                    self.f(x=x_plot),
+                    label=f"{self.__class__.__name__}",
+                )
                 ax.legend()
                 ax.set(xlabel=r"$x$")
                 ax.set(ylabel=r"$y$")
                 # ax.autoscale(tight=True)
-                plt.xlim(left=self._input_domain[0, 0], right=self._input_domain[0, 1])
+                plt.xlim(
+                    left=self._input_domain[0, 0],
+                    right=self._input_domain[0, 1],
+                )
                 if save_figure is True:
                     fig.savefig(self.__class__.__name__, dpi=300)
                 plt.show()
         elif num_dim == 2:
 
-            x1_plot = np.linspace(start=self._input_domain[0, 0], stop=self._input_domain[0, 1], num=num_plot)
-            x2_plot = np.linspace(start=self._input_domain[1, 0], stop=self._input_domain[1, 1], num=num_plot)
+            x1_plot = np.linspace(
+                start=self._input_domain[0, 0],
+                stop=self._input_domain[0, 1],
+                num=num_plot,
+            )
+            x2_plot = np.linspace(
+                start=self._input_domain[1, 0],
+                stop=self._input_domain[1, 1],
+                num=num_plot,
+            )
             X1, X2 = np.meshgrid(x1_plot, x2_plot)
             Y = np.zeros([len(X1), len(X2)])
             # get the values of Y at each mesh grid
@@ -49,6 +70,41 @@ class SingleFidelityFunctions(Functions):
                 plt.interactive(False)
         else:
             raise ValueError("Unexpected value of 'num_dimension'!", num_dim)
+
+
+class Forrester(SingleFidelityFunctions):
+    """
+    Forrester function
+    """
+
+    num_dim: int = 1
+    num_obj: int = 1
+    num_cons: int = 0
+    input_domain: np.ndarray = np.array([[0.0, 1.0]])
+    design_space: dict = {"x": [0.0, 1.0]}
+    optimum: float = -6.020740
+    optimum_scheme: list = [0.757248757841856]
+    low_fidelity: bool = None
+    cost_ratio: list = None
+
+    @classmethod
+    def is_dim_compatible(cls, num_dim):
+        assert (
+            num_dim == cls.num_dim
+        ), f"Can not change dimension for {cls.__name__} function"
+
+        return num_dim
+
+    def __init__(self, num_dim: int = 1) -> None:
+        # check the dimension
+        self.is_dim_compatible(num_dim=num_dim)
+
+    @staticmethod
+    def f(x: np.ndarray) -> np.ndarray:
+        obj = (6 * x - 2) ** 2 * np.sin(12 * x - 4)
+        obj = np.reshape(obj, (x.shape[0], 1))
+
+        return obj
 
 
 class Branin(SingleFidelityFunctions):
@@ -77,7 +133,9 @@ class Branin(SingleFidelityFunctions):
 
     @classmethod
     def is_dim_compatible(cls, num_dim):
-        assert num_dim == cls.num_dim, f"Can not change dimension for {cls.__name__} function"
+        assert (
+            num_dim == cls.num_dim
+        ), f"Can not change dimension for {cls.__name__} function"
 
         return num_dim
 
@@ -99,7 +157,11 @@ class Branin(SingleFidelityFunctions):
         x1 = x[:, 0]
         x2 = x[:, 1]
 
-        obj = a * (x2 - b * x1**2 + c * x1 - d) ** 2 + h * (1 - ff) * np.cos(x1) + h
+        obj = (
+            a * (x2 - b * x1**2 + c * x1 - d) ** 2
+            + h * (1 - ff) * np.cos(x1)
+            + h
+        )
         obj = np.reshape(obj, (x.shape[0], 1))
         return obj
 
@@ -131,7 +193,9 @@ class GoldPrice(SingleFidelityFunctions):
 
     @classmethod
     def is_dim_compatible(cls, num_dim):
-        assert num_dim == cls.num_dim, f"Can not change dimension for {cls.__name__} function"
+        assert (
+            num_dim == cls.num_dim
+        ), f"Can not change dimension for {cls.__name__} function"
 
         return num_dim
 
@@ -146,8 +210,28 @@ class GoldPrice(SingleFidelityFunctions):
     def f(x: np.ndarray) -> np.ndarray:
         x1 = x[:, 0]
         x2 = x[:, 1]
-        obj = (1 + (x1 + x2 + 1) ** 2 * (19 - 14 * x1 + 3 * x1**2 - 14 * x2 + 6 * x1 * x2 + 3 * x2**2)) * (
-            30 + (2 * x1 - 3 * x2) ** 2 * (18 - 32 * x1 + 12 * x1**2 + 48 * x2 - 36 * x1 * x2 + 27 * x2**2)
+        obj = (
+            1
+            + (x1 + x2 + 1) ** 2
+            * (
+                19
+                - 14 * x1
+                + 3 * x1**2
+                - 14 * x2
+                + 6 * x1 * x2
+                + 3 * x2**2
+            )
+        ) * (
+            30
+            + (2 * x1 - 3 * x2) ** 2
+            * (
+                18
+                - 32 * x1
+                + 12 * x1**2
+                + 48 * x2
+                - 36 * x1 * x2
+                + 27 * x2**2
+            )
         )
         obj = np.reshape(obj, (x.shape[0], 1))
         return obj
@@ -183,7 +267,9 @@ class Sixhump(SingleFidelityFunctions):
 
     @classmethod
     def is_dim_compatible(cls, num_dim):
-        assert num_dim == cls.num_dim, f"Can not change dimension for {cls.__name__} function"
+        assert (
+            num_dim == cls.num_dim
+        ), f"Can not change dimension for {cls.__name__} function"
 
         return num_dim
 
@@ -233,7 +319,9 @@ class Sasena(SingleFidelityFunctions):
 
     @classmethod
     def is_dim_compatible(cls, num_dim):
-        assert num_dim == cls.num_dim, f"Can not change dimension for {cls.__name__} function"
+        assert (
+            num_dim == cls.num_dim
+        ), f"Can not change dimension for {cls.__name__} function"
 
         return num_dim
 
@@ -286,7 +374,9 @@ class Hartman3(SingleFidelityFunctions):
 
     @classmethod
     def is_dim_compatible(cls, num_dim):
-        assert num_dim == cls.num_dim, f"Can not change dimension for {cls.__name__} function"
+        assert (
+            num_dim == cls.num_dim
+        ), f"Can not change dimension for {cls.__name__} function"
 
         return num_dim
 
@@ -299,15 +389,29 @@ class Hartman3(SingleFidelityFunctions):
 
     @staticmethod
     def f(x: np.ndarray) -> np.ndarray:
-        a = np.array([[3.0, 10.0, 30.0], [0.1, 10.0, 35.0], [3.0, 10.0, 30.0], [0.1, 10.0, 35.0]])
+        a = np.array(
+            [
+                [3.0, 10.0, 30.0],
+                [0.1, 10.0, 35.0],
+                [3.0, 10.0, 30.0],
+                [0.1, 10.0, 35.0],
+            ]
+        )
         p = np.array(
-            [[0.3689, 0.117, 0.2673], [0.4699, 0.4387, 0.747], [0.1091, 0.8732, 0.5547], [0.03815, 0.5743, 0.8828]]
+            [
+                [0.3689, 0.117, 0.2673],
+                [0.4699, 0.4387, 0.747],
+                [0.1091, 0.8732, 0.5547],
+                [0.03815, 0.5743, 0.8828],
+            ]
         )
         c = np.array([1, 1.2, 3, 3.2])
         num_samples = x.shape[0]
         obj = np.zeros((num_samples, 1))
         for i in range(num_samples):
-            obj[i, :] = -np.dot(c, np.exp(-np.sum(a * (x[i, :] - p) ** 2, axis=1)))
+            obj[i, :] = -np.dot(
+                c, np.exp(-np.sum(a * (x[i, :] - p) ** 2, axis=1))
+            )
         obj = np.reshape(obj, (x.shape[0], 1))
         return obj
 
@@ -333,7 +437,16 @@ class Hartman6(SingleFidelityFunctions):
     num_cons: int = 0
     # low_bound: list = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
     # high_bound: list = [1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
-    input_domain = np.array([[0.0, 1.0], [0.0, 1.0], [0.0, 1.0], [0.0, 1.0], [0.0, 1.0], [0.0, 1.0]])
+    input_domain = np.array(
+        [
+            [0.0, 1.0],
+            [0.0, 1.0],
+            [0.0, 1.0],
+            [0.0, 1.0],
+            [0.0, 1.0],
+            [0.0, 1.0],
+        ]
+    )
     design_space: dict = {
         "x1": [0.0, 1.0],
         "x2": [0.0, 1.0],
@@ -343,12 +456,21 @@ class Hartman6(SingleFidelityFunctions):
         "x6": [0.0, 1.0],
     }
     optimum: float = -np.log(3.32236801141551)
-    optimum_scheme: list = [0.20168952, 0.15001069, 0.47687398, 0.27533243, 0.31165162, 0.65730054]
+    optimum_scheme: list = [
+        0.20168952,
+        0.15001069,
+        0.47687398,
+        0.27533243,
+        0.31165162,
+        0.65730054,
+    ]
     low_fidelity: list = None
 
     @classmethod
     def is_dim_compatible(cls, num_dim):
-        assert num_dim == cls.num_dim, f"Can not change dimension for {cls.__name__} function"
+        assert (
+            num_dim == cls.num_dim
+        ), f"Can not change dimension for {cls.__name__} function"
 
         return num_dim
 
@@ -381,7 +503,9 @@ class Hartman6(SingleFidelityFunctions):
         num_samples = x.shape[0]
         obj = np.zeros((num_samples, 1))
         for i in range(num_samples):
-            obj[i, :] = -np.dot(c, np.exp(-np.sum(a * (x[i, :] - p) ** 2, axis=1)))
+            obj[i, :] = -np.dot(
+                c, np.exp(-np.sum(a * (x[i, :] - p) ** 2, axis=1))
+            )
         obj = np.reshape(obj, (x.shape[0], 1))
         return -np.log(-obj)
 
@@ -435,7 +559,9 @@ class Thevenot(SingleFidelityFunctions):
         """
         self.is_dim_compatible(d=num_dim)
         self.num_dim = num_dim
-        self.input_domain = np.array([[-2 * np.pi, 2 * np.pi] for _ in range(num_dim)])
+        self.input_domain = np.array(
+            [[-2 * np.pi, 2 * np.pi] for _ in range(num_dim)]
+        )
         self.m = m
         self.beta = beta
         # update the information of function class
@@ -452,7 +578,9 @@ class Thevenot(SingleFidelityFunctions):
             for ii in range(x.shape[0]):
                 X = x[ii, :]
                 res = np.exp(-np.sum((X / self.beta) ** (2 * self.m)))
-                res = res - 2 * np.exp(-np.prod(X**2)) * np.prod(np.cos(X) ** 2)
+                res = res - 2 * np.exp(-np.prod(X**2)) * np.prod(
+                    np.cos(X) ** 2
+                )
                 obj[ii, 0] = res
             obj = np.reshape(obj, (x.shape[0], 1))
 
@@ -470,9 +598,15 @@ class Thevenot(SingleFidelityFunctions):
         # self.__class__.low_bound = np.array([-2 * np.pi for _ in range(self.num_dim)]).tolist()
         # self.__class__.high_bound = np.array([2 * np.pi for _ in range(self.num_dim)]).tolist()
         for ii in range(self.input_domain.shape[0]):
-            self.__class__.design_space[f"x{ii + 1}"] = self.input_domain[ii, :].tolist()
-        self.__class__.optimum_scheme = np.array([0 for i in range(1, self.num_dim + 1)]).tolist()
-        self.__class__.optimum = self.f(np.array([0 for i in range(1, self.num_dim + 1)]))
+            self.__class__.design_space[f"x{ii + 1}"] = self.input_domain[
+                ii, :
+            ].tolist()
+        self.__class__.optimum_scheme = np.array(
+            [0 for i in range(1, self.num_dim + 1)]
+        ).tolist()
+        self.__class__.optimum = self.f(
+            np.array([0 for i in range(1, self.num_dim + 1)])
+        )
         self.__class__.input_domain = self.input_domain
 
 
@@ -513,7 +647,9 @@ class Ackley(SingleFidelityFunctions):
         ), "The dimension d must be None or a positive integer"
         return (d is None) or (d > 0)
 
-    def __init__(self, num_dim: int, a: float = 20, b: float = 0.2, c: float = 2 * np.pi) -> None:
+    def __init__(
+        self, num_dim: int, a: float = 20, b: float = 0.2, c: float = 2 * np.pi
+    ) -> None:
         """
 
         Parameters
@@ -543,14 +679,21 @@ class Ackley(SingleFidelityFunctions):
 
         if x.ndim == 1:
             res = -self.a * np.exp(-self.b * np.sqrt(np.mean(x**2)))
-            res = res - np.exp(np.mean(np.cos(self.c * x))) + self.a + np.exp(1)
+            res = (
+                res - np.exp(np.mean(np.cos(self.c * x))) + self.a + np.exp(1)
+            )
             obj = res
         elif x.ndim == 2:
             obj = np.zeros((x.shape[0], 1))
             for ii in range(x.shape[0]):
                 X = x[ii, :]
                 res = -self.a * np.exp(-self.b * np.sqrt(np.mean(X**2)))
-                res = res - np.exp(np.mean(np.cos(self.c * X))) + self.a + np.exp(1)
+                res = (
+                    res
+                    - np.exp(np.mean(np.cos(self.c * X)))
+                    + self.a
+                    + np.exp(1)
+                )
                 obj[ii, 0] = res
         return obj
 
@@ -566,9 +709,15 @@ class Ackley(SingleFidelityFunctions):
         # self.__class__.low_bound = np.array([-32.0 for _ in range(self.num_dim)]).tolist()
         # self.__class__.high_bound = np.array([32.0 for _ in range(self.num_dim)]).tolist()
         for ii in range(self.input_domain.shape[0]):
-            self.__class__.design_space[f"x{ii + 1}"] = self.input_domain[ii, :].tolist()
-        self.__class__.optimum_scheme = np.array([0 for _ in range(1, self.num_dim + 1)]).tolist()
-        self.__class__.optimum = self.f(np.array([0 for _ in range(1, self.num_dim + 1)]))
+            self.__class__.design_space[f"x{ii + 1}"] = self.input_domain[
+                ii, :
+            ].tolist()
+        self.__class__.optimum_scheme = np.array(
+            [0 for _ in range(1, self.num_dim + 1)]
+        ).tolist()
+        self.__class__.optimum = self.f(
+            np.array([0 for _ in range(1, self.num_dim + 1)])
+        )
         self.__class__.input_domain = self.input_domain
 
 
