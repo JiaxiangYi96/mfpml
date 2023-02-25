@@ -188,9 +188,7 @@ class LatinHyperCube(SingleFidelitySampler):
         )
 
     def get_samples(self, num_samples: int, **kwargs) -> dict:
-        lhs_sampler = LatinHypercube(
-            d=self.num_dim, seed=self.seed, optimization="random-cd"
-        )
+        lhs_sampler = LatinHypercube(d=self.num_dim, seed=self.seed)
         sample = lhs_sampler.random(num_samples)
         for i, bounds in enumerate(self.design_space.values()):
             sample[:, i] = sample[:, i] * (bounds[1] - bounds[0]) + bounds[0]
