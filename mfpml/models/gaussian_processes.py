@@ -1,4 +1,5 @@
 # define gpr model via gpytorch
+from cgi import test
 from tkinter.tix import Tree
 import numpy as np
 import torch
@@ -29,6 +30,15 @@ class Kriging:
         optimizer: str = "Adam",
         loss_function: str = "mll",
     ) -> None:
+        """Initilization of Kriging model
+
+        Parameters
+        ----------
+        optimizer : str, optional
+            string to indicate the optimizer , by default "Adam"
+        loss_function : str, optional
+            string to indicate the loss function, by default "mll"
+        """
         # define components of gpr model
         self.model = None
         self.likelihood = None
@@ -48,21 +58,43 @@ class Kriging:
         self,
         train_x: torch.Tensor,
         train_y: torch.Tensor,
+        design_space: dict,
+        normlize: bool = False,
         training_iteration: int = 200,
         learning_rate: float = 0.1,
         print_info: bool = False,
     ):
+        """training the Kriging model
 
-        self.train_x = train_x
+        Parameters
+        ----------
+        train_x : torch.Tensor
+            training inputs
+        train_y : torch.Tensor
+            traning outputs
+        training_iteration : int, optional
+            traning iteration, by default 200
+        learning_rate : float, optional
+            learning rate, by default 0.1
+        print_info : bool, optional
+            print the traning information or not , by default False
+        """
+        self.normlize = normlize
+        self.design_space = design_space
+        if self.normlize is True:
+            self.train_x = self._normalize_data(train_x)
+        else:
+            self.train_x = train_x
+
         self.train_y = train_y
+
         # number of samples
         self.num_samples = self.train_x.size(dim=0)
-        # TODO normalize the inputs and outputs
 
         # initialize gpr model
         self.likelihood = self._likelihood(num_samples=self.num_samples)
         self.model = ExactGPModel(
-            train_inputs=train_x,
+            train_inputs=self.train_x,
             train_targets=train_y,
             likelihood=self.likelihood,
         )
@@ -79,7 +111,7 @@ class Kriging:
             # Zero gradients from previous iteration
             self.optimizer.zero_grad()
             # Output from model
-            output = self.model(train_x)
+            output = self.model(self.train_x)
             # Calc loss and backprop gradients
             loss = -self.loss(output, train_y)
             loss.backward()
@@ -96,25 +128,41 @@ class Kriging:
             self.optimizer.step()
 
     def predict(self, test_x: torch.Tensor) -> np.ndarray:
+        """prediction
+
+        Parameters
+        ----------
+        test_x : torch.Tensor
+            test inputs
+
+        Returns
+        -------
+        np.ndarray
+            likelihood of prediction
+        """
         self.model.eval()
         self.likelihood.eval()
         # get the number of the test points
         num_test = test_x.size(dim=0)
-        self.test_x = test_x
+        if self.normlize is True:
+            self.test_x = self._normalize_data(x=test_x)
+        else:
+            self.test_x = test_x
 
         with torch.no_grad(), gpytorch.settings.fast_pred_var():
             observed_pred = self.likelihood(
-                self.model(test_x), noise=torch.zeros(num_test)
+                self.model(self.test_x), noise=torch.zeros(num_test)
             )
         # get the prediction for
         return observed_pred
 
-    def _normalize_data(self):
+    def _normalize_data(self, x: torch.Tensor) -> torch.Tensor:
         """normalize the train inputs so that there are located in the space
         from zero to one
         """
-
-        pass
+        for i, bounds in enumerate(self.design_space.values()):
+            x[:, i] = (x[:, i] - bounds[0]) / (bounds[1] - bounds[0])
+        return x
 
     def _likelihood(self, num_samples: int) -> gpytorch.likelihoods:
         """define the likelihood function for training gpr model
@@ -137,6 +185,18 @@ class Kriging:
         return likelihood
 
     def _loss(self):
+        """get the loss function
+
+        Returns
+        -------
+        _type_
+            _description_
+
+        Raises
+        ------
+        NameError
+            if the name is not correct, then report an error
+        """
         if self.loss_function_ == "mll":
             loss = gpytorch.mlls.ExactMarginalLogLikelihood(
                 likelihood=self.likelihood, model=self.model
@@ -161,6 +221,10 @@ class Kriging:
 
         if self.optimizer_ == "Adam":
             optimizer = torch.optim.Adam(
+                self.model.parameters(), lr=learning_rate
+            )
+        elif self.optimizer_ == "LBFGS":
+            optimizer = torch.optim.LBFGS(
                 self.model.parameters(), lr=learning_rate
             )
         else:

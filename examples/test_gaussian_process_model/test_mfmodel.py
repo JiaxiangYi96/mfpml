@@ -19,7 +19,7 @@ from mfpml.problems.mf_functions import Forrester_1a, mf_Hartman3
 from mfpml.optimization.evolutionary_algorithms import PSO
 
 func = Forrester_1a()
-func = mf_Hartman3()
+# func = mf_Hartman3()
 
 sampler = LatinHyperCube(design_space=func._design_space, seed=17)
 sample_x = sampler.get_samples(num_hf_samples=9, num_lf_samples=15)
