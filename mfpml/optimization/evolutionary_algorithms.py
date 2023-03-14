@@ -1,5 +1,5 @@
 from operator import index
-
+import pickle
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -37,20 +37,19 @@ class EABase:
     def plot_optimization_history(
         self, figure_name: str = "optimization", save_figure: bool = True
     ) -> None:
-        with plt.style.context(["ieee", "science", "high-contrast"]):
-            fig, ax = plt.subplots()
-            ax.plot(
-                np.linspace(0, self.num_gen, self.num_gen + 1, endpoint=True),
-                self.gen_best,
-                label="optimum",
-            )
-            ax.legend()
-            ax.set(xlabel="iteration")
-            ax.set(ylabel="optimum")
-            plt.xlim(left=0, right=self.num_gen + 1)
-            if save_figure is True:
-                fig.savefig(figure_name, dpi=300)
-            plt.show()
+        fig, ax = plt.subplots()
+        ax.plot(
+            np.linspace(0, self.num_gen, self.num_gen + 1, endpoint=True),
+            self.gen_best,
+            label="optimum",
+        )
+        ax.legend()
+        ax.set(xlabel="iteration")
+        ax.set(ylabel="optimum")
+        plt.xlim(left=0, right=self.num_gen + 1)
+        if save_figure is True:
+            fig.savefig(figure_name, dpi=300)
+        plt.show()
 
     def _location_initialzer(self) -> np.ndarray:
         """location/position initialization"""
@@ -110,6 +109,22 @@ class EABase:
             x[:, ii] = temp
         return x
 
+    def _save_results(self) -> None:
+        results = {
+            "best_x": self.gen_best_x,
+            "best_y": self.gen_best,
+            "best_x_historical": self.gen_best_x,
+            "best_x_historical": self.gen_best,
+            "all_samples": self.samples,
+            "all_responses": self.responses,
+            "design_space": self.design_space,
+            "pop": self.num_pop,
+            "gen": self.num_gen,
+        }
+
+        with open("step_results.pickle", "wb") as f:
+            pickle.dump(results, f)
+
     def print_info(self, iter: int) -> None:
 
         print(
@@ -157,6 +172,7 @@ class PSO(EABase):
         num_dim: int,
         design_space: np.ndarray,
         print_info: bool = False,
+        save_step_results: bool = True,
         args: any = (),
     ) -> dict:
 
@@ -189,7 +205,12 @@ class PSO(EABase):
         self.gen_best_x = np.zeros((self.num_gen + 1, num_dim))
         self.pop_best = np.zeros((self.num_pop, 1))
         self.pop_best_x = np.zeros((self.num_pop, self.num_dim))
-        ## run
+
+        # define an array to save all data
+        self.samples = np.zeros([self.num_gen + 1, self.num_pop, num_dim])
+        self.responses = np.zeros([self.num_gen + 1, self.num_pop, 1])
+
+        # run
         self._pso_initializer()
         # main iteration
         for iter in range(self.num_gen):
@@ -199,16 +220,27 @@ class PSO(EABase):
             # update the location information
             self.__update_pop(iter=iter)
             # update the obj
-            self.__update_obj()
+            self.__update_obj(iter=iter)
             # update the population optimum information
             self.__update_pop_optimum()
             # update the generation optimum information
             self.__update_gen_optimum(iter=iter)
+            if save_step_results is True:
+                self._save_results()
 
+        # get the final results
         results = {
             "best_x": self.gen_best_x[-1, :],
             "best_y": self.gen_best[-1, :],
+            "best_x_historical": self.gen_best_x,
+            "best_x_historical": self.gen_best,
+            "all_samples": self.samples,
+            "all_responses": self.responses,
+            "design_space": design_space,
+            "pop": self.num_pop,
+            "gen": self.num_gen,
         }
+
         return results
 
     def __velocity_initialzer(self, trick: str = "random") -> None:
@@ -241,10 +273,13 @@ class PSO(EABase):
         # find the best values for individuals
         self.pop_best = self.obj
         self.pop_best_x = self.x
-
         # find the best value for population
         self.gen_best[0, :] = self._gen_best_obj(obj=self.obj)
         self.gen_best_x[0, :] = self._gen_best_x(pop=self.x, obj=self.obj)
+
+        # save samples
+        self.samples[0, :, :] = self.x.copy()
+        self.responses[0, :, :] = self.obj.copy()
 
     def __update_pop(self, iter: int) -> None:
         """update the population information
@@ -262,11 +297,14 @@ class PSO(EABase):
         self.__velocity_cons()
         self.x = self.x + self.v
         self.x = self._loc_cons(x=self.x)
+        # save pop info
+        self.samples[iter + 1, :, :] = self.x.copy()
 
-    def __update_obj(self) -> None:
+    def __update_obj(self, iter: int) -> None:
 
         self.obj = self.func(self.x)
         self.obj = np.reshape(self.obj, (self.num_pop, 1))
+        self.responses[iter + 1, :, :] = self.obj.copy()
 
     def __update_pop_optimum(self) -> None:
         """update the population optimum information"""
@@ -317,6 +355,7 @@ class DE(EABase):
         num_dim: int,
         design_space: np.ndarray,
         print_info: bool = False,
+        save_step_results: bool = True,
         args: any = (),
     ) -> np.ndarray:
 
@@ -330,6 +369,9 @@ class DE(EABase):
         # some unique parameters for defferential evoluntionary algorithms
         self.gen_best = np.zeros((self.num_gen + 1, 1))
         self.gen_best_x = np.zeros((self.num_gen + 1, num_dim))
+        # define an array to save all data
+        self.samples = np.zeros([self.num_gen + 1, self.num_pop, num_dim])
+        self.responses = np.zeros([self.num_gen + 1, self.num_pop, 1])
 
         # de initialization
         self._de_initializer()
@@ -341,12 +383,22 @@ class DE(EABase):
             # update the location information
             self.__update_pop(iter=iter)
             # update the obj
-            self.__update_obj()
+            self.__update_obj(iter=iter)
             # update the generation optimum information
             self.__update_gen_optimum(iter=iter)
+            if save_step_results is True:
+                self._save_results()
+        # get the final results
         results = {
             "best_x": self.gen_best_x[-1, :],
             "best_y": self.gen_best[-1, :],
+            "best_x_historical": self.gen_best_x,
+            "best_x_historical": self.gen_best,
+            "all_samples": self.samples,
+            "all_responses": self.responses,
+            "design_space": design_space,
+            "pop": self.num_pop,
+            "gen": self.num_gen,
         }
         return results
 
@@ -360,6 +412,9 @@ class DE(EABase):
         # find the best value for population
         self.gen_best[0, :] = self._gen_best_obj(obj=self.obj)
         self.gen_best_x[0, :] = self._gen_best_x(pop=self.x, obj=self.obj)
+        # save samples
+        self.samples[0, :, :] = self.x.copy()
+        self.responses[0, :, :] = self.obj.copy()
 
     def __update_pop(self, iter: int) -> None:
 
@@ -376,12 +431,10 @@ class DE(EABase):
                     r[r == ii] = 0
                 else:
                     raise Exception("index exceed population number \n")
-                # update the
+                # update the pop
                 self.v[ii, :] = self.x[r[0, 0], :] + self.step_size * (
                     self.x[r[0, 1], :] - self.x[r[0, 2], :]
                 )
-                # random pick for crossover
-                c = np.random.choice(self.num_dim, 1)
                 for jj in range(self.num_dim):
                     # generate the random number for crossover
                     cr = np.random.random(1)
@@ -393,22 +446,49 @@ class DE(EABase):
             self.u = self._loc_cons(x=self.u)
 
         elif self.strategy == "DE/best/1/bin":
-            pass
+            for ii in range(self.num_pop):
+                r = np.array(
+                    [np.random.choice(self.num_pop, 2, replace=False)]
+                )
+                # selected inidivials is not same as the index
+                if ii < self.num_pop - 1:
+                    r[r == ii] = ii + 1
+                elif ii == self.num_pop - 1:
+                    r[r == ii] = 0
+                else:
+                    raise Exception("index exceed population number \n")
+                # update the pop
+                # get the best scheme
+                x_best = self.gen_best_x[iter, :].copy()
+                self.v[ii, :] = x_best + self.step_size * (
+                    self.x[r[0, 0], :] - self.x[r[0, 1], :]
+                )
+                for jj in range(self.num_dim):
+                    # generate the random number for crossover
+                    cr = np.random.random(1)
+                    if cr < self.crossover_rate:
+                        self.u[ii, jj] = self.v[ii, jj]
+                    else:
+                        self.u[ii, jj] = self.x[ii, jj]
+            # location constrains
+            self.u = self._loc_cons(x=self.u)
         else:
             raise ValueError("This strategy is not defined! \n ")
 
-    def __update_obj(self) -> None:
+    def __update_obj(self, iter: int) -> None:
 
         self.obj_u = self.func(self.u)
         self.obj_u = np.reshape(self.obj_u, (self.num_pop, 1))
         # decide the next parent population
-        # self.x[np.less[self.obj_u, self.obj]] = self.u[np.less[self.obj_u, self.obj]]
-        # self.obj[np.less[self.obj_u, self.obj]] = self.obj_u[np.less[self.obj_u, self.obj]]
         for ii in range(self.num_pop):
             if self.obj_u[ii, :] < self.obj[ii, :]:
                 self.x[ii, :] = self.u[ii, :]
                 self.obj[ii, :] = self.obj_u[ii, :]
         self.obj = np.reshape(self.obj, (self.num_pop, 1))
+
+        # save pop info
+        self.samples[iter + 1, :, :] = self.x.copy()
+        self.responses[iter + 1, :, :] = self.obj.copy()
 
     def __update_gen_optimum(self, iter: int) -> None:
         """update the generation optimum information"""
