@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
 from scipy.stats.qmc import LatinHypercube, Sobol
-
+from typing import Dict
 # local modulus
 from mfpml.design_of_experiment.sampler import Sampler
 

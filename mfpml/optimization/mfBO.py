@@ -97,17 +97,17 @@ class MFSOBO:
         name : bool, optional
             name of the figure, by default 'historical best observed values'
         """
-        with plt.style.context(['ieee', 'science']):
-            fig, ax = plt.subplots()
-            ax.plot(range(self.iter+1), self.history_best, '-o', 
-                    label="Iterative figure for best solutions")
-            ax.legend()
-            ax.set(xlabel=r"$Iteration$")
-            ax.set(ylabel=r"$Function values$")
-            if save_figure is True:
-                fig.savefig(name, dpi=300)
-            plt.show(block=True)
-            plt.interactive(False)
+        # with plt.style.context(['ieee', 'science']):
+        fig, ax = plt.subplots()
+        ax.plot(range(self.iter+1), self.history_best, '-o', 
+                label="Iterative figure for best solutions")
+        ax.legend()
+        ax.set(xlabel=r"$Iteration$")
+        ax.set(ylabel=r"$Function values$")
+        if save_figure is True:
+            fig.savefig(name, dpi=300)
+        plt.show(block=True)
+        plt.interactive(False)
 
     def _first_run(self, mf_surrogate: any, X: dict, Y: dict, print_info: bool = True): 
         """Initialize parameters in the Bayesian optimization
