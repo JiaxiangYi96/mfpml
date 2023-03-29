@@ -1,3 +1,14 @@
 [build-system]
-requires = ["setuptools>=61.0"]
+requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
+
+[tool.pytest.ini_options]
+pythonpath = [".", "mfpml"]
+minversion = "6.0"
+addopts = "--strict-markers"
+testpaths = [
+    "tests"
+]
+markers = [
+    "smoke"
+]

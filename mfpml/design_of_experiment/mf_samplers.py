@@ -1,11 +1,10 @@
-
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
 from scipy.stats.qmc import LatinHypercube, Sobol
 
 # local modulus
-from mfpml.base.sampler import Sampler
+from mfpml.design_of_experiment.sampler import Sampler
 
 
 class MultiFidelitySampler(Sampler):
@@ -22,7 +21,9 @@ class MultiFidelitySampler(Sampler):
         seed: int
             seed s
         """
-        super(MultiFidelitySampler, self).__init__(design_space=design_space, seed=seed)
+        super(MultiFidelitySampler, self).__init__(
+            design_space=design_space, seed=seed
+        )
 
         self._lf_samples = None
         self._hf_samples = None
@@ -68,10 +69,16 @@ class MultiFidelitySampler(Sampler):
             pd.DataFrame format of samples
         """
 
-        self._lf_samples = pd.DataFrame(self._lf_samples, columns=list(self.design_space.keys()))
-        self._hf_samples = pd.DataFrame(self._hf_samples, columns=list(self.design_space.keys()))
+        self._lf_samples = pd.DataFrame(
+            self._lf_samples, columns=list(self.design_space.keys())
+        )
+        self._hf_samples = pd.DataFrame(
+            self._hf_samples, columns=list(self.design_space.keys())
+        )
 
-    def plot_samples(self, figure_name: str = None, save_plot: bool = False) -> None:
+    def plot_samples(
+        self, figure_name: str = None, save_plot: bool = False, **kwarg
+    ) -> None:
         """
         Visualization of mf sampling
         Parameters
@@ -83,43 +90,57 @@ class MultiFidelitySampler(Sampler):
         Returns
         -------
         """
+        if "fig_size" in kwarg.values():
+            fig_size = kwarg["fig_size"]
+        else:
+            fig_size = (5, 4)
         if self.num_dim == 2:
+            fig, ax = plt.subplots(figsize=fig_size)
+            # plot the low fidelity samples
+            ax.plot(
+                self.lf_samples.iloc[:, 0],
+                self.lf_samples.iloc[:, 1],
+                "*",
+                label="LF Samples",
+            )
+            ax.plot(
+                self.hf_samples.iloc[:, 0],
+                self.hf_samples.iloc[:, 1],
+                "o",
+                mfc="none",
+                label="HF Samples",
+            )
+            ax.legend()
+            ax.set(xlabel=r"$x_1$")
+            ax.set(ylabel=r"$x_2$")
+            # ax.autoscale(tight=True)
+            plt.grid("--")
+            plt.show()
+            if save_plot is True:
+                fig.savefig(figure_name, dpi=300)
 
-            with plt.style.context(["ieee", "science", "high-contrast", "grid"]):
-                fig, ax = plt.subplots()
-                # plot the low fidelity samples
-                ax.plot(self.lf_samples.iloc[:, 0], self.lf_samples.iloc[:, 1], "*", label="LF Samples")
-                ax.plot(self.hf_samples.iloc[:, 0], self.hf_samples.iloc[:, 1], "o", mfc="none", label="HF Samples")
-                ax.legend()
-                # legend = ax.legend(loc='upper right', shadow=True)
-                # legend.get_frame().set_facecolor('b')
-                ax.set(xlabel=r"$x_1$")
-                ax.set(ylabel=r"$x_2$")
-                # ax.autoscale(tight=True)
-                # plt.grid('--')
-                if save_plot is True:
-                    fig.savefig(figure_name, dpi=300)
-                plt.show(block=True)
-                plt.interactive(False)
         elif self.num_dim == 1:
-            with plt.style.context(["ieee", "science", "high-contrast", "grid"]):
-                fig, ax = plt.subplots()
-                ax.plot(self.lf_samples.iloc[:, 0], np.zeros((self.lf_samples.shape[0], 1)), ".", label="LF Samples")
-                ax.plot(
-                    self.hf_samples.iloc[:, 0],
-                    np.zeros((self.hf_samples.shape[0], 1)),
-                    "o",
-                    mfc="none",
-                    label="HF Samples",
-                )
-                ax.legend()
-                ax.set(xlabel=r"$x$")
-                ax.set(ylabel=r"$y$")
-                ax.autoscale(tight=True)
-                if save_plot is True:
-                    fig.savefig(figure_name, dpi=300)
-                plt.show(block=True)
-                plt.interactive(False)
+            fig, ax = plt.subplots(figsize=fig_size)
+            ax.plot(
+                self.lf_samples.iloc[:, 0],
+                np.zeros((self.lf_samples.shape[0], 1)),
+                ".",
+                label="LF Samples",
+            )
+            ax.plot(
+                self.hf_samples.iloc[:, 0],
+                np.zeros((self.hf_samples.shape[0], 1)),
+                "o",
+                mfc="none",
+                label="HF Samples",
+            )
+            ax.legend()
+            ax.set(xlabel=r"$x$")
+            ax.set(ylabel=r"$y$")
+            plt.show()
+            if save_plot is True:
+                fig.savefig(figure_name, dpi=300)
+
         else:
             raise Exception("Can not plot figure more than two dimension! \n ")
 
@@ -164,8 +185,12 @@ class LatinHyperCube(MultiFidelitySampler):
     Multi-fidelity Latin HyperCube sampling
     """
 
-    def __init__(self, design_space: dict, nested: bool = False, seed: int = 123456) -> None:
-        super(LatinHyperCube, self).__init__(design_space=design_space, seed=seed)
+    def __init__(
+        self, design_space: dict, nested: bool = False, seed: int = 123456
+    ) -> None:
+        super(LatinHyperCube, self).__init__(
+            design_space=design_space, seed=seed
+        )
         self.nested = nested
 
     def get_samples(self, num_samples: int = None, **kwargs) -> dict:
@@ -197,7 +222,9 @@ class LatinHyperCube(MultiFidelitySampler):
 
         lf_sample = lhs_sampler.random(n=self.num_lf_samples)
         for i, bounds in enumerate(self.design_space.values()):
-            lf_sample[:, i] = lf_sample[:, i] * (bounds[1] - bounds[0]) + bounds[0]
+            lf_sample[:, i] = (
+                lf_sample[:, i] * (bounds[1] - bounds[0]) + bounds[0]
+            )
         self._lf_samples = lf_sample
 
         return lf_sample
@@ -211,12 +238,15 @@ class LatinHyperCube(MultiFidelitySampler):
         lhs_sampler = LatinHypercube(d=self.num_dim, seed=self.seed + 1)
         hf_sample = lhs_sampler.random(n=self.num_hf_samples)
         for i, bounds in enumerate(self.design_space.values()):
-            hf_sample[:, i] = hf_sample[:, i] * (bounds[1] - bounds[0]) + bounds[0]
+            hf_sample[:, i] = (
+                hf_sample[:, i] * (bounds[1] - bounds[0]) + bounds[0]
+            )
         self._hf_samples = hf_sample
 
         return hf_sample
 
     def __get_nested_hf_samples(self) -> None:
+
         pass
 
 
@@ -225,8 +255,16 @@ class SobolSequence(MultiFidelitySampler):
     Multi-fidelity sobol sequence sampling
     """
 
-    def __init__(self, design_space: dict, nested: bool = False, seed: int = 123456, num_skip: int = None) -> None:
-        super(SobolSequence, self).__init__(design_space=design_space, seed=seed)
+    def __init__(
+        self,
+        design_space: dict,
+        nested: bool = False,
+        seed: int = 123456,
+        num_skip: int = None,
+    ) -> None:
+        super(SobolSequence, self).__init__(
+            design_space=design_space, seed=seed
+        )
         self.nested = nested
         if num_skip is None:
             self.num_skip = len(design_space)
@@ -262,7 +300,9 @@ class SobolSequence(MultiFidelitySampler):
         # get the samples
         lf_sample = sobol_sampler.random(n=self.num_lf_samples)
         for i, bounds in enumerate(self.design_space.values()):
-            lf_sample[:, i] = lf_sample[:, i] * (bounds[1] - bounds[0]) + bounds[0]
+            lf_sample[:, i] = (
+                lf_sample[:, i] * (bounds[1] - bounds[0]) + bounds[0]
+            )
         self._lf_samples = lf_sample
 
         return lf_sample
@@ -287,7 +327,9 @@ class SobolSequence(MultiFidelitySampler):
         # get the samples
         hf_sample = sobol_sampler.random(n=self.num_hf_samples)
         for i, bounds in enumerate(self.design_space.values()):
-            hf_sample[:, i] = hf_sample[:, i] * (bounds[1] - bounds[0]) + bounds[0]
+            hf_sample[:, i] = (
+                hf_sample[:, i] * (bounds[1] - bounds[0]) + bounds[0]
+            )
         self._hf_samples = hf_sample
 
         return hf_sample

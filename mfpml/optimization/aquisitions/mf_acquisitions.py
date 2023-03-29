@@ -18,7 +18,7 @@ class MF_Acquisitions:
                     lower confidence bounding approach for engineering optimization problems with 
                     expensive simulations. AIAA Journal, 57(12), 5416-5430.
         eps: Small floating value. 
-        params: Extra parameters needed for certain acqusition functions. 
+        params: Extra parameters needed for certain acqusition functions.
         """ 
         self.eps = eps 
         self.params = params 

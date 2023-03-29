@@ -2,9 +2,9 @@ import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
 from scipy.stats.qmc import LatinHypercube, Sobol
-
+from typing import Dict
 # local modulus
-from mfpml.base.sampler import Sampler
+from mfpml.design_of_experiment.sampler import Sampler
 
 
 class SingleFidelitySampler(Sampler):
@@ -21,7 +21,9 @@ class SingleFidelitySampler(Sampler):
         ----------
 
         """
-        super(SingleFidelitySampler, self).__init__(design_space=design_space, seed=seed)
+        super(SingleFidelitySampler, self).__init__(
+            design_space=design_space, seed=seed
+        )
 
     def _create_pandas_frame(self) -> None:
         """
@@ -31,7 +33,9 @@ class SingleFidelitySampler(Sampler):
 
 
         """
-        self._samples = pd.DataFrame(self._samples, columns=list(self.design_space.keys()))
+        self._samples = pd.DataFrame(
+            self._samples, columns=list(self.design_space.keys())
+        )
 
     def get_samples(self, num_samples: int, **kwargs) -> np.ndarray:
         """
@@ -55,11 +59,13 @@ class SingleFidelitySampler(Sampler):
 
         raise NotImplementedError("Subclasses should implement this method.")
 
-    def plot_samples(self, figure_name: str = None, save_plot: bool = False) -> None:
+    def plot_samples(
+        self, figure_name: str = None, save_plot: bool = False, **kwarg
+    ) -> None:
         """
         Visualization of sampling method
         Parameters
-        ----------
+        ----------s
         figure_name:str
             figure name
         save_plot: bool
@@ -69,35 +75,47 @@ class SingleFidelitySampler(Sampler):
         -------
 
         """
+        if "fig_size" in kwarg.keys():
+            fig_size = kwarg["fig_size"]
+        else:
+            fig_size = (5, 4)
 
         if self.num_dim == 2:
+            fig, ax = plt.subplots(figsize=fig_size)
+            ax.plot(
+                self.samples.iloc[:, 0],
+                self.samples.iloc[:, 1],
+                "*",
+                label="Samples",
+            )
+            ax.legend()
+            # legend = ax.legend(loc='upper right', shadow=True)
+            # legend.get_frame().set_facecolor('b')
+            ax.set(xlabel=r"$x_1$")
+            ax.set(ylabel=r"$x_2$")
+            # ax.autoscale(tight=True)
+            plt.grid("--")
+            plt.show()
+            if save_plot is True:
+                fig.savefig(figure_name, dpi=300)
 
-            with plt.style.context(["ieee", "science", "high-contrast", "grid"]):
-                fig, ax = plt.subplots()
-                ax.plot(self.samples.iloc[:, 0], self.samples.iloc[:, 1], "*", label="Samples")
-                ax.legend()
-                # legend = ax.legend(loc='upper right', shadow=True)
-                # legend.get_frame().set_facecolor('b')
-                ax.set(xlabel=r"$x_1$")
-                ax.set(ylabel=r"$x_2$")
-                # ax.autoscale(tight=True)
-                # plt.grid('--')
-                if save_plot is True:
-                    fig.savefig(figure_name, dpi=300)
-                plt.show(block=True)
-                plt.interactive(False)
         elif self.num_dim == 1:
-            with plt.style.context(["ieee", "science", "high-contrast", "grid"]):
-                fig, ax = plt.subplots()
-                ax.plot(self.samples.iloc[:, 0], np.zeros((self.samples.shape[0], 1)), ".", label="Samples")
-                ax.legend()
-                ax.set(xlabel=r"$x$")
-                ax.set(ylabel=r"$y$")
-                ax.autoscale(tight=True)
-                if save_plot is True:
-                    fig.savefig(figure_name, dpi=300)
-                plt.show(block=True)
-                plt.interactive(False)
+            fig, ax = plt.subplots(figsize=fig_size)
+            ax.plot(
+                self.samples.iloc[:, 0],
+                np.zeros((self.samples.shape[0], 1)),
+                ".",
+                label="Samples",
+            )
+            ax.legend()
+            ax.set(xlabel=r"$x$")
+            ax.set(ylabel=r"$y$")
+            ax.autoscale(tight=True)
+            plt.grid("--")
+            plt.show()
+            if save_plot is True:
+                fig.savefig(figure_name, dpi=300)
+
         else:
             raise Exception("Can not plot figure more than two dimension! \n ")
 
@@ -124,7 +142,9 @@ class FixNumberSampler(SingleFidelitySampler):
         Returns
         -------
         """
-        super(FixNumberSampler, self).__init__(design_space=design_space, seed=seed)
+        super(FixNumberSampler, self).__init__(
+            design_space=design_space, seed=seed
+        )
 
     def get_samples(self, num_samples: int, **kwargs) -> dict:
         """
@@ -163,10 +183,12 @@ class LatinHyperCube(SingleFidelitySampler):
         seed: int
             seed
         """
-        super(LatinHyperCube, self).__init__(design_space=design_space, seed=seed)
+        super(LatinHyperCube, self).__init__(
+            design_space=design_space, seed=seed
+        )
 
     def get_samples(self, num_samples: int, **kwargs) -> dict:
-        lhs_sampler = LatinHypercube(d=self.num_dim, seed=self.seed, optimization="random-cd")
+        lhs_sampler = LatinHypercube(d=self.num_dim, seed=self.seed)
         sample = lhs_sampler.random(num_samples)
         for i, bounds in enumerate(self.design_space.values()):
             sample[:, i] = sample[:, i] * (bounds[1] - bounds[0]) + bounds[0]
@@ -191,7 +213,9 @@ class RandomSampler(SingleFidelitySampler):
         seed: int
             seed
         """
-        super(RandomSampler, self).__init__(design_space=design_space, seed=seed)
+        super(RandomSampler, self).__init__(
+            design_space=design_space, seed=seed
+        )
 
     def get_samples(self, num_samples: int, **kwargs) -> dict:
         np.random.seed(self.seed)
@@ -209,7 +233,9 @@ class SobolSequence(SingleFidelitySampler):
     Sobol Sequence sampling
     """
 
-    def __init__(self, design_space: dict, seed: int, num_skip: int = None) -> None:
+    def __init__(
+        self, design_space: dict, seed: int, num_skip: int = None
+    ) -> None:
         """
 
         Parameters
@@ -221,7 +247,9 @@ class SobolSequence(SingleFidelitySampler):
         num_skip: int
             cut the first several samples s
         """
-        super(SobolSequence, self).__init__(design_space=design_space, seed=seed)
+        super(SobolSequence, self).__init__(
+            design_space=design_space, seed=seed
+        )
         if num_skip is None:
             self.num_skip = len(design_space)
         else:
