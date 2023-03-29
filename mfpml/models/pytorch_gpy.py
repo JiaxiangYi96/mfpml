@@ -1,13 +1,15 @@
 # define gpr model via gpytorch
 from cgi import test
 from tkinter.tix import Tree
+
+import gpytorch
 import numpy as np
 import torch
-import gpytorch
+
 
 # basic class of standard Gasussian process regression model
 class ExactGPModel(gpytorch.models.ExactGP):
-    def __init__(self, train_inputs, train_targets, likelihood):
+    def __init__(self, train_inputs, train_targets, likelihood) -> None:
         super().__init__(train_inputs, train_targets, likelihood)
         self.mean_module = gpytorch.means.ConstantMean()
         self.covar_module = gpytorch.kernels.ScaleKernel(
@@ -21,8 +23,10 @@ class ExactGPModel(gpytorch.models.ExactGP):
 
 
 class Kriging:
-    """This is the standard gaussian process regression model, in which the fixnoise exact gp model is used.
-    In this case, the prediction mean of the standard GP model will cross the actual samples
+    """This is the standard gaussian process regression model,
+    in which the fixnoise exact gp model is used.
+    In this case, the prediction mean of the standard
+    GP model will cross the actual samples
     """
 
     def __init__(

@@ -1,5 +1,6 @@
-from operator import index
 import pickle
+from operator import index
+
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -435,10 +436,11 @@ class DE(EABase):
                 self.v[ii, :] = self.x[r[0, 0], :] + self.step_size * (
                     self.x[r[0, 1], :] - self.x[r[0, 2], :]
                 )
+                c = np.random.choice(self.num_dim, 1)
                 for jj in range(self.num_dim):
                     # generate the random number for crossover
                     cr = np.random.random(1)
-                    if cr < self.crossover_rate:
+                    if cr < self.crossover_rate or c == jj:
                         self.u[ii, jj] = self.v[ii, jj]
                     else:
                         self.u[ii, jj] = self.x[ii, jj]
@@ -463,10 +465,11 @@ class DE(EABase):
                 self.v[ii, :] = x_best + self.step_size * (
                     self.x[r[0, 0], :] - self.x[r[0, 1], :]
                 )
+                c = np.random.choice(self.num_dim, 1)
                 for jj in range(self.num_dim):
                     # generate the random number for crossover
                     cr = np.random.random(1)
-                    if cr < self.crossover_rate:
+                    if cr < self.crossover_rate or c == jj:
                         self.u[ii, jj] = self.v[ii, jj]
                     else:
                         self.u[ii, jj] = self.x[ii, jj]

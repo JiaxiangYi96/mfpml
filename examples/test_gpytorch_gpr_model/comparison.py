@@ -19,7 +19,7 @@ from mfpml.problems.sf_functions import (
     GoldPrice,
 )
 from mfpml.design_of_experiment.plot_figures import plot_sf_sampling
-from mfpml.models.gaussian_processes import Kriging
+from mfpml.models.pytorch_gpy import Kriging
 from sklearn.metrics import r2_score, mean_squared_error, max_error
 
 

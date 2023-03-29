@@ -12,7 +12,7 @@ sys.path.insert(0, folder_path)
 from mfpml.design_of_experiment.sf_samplers import LatinHyperCube
 from mfpml.problems.sf_functions import Forrester
 from mfpml.design_of_experiment.plot_figures import plot_sf_sampling
-from mfpml.models.gaussian_processes import GPR
+from mfpml.models.pytorch_gpy import GPR
 
 # Training data is 100 points in [0,1] inclusive regularly spaced
 train_x = torch.linspace(0, 1, 100)

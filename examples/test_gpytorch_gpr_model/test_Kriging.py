@@ -11,7 +11,7 @@ sys.path.insert(0, folder_path)
 from mfpml.design_of_experiment.sf_samplers import LatinHyperCube
 from mfpml.problems.sf_functions import Forrester
 from mfpml.design_of_experiment.plot_figures import plot_sf_sampling
-from mfpml.models.gaussian_processes import StandardGPRModel
+from mfpml.models.pytorch_gpy import StandardGPRModel
 
 # user-defined parameters
 num_sample = 10
@@ -26,8 +26,6 @@ design_space = function.design_space
 sampler = LatinHyperCube(design_space=design_space, seed=None)
 sample_x = sampler.get_samples(num_samples=num_sample)
 sample_y = function.f(sample_x)
-
-
 
 
 train_x = torch.from_numpy(sample_x)
@@ -49,7 +47,7 @@ test_y__temp = function.f(test_x_temp)
 test_x = torch.from_numpy(test_x_temp)
 test_y = torch.from_numpy(test_y__temp).flatten()
 pred = gprmodel.predict(test_x=test_x)
-# get mean 
+# get mean
 pred_mean = pred.mean.numpy()
 lower, upper = pred.confidence_region()
 pred_std = pred.variance.numpy()
