@@ -1,6 +1,5 @@
 # define gpr model via gpytorch
 from cgi import test
-from tkinter.tix import Tree
 
 import gpytorch
 import numpy as np
