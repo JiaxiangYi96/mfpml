@@ -13,6 +13,7 @@ from mfpml.design_of_experiment.space import DesignSpace
 space = DesignSpace(
     names=["x1", "x2"], low_bound=[0.0, 0.0], high_bound=[1.0, 1.0]
 )
+print(space.design_space)
 # output the deisgn space in a dict format
 design_space = space.design_space
 print(f"dict format: \n {design_space}")

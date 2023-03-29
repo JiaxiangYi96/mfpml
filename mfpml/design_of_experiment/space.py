@@ -2,8 +2,9 @@ import numpy as np
 
 
 class DesignSpace:
-
-    def __init__(self, names: list, low_bound: list, high_bound: list) -> np.ndarray:
+    def __init__(
+        self, names: list, low_bound: list, high_bound: list
+    ) -> np.ndarray:
         """
         Parameters
         ----------
@@ -22,16 +23,18 @@ class DesignSpace:
         self._input_domain = np.ndarray
         self._design_space = dict()
 
-        self.__check_consistency(names=names,
-                                 low_bound=low_bound,
-                                 high_bound=high_bound)
+        self.__check_consistency(
+            names=names, low_bound=low_bound, high_bound=high_bound
+        )
 
         for ii, name in enumerate(names):
             self._design_space[name] = [low_bound[ii], high_bound[ii]]
         self._input_domain = np.array([low_bound, high_bound]).transpose()
 
     @staticmethod
-    def __check_consistency(names: list, low_bound: list, high_bound: list) -> None:
+    def __check_consistency(
+        names: list, low_bound: list, high_bound: list
+    ) -> None:
         """
         check consistency
         Parameters
@@ -47,8 +50,9 @@ class DesignSpace:
         -------
 
         """
-        assert (len(names) == len(low_bound) == len(
-            high_bound)), "Length of variables should be same"
+        assert (
+            len(names) == len(low_bound) == len(high_bound)
+        ), "Length of variables should be same"
 
     @staticmethod
     def __check_magnitude(low_bound: list, high_bound: list) -> None:
@@ -65,8 +69,9 @@ class DesignSpace:
         -------
 
         """
-        assert (sum(np.array(high_bound) - np.array(
-            low_bound)) == len(low_bound)), "Length of variables should be same"
+        assert sum(np.array(high_bound) - np.array(low_bound)) == len(
+            low_bound
+        ), "Length of variables should be same"
 
     @property
     def design_space(self) -> dict:
