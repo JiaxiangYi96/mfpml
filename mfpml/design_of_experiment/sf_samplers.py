@@ -1,8 +1,10 @@
+from typing import Dict
+
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
 from scipy.stats.qmc import LatinHypercube, Sobol
-from typing import Dict
+
 # local modulus
 from mfpml.design_of_experiment.sampler import Sampler
 
@@ -162,10 +164,13 @@ class FixNumberSampler(SingleFidelitySampler):
 
         """
         fixed_value = list(self.design_space.values())
-        self._samples = np.repeat(fixed_value[0], num_samples)
+        samples = np.repeat(fixed_value[0], num_samples).reshape(
+            (-1, self.num_dim)
+        )
+        self._samples = samples.copy()
         self._create_pandas_frame()
 
-        return self._samples
+        return samples
 
 
 class LatinHyperCube(SingleFidelitySampler):

@@ -3,13 +3,13 @@ import pytest
 
 from mfpml.design_of_experiment.space import DesignSpace
 
-# pytestmark = pytest.mark.smoke
+pytestmark = pytest.mark.smoke
 
 
 # Continuous space tests
 
 
-@pytest.mark.smoke
+# @pytest.mark.smoke
 def test_design_space():
     space_dict = {"x1": [0.0, 1.0], "x2": [0.0, 1.0]}
     space_array = np.array([[0.0, 1.0], [0.0, 1.0]])

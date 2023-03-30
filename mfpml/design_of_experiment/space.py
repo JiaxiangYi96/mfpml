@@ -22,10 +22,12 @@ class DesignSpace:
         """
         self._input_domain = np.ndarray
         self._design_space = dict()
-
+        # check the consistency of variable
         self.__check_consistency(
             names=names, low_bound=low_bound, high_bound=high_bound
         )
+        # check the magitude of variables
+        self.__check_magnitude(low_bound=low_bound, high_bound=high_bound)
 
         for ii, name in enumerate(names):
             self._design_space[name] = [low_bound[ii], high_bound[ii]]

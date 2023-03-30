@@ -9,15 +9,15 @@ to write your content.
 
 1. git clone the repo to your local machine 
 ``` 
-    git clone https://github.com/JiaxiangYi96/mfpml.git 
+git clone https://github.com/JiaxiangYi96/mfpml.git 
 ```
 2. go to the local folder where you cloned the repo, and pip install it with editable more 
 ```
-    pip install --verbose --no-build-isolation --editable .
+pip install --verbose --no-build-isolation --editable .
 ```
 3. install dependancies 
 ```
-    pip install -r requirements.txt
+pip install -r requirements.txt
 ```
 
 <!-- ## **Contents**
