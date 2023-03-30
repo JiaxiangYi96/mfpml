@@ -4,8 +4,6 @@ import gpytorch
 import numpy as np
 import matplotlib.pyplot as plt
 
-folder_path = "/home/yaga/Documents/GitHub/mfpml"
-sys.path.insert(0, folder_path)
 
 # import local functions
 from mfpml.design_of_experiment.sf_samplers import LatinHyperCube

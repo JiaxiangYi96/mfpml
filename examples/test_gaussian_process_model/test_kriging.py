@@ -1,4 +1,5 @@
-import sys, os
+import os
+import sys
 
 folder_path = "/home/yaga/Documents/GitHub/mfpml"
 sys.path.insert(0, folder_path)
@@ -6,9 +7,7 @@ sys.path.insert(0, folder_path)
 import numpy as np
 from sklearn.gaussian_process import GaussianProcessRegressor
 from sklearn.gaussian_process.kernels import RBF
-from sklearn.metrics import r2_score, mean_squared_error, max_error
-
-from mfpml.models.kriging import Kriging
+from sklearn.metrics import max_error, mean_squared_error, r2_score
 
 # from mfpml.models.mf_surrogates import (
 #     HierarchicalKriging,
@@ -16,8 +15,9 @@ from mfpml.models.kriging import Kriging
 #     CoKriging,
 # )
 from mfpml.design_of_experiment.sf_samplers import LatinHyperCube
-from mfpml.problems.sf_functions import Branin, Sasena, Sixhump, Hartman3
+from mfpml.models.kriging import Kriging
 from mfpml.optimization.evolutionary_algorithms import PSO
+from mfpml.problems.sf_functions import Branin, Hartman3, Sasena, Sixhump
 
 func = Hartman3()
 # func = mf_Hartman3()

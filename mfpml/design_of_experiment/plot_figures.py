@@ -3,6 +3,7 @@ from typing import Any, Tuple
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
+
 from mfpml.problems.functions import Functions
 
 
@@ -11,6 +12,7 @@ def plot_sf_sampling(
     responses: np.ndarray,
     function: Functions = None,
     save_figure: bool = False,
+    **kwargs,
 ) -> None:
     """
     Visualize the 1D case, set the y axis as Zero
@@ -39,8 +41,7 @@ def plot_sf_sampling(
         x_plot = x_plot.reshape((-1, 1))
         y_plot = function.f(x=x_plot)
         y_plot.reshape((-1, 1))
-        # with plt.style.context(["ieee", "science"]):
-        fig, ax = plt.subplots()
+        fig, ax = plt.subplots(**kwargs)
         ax.plot(samples[:, 0], responses[:, 0], "*", label="Samples")
         ax.plot(x_plot, y_plot, label=f"{function.__class__.__name__}")
         ax.legend()
@@ -71,8 +72,7 @@ def plot_sf_sampling(
                 xy = np.array([X1[i, j], X2[i, j]])
                 xy = np.reshape(xy, (1, 2))
                 Y[i, j] = function.f(x=xy)
-        # with plt.style.context(["ieee", "science"]):
-        fig, ax = plt.subplots()
+        fig, ax = plt.subplots(**kwargs)
         plt.scatter(
             samples[:, 0],
             samples[:, 1],
@@ -89,7 +89,7 @@ def plot_sf_sampling(
         )
 
         if save_figure is True:
-            fig.savefig(function.__class__.__name__ + '.png', dpi=300)
+            fig.savefig(function.__class__.__name__ + ".png", dpi=300)
         plt.show()
 
 
@@ -98,6 +98,7 @@ def plot_mf_sampling(
     responses: dict,
     function: Functions = None,
     save_figure: bool = False,
+    **kwargs,
 ) -> None:
     """
     Visualize the 1D case, set the y axis as Zero
@@ -128,7 +129,7 @@ def plot_mf_sampling(
         # yh_plot.reshape((-1, 1))
         yl_plot = function.lf(x=x_plot)
         # with plt.style.context(["ieee", "science"]):
-        fig, ax = plt.subplots()
+        fig, ax = plt.subplots(**kwargs)
         ax.plot(
             samples["hf"][:, 0],
             responses["hf"][:, 0],
@@ -174,8 +175,7 @@ def plot_mf_sampling(
                 xy = np.array([X1[i, j], X2[i, j]])
                 xy = np.reshape(xy, (1, 2))
                 Y[i, j] = function.f(x=xy)
-        # with plt.style.context(["ieee", "science"]):
-        fig, ax = plt.subplots()
+        fig, ax = plt.subplots(**kwargs)
         plt.scatter(
             samples[:, 0],
             samples[:, 1],
@@ -202,6 +202,7 @@ def plot_1d_model_prediction(
     function: Functions = None,
     name: str = "figure",
     save: bool = False,
+    **kwargs
 ) -> None:
     """
 
@@ -230,7 +231,7 @@ def plot_1d_model_prediction(
     y_plot.reshape((-1, 1))
     y_pred, y_sigma = model.predict(x_plot, return_std=True)
     # with plt.style.context(["ieee", "science"]):
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(**kwargs)
     ax.plot(
         data["inputs"].iloc[:, 0],
         data["outputs"].iloc[:, 0],

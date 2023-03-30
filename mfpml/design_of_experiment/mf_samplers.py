@@ -77,7 +77,7 @@ class MultiFidelitySampler(Sampler):
         )
 
     def plot_samples(
-        self, figure_name: str = None, save_plot: bool = False, **kwarg
+        self, figure_name: str = None, save_plot: bool = False, **kwargs
     ) -> None:
         """
         Visualization of mf sampling
@@ -90,12 +90,8 @@ class MultiFidelitySampler(Sampler):
         Returns
         -------
         """
-        if "fig_size" in kwarg.values():
-            fig_size = kwarg["fig_size"]
-        else:
-            fig_size = (5, 4)
         if self.num_dim == 2:
-            fig, ax = plt.subplots(figsize=fig_size)
+            fig, ax = plt.subplots(**kwargs)
             # plot the low fidelity samples
             ax.plot(
                 self.lf_samples.iloc[:, 0],
@@ -120,7 +116,7 @@ class MultiFidelitySampler(Sampler):
                 fig.savefig(figure_name, dpi=300)
 
         elif self.num_dim == 1:
-            fig, ax = plt.subplots(figsize=fig_size)
+            fig, ax = plt.subplots(**kwargs)
             ax.plot(
                 self.lf_samples.iloc[:, 0],
                 np.zeros((self.lf_samples.shape[0], 1)),
@@ -246,7 +242,6 @@ class LatinHyperCube(MultiFidelitySampler):
         return hf_sample
 
     def __get_nested_hf_samples(self) -> None:
-
         pass
 
 

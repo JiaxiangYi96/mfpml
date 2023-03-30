@@ -76,3 +76,6 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+
+# folders
+examples/

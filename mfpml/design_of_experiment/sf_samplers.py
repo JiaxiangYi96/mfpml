@@ -62,7 +62,7 @@ class SingleFidelitySampler(Sampler):
         raise NotImplementedError("Subclasses should implement this method.")
 
     def plot_samples(
-        self, figure_name: str = None, save_plot: bool = False, **kwarg
+        self, figure_name: str = None, save_plot: bool = False, **kwargs
     ) -> None:
         """
         Visualization of sampling method
@@ -77,13 +77,9 @@ class SingleFidelitySampler(Sampler):
         -------
 
         """
-        if "fig_size" in kwarg.keys():
-            fig_size = kwarg["fig_size"]
-        else:
-            fig_size = (5, 4)
 
         if self.num_dim == 2:
-            fig, ax = plt.subplots(figsize=fig_size)
+            fig, ax = plt.subplots(**kwargs)
             ax.plot(
                 self.samples.iloc[:, 0],
                 self.samples.iloc[:, 1],
@@ -102,7 +98,7 @@ class SingleFidelitySampler(Sampler):
                 fig.savefig(figure_name, dpi=300)
 
         elif self.num_dim == 1:
-            fig, ax = plt.subplots(figsize=fig_size)
+            fig, ax = plt.subplots(**kwargs)
             ax.plot(
                 self.samples.iloc[:, 0],
                 np.zeros((self.samples.shape[0], 1)),
