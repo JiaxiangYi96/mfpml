@@ -127,7 +127,6 @@ class EABase:
             pickle.dump(results, f)
 
     def print_info(self, iter: int) -> None:
-
         print(
             f"iteration:{iter}, optimum:{self.gen_best[iter,:].flatten()}, best_x:{self.gen_best_x[iter,:].flatten()}\n"
         )
@@ -174,9 +173,9 @@ class PSO(EABase):
         design_space: np.ndarray,
         print_info: bool = False,
         save_step_results: bool = True,
+        stopping_error: float = None,
         args: any = (),
     ) -> dict:
-
         """main function of pso algorithm
 
         Parameters
@@ -195,7 +194,7 @@ class PSO(EABase):
         """
 
         # update some params
-
+        self.stopping_error = stopping_error
         self.func = FunctionWrapper(function=func, args=args)
         self.num_dim = num_dim
         self.design_space = design_space
@@ -229,6 +228,10 @@ class PSO(EABase):
             if save_step_results is True:
                 self._save_results()
 
+            if self.stopping_error is not None:
+                if self.gen_best[iter + 1, 0] < self.stopping_error:
+                    break
+
         # get the final results
         results = {
             "best_x": self.gen_best_x[-1, :],
@@ -242,7 +245,11 @@ class PSO(EABase):
             "gen": self.num_gen,
         }
 
-        return results
+        return (
+            results,
+            self.gen_best[iter + 1, 0],
+            self.gen_best_x[iter + 1, :],
+        )
 
     def __velocity_initialzer(self, trick: str = "random") -> None:
         """velocity initialization
@@ -302,7 +309,6 @@ class PSO(EABase):
         self.samples[iter + 1, :, :] = self.x.copy()
 
     def __update_obj(self, iter: int) -> None:
-
         self.obj = self.func(self.x)
         self.obj = np.reshape(self.obj, (self.num_pop, 1))
         self.responses[iter + 1, :, :] = self.obj.copy()
@@ -343,7 +349,6 @@ class DE(EABase):
         crossover_rate: float = 0.1,
         strategy: str = "DE/rand/1/bin",
     ) -> None:
-
         self.num_pop = num_pop
         self.num_gen = num_gen
         self.step_size = step_size
@@ -357,10 +362,11 @@ class DE(EABase):
         design_space: np.ndarray,
         print_info: bool = False,
         save_step_results: bool = True,
+        stopping_error: float = None,
         args: any = (),
     ) -> np.ndarray:
-
         # update some params
+        self.stopping_error = stopping_error
         self.func = FunctionWrapper(function=func, args=args)
         self.num_dim = num_dim
         self.design_space = design_space
@@ -389,6 +395,9 @@ class DE(EABase):
             self.__update_gen_optimum(iter=iter)
             if save_step_results is True:
                 self._save_results()
+            if self.stopping_error is not None:
+                if self.gen_best[iter + 1, 0] < self.stopping_error:
+                    break
         # get the final results
         results = {
             "best_x": self.gen_best_x[-1, :],
@@ -401,7 +410,11 @@ class DE(EABase):
             "pop": self.num_pop,
             "gen": self.num_gen,
         }
-        return results
+        return (
+            results,
+            self.gen_best[iter + 1, 0],
+            self.gen_best_x[iter + 1, :],
+        )
 
     def _de_initializer(self) -> None:
         """calculate the objective values for the initial population"""
@@ -418,9 +431,7 @@ class DE(EABase):
         self.responses[0, :, :] = self.obj.copy()
 
     def __update_pop(self, iter: int) -> None:
-
         if self.strategy == "DE/rand/1/bin":
-
             for ii in range(self.num_pop):
                 r = np.array(
                     [np.random.choice(self.num_pop, 3, replace=False)]
@@ -479,7 +490,6 @@ class DE(EABase):
             raise ValueError("This strategy is not defined! \n ")
 
     def __update_obj(self, iter: int) -> None:
-
         self.obj_u = self.func(self.u)
         self.obj_u = np.reshape(self.obj_u, (self.num_pop, 1))
         # decide the next parent population
