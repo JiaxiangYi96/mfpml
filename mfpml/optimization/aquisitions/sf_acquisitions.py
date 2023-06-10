@@ -1,6 +1,7 @@
 import numpy as np
 from scipy.stats import norm
-from mfpml.base.model import GPRmodel
+
+# from mfpml.base.model import GPRmodel
 
 
 class LCB:
@@ -18,7 +19,9 @@ class LCB:
         """
         self.model = model
 
-    def __call__(self, x: np.ndarray, explore_factor: float = 1.96) -> np.ndarray:
+    def __call__(
+        self, x: np.ndarray, explore_factor: float = 1.96
+    ) -> np.ndarray:
         """
         Calculate values of LCB acquisition function
         Parameters
@@ -72,7 +75,9 @@ class EI:
         x = np.array(x).reshape((-1, num_dim))
         f_min = self.model.y.min()
         y, sigma = self.model.predict(x, return_std=True)
-        ei = (f_min - y) * norm.cdf((f_min - y) / (sigma + 1e-9)) + sigma * norm.pdf((f_min - y) / (sigma + 1e-9))
+        ei = (f_min - y) * norm.cdf(
+            (f_min - y) / (sigma + 1e-9)
+        ) + sigma * norm.pdf((f_min - y) / (sigma + 1e-9))
 
         return -ei
 
