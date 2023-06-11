@@ -134,13 +134,13 @@ def plot_mf_sampling(
             samples["hf"][:, 0],
             responses["hf"][:, 0],
             "*",
-            label="HF Samples",
+            label="hf Samples",
         )
         ax.plot(
             samples["lf"][:, 0],
             responses["lf"][:, 0],
             "o",
-            label="LF Samples",
+            label="ls Samples",
         )
         ax.plot(x_plot, yh_plot, "-", label=f"High fidelity function")
         ax.plot(x_plot, yl_plot, "--", label=f"Low fidelity function")
@@ -154,8 +154,8 @@ def plot_mf_sampling(
         if save_figure is True:
             fig.savefig(function.__class__.__name__, dpi=300)
         plt.show()
+
     elif num_dim == 2:
-        # TODO revise this part
         num_plot = 200
         x1_plot = np.linspace(
             start=function._input_domain[0, 0],
@@ -174,14 +174,21 @@ def plot_mf_sampling(
             for j in range(len(X1)):
                 xy = np.array([X1[i, j], X2[i, j]])
                 xy = np.reshape(xy, (1, 2))
-                Y[i, j] = function.f(x=xy)
+                Y[i, j] = function.hf(x=xy)
         fig, ax = plt.subplots(**kwargs)
         plt.scatter(
-            samples[:, 0],
-            samples[:, 1],
+            samples["hf"][:, 0],
+            samples["hf"][:, 1],
             s=15,
             color="orangered",
-            label="Samples",
+            label="hf samples ",
+        )
+        plt.scatter(
+            samples["lf"][:, 0],
+            samples["lf"][:, 1],
+            s=15,
+            color="green",
+            label="lf samples ",
         )
         cs = ax.contour(X1, X2, Y, 15)
         plt.colorbar(cs)
@@ -190,9 +197,9 @@ def plot_mf_sampling(
         plt.legend(
             loc="upper center", bbox_to_anchor=(1, -0.05), edgecolor="k"
         )
-        # plt.clabel(cs, inline=True)
+
         if save_figure is True:
-            fig.savefig(function.__class__.__name__, dpi=300)
+            fig.savefig(function.__class__.__name__ + ".png", dpi=300)
         plt.show()
 
 
@@ -202,7 +209,7 @@ def plot_1d_model_prediction(
     function: Functions = None,
     name: str = "figure",
     save: bool = False,
-    **kwargs
+    **kwargs,
 ) -> None:
     """
 
