@@ -125,13 +125,15 @@ class Forrester_1a(MultiFidelityFunctions):
         self.cost = cost
         self.cr = round(cost[0] / cost[1])
 
-    def hf(self, x: np.ndarray) -> np.ndarray:
+    @staticmethod
+    def hf(x: np.ndarray) -> np.ndarray:
         obj = (6 * x - 2) ** 2 * np.sin(12 * x - 4)
         obj = np.reshape(obj, (x.shape[0], 1))
 
         return obj
 
-    def lf(self, x: np.ndarray, factor: float = None) -> np.ndarray:
+    @staticmethod
+    def lf(x: np.ndarray, factor: float = None) -> np.ndarray:
         obj = (6 * x - 2) ** 2 * np.sin(12 * x - 4) - 5
         obj = np.reshape(obj, (x.shape[0], 1))
         return obj
@@ -179,13 +181,15 @@ class Forrester_1b(MultiFidelityFunctions):
         self.cost = cost
         self.cr = round(cost[0] / cost[1])
 
-    def hf(self, x: np.ndarray) -> np.ndarray:
+    @staticmethod
+    def hf(x: np.ndarray) -> np.ndarray:
         obj = (6 * x - 2) ** 2 * np.sin(12 * x - 4)
         obj = np.reshape(obj, (x.shape[0], 1))
 
         return obj
 
-    def lf(self, x: np.ndarray, factor: float = None) -> np.ndarray:
+    @staticmethod
+    def lf(x: np.ndarray, factor: float = None) -> np.ndarray:
         obj = (
             0.5 * ((6 * x - 2) ** 2 * np.sin(12 * x - 4)) + 10 * (x - 0.5) - 5
         )
@@ -235,13 +239,15 @@ class Forrester_1c(MultiFidelityFunctions):
         self.cost = cost
         self.cr = round(cost[0] / cost[1])
 
-    def hf(self, x: np.ndarray) -> np.ndarray:
+    @staticmethod
+    def hf(x: np.ndarray) -> np.ndarray:
         obj = (6 * x - 2) ** 2 * np.sin(12 * x - 4)
         obj = np.reshape(obj, (x.shape[0], 1))
 
         return obj
 
-    def lf(self, x: np.ndarray, factor: float = None) -> np.ndarray:
+    @staticmethod
+    def lf(x: np.ndarray, factor: float = None) -> np.ndarray:
         obj = (6 * (x + 0.2) - 2) ** 2 * np.sin(12 * (x + 0.2) - 4)
         obj = np.reshape(obj, (x.shape[0], 1))
         return obj
@@ -279,7 +285,8 @@ class mf_Hartman3(MultiFidelityFunctions):
         self.cost = cost
         self.cr = round(cost[0] / cost[1])
 
-    def hf(self, x: np.ndarray) -> np.ndarray:
+    @staticmethod
+    def hf(x: np.ndarray) -> np.ndarray:
         a = np.array(
             [
                 [3.0, 10.0, 30.0],
@@ -306,7 +313,8 @@ class mf_Hartman3(MultiFidelityFunctions):
         obj.reshape((x.shape[0], 1))
         return obj
 
-    def lf(self, x: np.ndarray, factor: float = None) -> np.ndarray:
+    @staticmethod
+    def lf(x: np.ndarray, factor: float = None) -> np.ndarray:
         obj = (
             0.585
             - 0.324 * x[:, 0]
@@ -365,7 +373,8 @@ class mf_Sixhump(MultiFidelityFunctions):
 
         self.is_dim_compatible(num_dim=num_dim)
 
-    def hf(self, x: np.ndarray) -> np.ndarray:
+    @staticmethod
+    def hf(x: np.ndarray) -> np.ndarray:
         x1 = x[:, 0]
         x2 = x[:, 1]
 
@@ -378,11 +387,16 @@ class mf_Sixhump(MultiFidelityFunctions):
 
         return obj
 
-    def lf(self, x: np.ndarray) -> np.ndarray:
+    @staticmethod
+    def lf(x: np.ndarray) -> np.ndarray:
         x1 = x[:, 0]
         x2 = x[:, 1]
-        obj1 = self.hf(x=x)
-
+        term1 = (4 - 2.1 * (0.7 * x1) ** 2 + ((0.7 * x1) ** 4) / 3) * (
+            0.7 * x1
+        ) ** 2
+        term2 = 0.7 * x1 * 0.7 * x2
+        term3 = (-4 + 4 * (0.7 * x2) ** 2) * (0.7 * x2) ** 2
+        obj1 = (term1 + term2 + term3).reshape((-1, 1))
         obj2 = (-x1 * x2 - 15).reshape(x.shape[0], 1)
 
         obj = obj1 + obj2
@@ -437,22 +451,6 @@ class mf_Hartman6(MultiFidelityFunctions):
         0.65730054,
     ]
     low_fidelity: list = None
-    a = np.array(
-        [
-            [10.00, 3.0, 17.00, 3.5, 1.7, 8],
-            [0.05, 10.0, 17.00, 0.1, 8.0, 14],
-            [3.00, 3.5, 1.70, 10.0, 17.0, 8],
-            [17.00, 8.0, 0.05, 10.0, 0.1, 14],
-        ]
-    )
-    p = np.array(
-        [
-            [0.1312, 0.1696, 0.5569, 0.0124, 0.8283, 0.5886],
-            [0.2329, 0.4135, 0.8307, 0.3736, 0.1004, 0.9991],
-            [0.2348, 0.1451, 0.3522, 0.2883, 0.3047, 0.6650],
-            [0.4047, 0.8828, 0.8732, 0.5743, 0.1091, 0.0381],
-        ]
-    )
 
     @classmethod
     def is_dim_compatible(cls, num_dim):
@@ -469,19 +467,53 @@ class mf_Hartman6(MultiFidelityFunctions):
 
         self.is_dim_compatible(num_dim=num_dim)
 
-    def hf(self, x: np.ndarray) -> np.ndarray:
+    @staticmethod
+    def hf(x: np.ndarray) -> np.ndarray:
+        a = np.array(
+            [
+                [10.00, 3.0, 17.00, 3.5, 1.7, 8],
+                [0.05, 10.0, 17.00, 0.1, 8.0, 14],
+                [3.00, 3.5, 1.70, 10.0, 17.0, 8],
+                [17.00, 8.0, 0.05, 10.0, 0.1, 14],
+            ]
+        )
+        p = np.array(
+            [
+                [0.1312, 0.1696, 0.5569, 0.0124, 0.8283, 0.5886],
+                [0.2329, 0.4135, 0.8307, 0.3736, 0.1004, 0.9991],
+                [0.2348, 0.1451, 0.3522, 0.2883, 0.3047, 0.6650],
+                [0.4047, 0.8828, 0.8732, 0.5743, 0.1091, 0.0381],
+            ]
+        )
         c = np.array([1.0, 1.2, 3.0, 3.2])
         num_samples = x.shape[0]
         obj = np.zeros((num_samples, 1))
         for i in range(num_samples):
             obj[i, :] = -np.dot(
-                c, np.exp(-np.sum(self.a * (x[i, :] - self.p) ** 2, axis=1))
+                c, np.exp(-np.sum(a * (x[i, :] - p) ** 2, axis=1))
             )
         obj = np.reshape(obj, (x.shape[0], 1))
         return -np.log(-obj)
 
-    def lf(self, x: np.ndarray) -> np.ndarray:
+    @staticmethod
+    def lf(x: np.ndarray) -> np.ndarray:
         # different from lf
+        a = np.array(
+            [
+                [10.00, 3.0, 17.00, 3.5, 1.7, 8],
+                [0.05, 10.0, 17.00, 0.1, 8.0, 14],
+                [3.00, 3.5, 1.70, 10.0, 17.0, 8],
+                [17.00, 8.0, 0.05, 10.0, 0.1, 14],
+            ]
+        )
+        p = np.array(
+            [
+                [0.1312, 0.1696, 0.5569, 0.0124, 0.8283, 0.5886],
+                [0.2329, 0.4135, 0.8307, 0.3736, 0.1004, 0.9991],
+                [0.2348, 0.1451, 0.3522, 0.2883, 0.3047, 0.6650],
+                [0.4047, 0.8828, 0.8732, 0.5743, 0.1091, 0.0381],
+            ]
+        )
         c = np.array([1.1, 0.8, 2.5, 3])
         l = np.array([0.75, 1, 0.8, 1.3, 0.7, 1.1])
         # number of samples
@@ -490,7 +522,7 @@ class mf_Hartman6(MultiFidelityFunctions):
         for i in range(num_samples):
             obj[i, :] = -np.dot(
                 c,
-                np.exp(-np.sum(self.a * (l * x[i, :] - self.p) ** 2, axis=1)),
+                np.exp(-np.sum(a * (l * x[i, :] - p) ** 2, axis=1)),
             )
         obj = np.reshape(obj, (x.shape[0], 1))
         return -np.log(-obj)

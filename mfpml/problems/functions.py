@@ -1,3 +1,4 @@
+import sys
 from abc import ABC
 
 import matplotlib.pyplot as plt
@@ -48,6 +49,7 @@ class Functions(ABC):
         """
         raise NotImplementedError("Subclasses should implement this method.")
 
+    @staticmethod
     def hf(x: np.ndarray) -> np.ndarray:
         """
 
@@ -69,6 +71,7 @@ class Functions(ABC):
 
         raise NotImplementedError("Subclasses should implement this method.")
 
+    @staticmethod
     def lf(x: np.ndarray, factor: float) -> np.ndarray:
         """
         low fidelity function

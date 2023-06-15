@@ -182,7 +182,7 @@ class LatinHyperCube(MultiFidelitySampler):
     """
 
     def __init__(
-        self, design_space: dict, nested: bool = False, seed: int = 123456
+        self, design_space: dict, nested: bool = False, seed: int = None
     ) -> None:
         super(LatinHyperCube, self).__init__(
             design_space=design_space, seed=seed
@@ -231,7 +231,11 @@ class LatinHyperCube(MultiFidelitySampler):
         Returns
         -------
         """
-        lhs_sampler = LatinHypercube(d=self.num_dim, seed=self.seed + 1)
+        if self.seed is None:
+            lhs_sampler = LatinHypercube(d=self.num_dim, seed=None)
+        else:
+            lhs_sampler = LatinHypercube(d=self.num_dim, seed=self.seed + 1)
+
         hf_sample = lhs_sampler.random(n=self.num_hf_samples)
         for i, bounds in enumerate(self.design_space.values()):
             hf_sample[:, i] = (

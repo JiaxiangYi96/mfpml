@@ -60,7 +60,9 @@ class Kriging:
 
         # update parameters with optimized hyperparameters
         self.K = self.kernel.K(self.X, self.X)
-        self.L = cholesky(self.K, lower=True)
+        self.L = cholesky(
+            self.K + np.eye(self.K.shape[1]) * 0.000001, lower=True
+        )
         self.alpha = solve(self.L.T, solve(self.L, self.sample_Y))
         one = np.ones((self.X.shape[0], 1))
         self.beta = solve(self.L.T, solve(self.L, one))
@@ -161,8 +163,10 @@ class Kriging:
         for i in range(params.shape[0]):
             param = params[i, :]
             # correlation matrix R
+            # add noise to the kernal function
             K = self.kernel(self.X, self.X, param)
-            L = cholesky(K, lower=True)
+
+            L = cholesky(K + np.eye(K.shape[1]) * 0.000001, lower=True)
             # R^(-1)Y
             alpha = solve(L.T, solve(L, self.sample_Y))
             one = np.ones((self.X.shape[0], 1))

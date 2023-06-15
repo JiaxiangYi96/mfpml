@@ -1,27 +1,24 @@
-import sys
-import torch
-import numpy as np
-
 import pickle
+import sys
 
-folder_path = "/home/yaga/Documents/GitHub/mfpml"
-sys.path.insert(0, folder_path)
+import numpy as np
+import torch
+from sklearn.metrics import max_error, mean_squared_error, r2_score
+
+from mfpml.design_of_experiment.plot_figures import plot_sf_sampling
 
 # import local functions
 from mfpml.design_of_experiment.sf_samplers import LatinHyperCube
+from mfpml.models.pytorch_gpy import Kriging
 from mfpml.problems.sf_functions import (
-    Forrester,
     Branin,
-    Sasena,
-    Sixhump,
+    Forrester,
+    GoldPrice,
     Hartman3,
     Hartman6,
-    GoldPrice,
+    Sasena,
+    Sixhump,
 )
-from mfpml.design_of_experiment.plot_figures import plot_sf_sampling
-from mfpml.models.pytorch_gpy import Kriging
-from sklearn.metrics import r2_score, mean_squared_error, max_error
-
 
 # number of repetition
 num_trial = 10
@@ -29,7 +26,6 @@ num_increment = 5
 record_results = np.zeros((num_increment, num_trial, 3))
 
 for ii in range(num_increment):
-
     # define the tested function
     function = Branin()
     # get the number of variables

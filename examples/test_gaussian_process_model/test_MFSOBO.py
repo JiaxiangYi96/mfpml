@@ -2,9 +2,6 @@ import os
 import sys
 from time import process_time_ns
 
-# sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
-folder_path = "/home/jiaxiangyi/mfpml"
-sys.path.insert(0, folder_path)
 import numpy as np
 
 from mfpml.design_of_experiment.mf_samplers import LatinHyperCube

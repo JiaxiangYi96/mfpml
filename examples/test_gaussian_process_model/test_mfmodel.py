@@ -1,7 +1,5 @@
 import sys, os
 
-folder_path = "/home/yaga/Documents/GitHub/mfpml"
-sys.path.insert(0, folder_path)
 
 import numpy as np
 from sklearn.gaussian_process import GaussianProcessRegressor

@@ -1,10 +1,12 @@
 # multi-fidelity model
-import numpy as np
 from collections import OrderedDict
+
+import numpy as np
 from scipy.linalg import cholesky, solve
 from scipy.optimize import minimize
 
 from mfpml.models.corrfunc import KRG
+
 from .kriging import Kriging
 
 
@@ -779,7 +781,7 @@ class CoKriging(mf_model):
             theta = params[i, 1:]
             # correlation matrix R
             K = self.kernel(self.XH, self.XH, theta)
-            L = cholesky(K, lower=True)
+            L = cholesky(K + np.eye(K.shape[1]) * 0.000001, lower=True)
             # R^(-1)Y
             d = self.sample_YH - rho * self.F
             alpha = solve(L.T, solve(L, d))
@@ -800,7 +802,7 @@ class CoKriging(mf_model):
         """Update parameters of the model"""
         # correlation matrix R
         K = self.kernel.K(self.XH, self.XH)
-        L = cholesky(K, lower=True)
+        L = cholesky(K + np.eye(K.shape[1]) * 0.000001, lower=True)
         # R^(-1)Y
         self.d = self.sample_YH - self.rho * self.F
         alpha = solve(L.T, solve(L, self.d))
@@ -845,7 +847,9 @@ class CoKriging(mf_model):
             axis=0,
         )
         self.y = np.concatenate((self.sample_YL, self.sample_YH), axis=0)
-        self.LC = cholesky(self.C, lower=True)
+        self.LC = cholesky(
+            self.C + np.eye(self.C.shape[1]) * 0.000001, lower=True
+        )
         oneC = np.ones((self.C.shape[0], 1))
         self.mu = oneC.T.dot(
             solve(self.LC.T, solve(self.LC, self.y))
