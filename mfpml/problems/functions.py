@@ -1,9 +1,7 @@
-import sys
+
 from abc import ABC
 
-import matplotlib.pyplot as plt
 import numpy as np
-import torch
 
 
 class Functions(ABC):
@@ -26,6 +24,7 @@ class Functions(ABC):
         NotImplementedError
             Raised when not implemented. Subclasses should implement this method.
         """
+
         raise NotImplementedError("Subclasses should implement this method.")
 
     @staticmethod
@@ -80,7 +79,7 @@ class Functions(ABC):
         ----------
         x: np.ndarray
             design scheme that needs to be evaluated
-        factor: float
+        factor: floatS
             a factor to control generating low fidelity functions
 
         Returns
@@ -319,3 +318,4 @@ class FunctionWrapper:
 
     def __call__(self, x):
         return self.function(x, *self.args)
+

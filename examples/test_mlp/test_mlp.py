@@ -1,14 +1,14 @@
 import sys
-import torch
-import gpytorch
-import numpy as np
-import matplotlib.pyplot as plt
 
+import gpytorch
+import matplotlib.pyplot as plt
+import numpy as np
+import torch
 
 # import local functions
 from mfpml.design_of_experiment.sf_samplers import LatinHyperCube
-from mfpml.problems.sf_functions import Forrester
 from mfpml.models.mlp import MLPModel
+from mfpml.problems.singlefidelity_functions import Forrester
 
 # user-defined parameters
 num_sample = 20

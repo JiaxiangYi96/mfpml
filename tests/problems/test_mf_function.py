@@ -2,7 +2,7 @@ import numpy as np
 import pytest
 
 from mfpml.design_of_experiment.mf_samplers import SobolSequence
-from mfpml.problems.mf_functions import Forrester_1b
+from mfpml.problems.multifidelity_functions import Forrester_1b
 
 pytestmark = pytest.mark.smoke
 

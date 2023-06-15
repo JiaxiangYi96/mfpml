@@ -5,6 +5,7 @@ from mfpml.problems.functions import Functions
 
 
 class MultiFidelityFunctions(Functions):
+
     def plot_function(
         self, save_figure: bool = True, with_low_fidelity: bool = False
     ) -> None:
@@ -18,7 +19,6 @@ class MultiFidelityFunctions(Functions):
                 num=num_plot,
             )
 
-            # with plt.style.context(["ieee", "science"]):
             fig, ax = plt.subplots()
             ax.plot(
                 x_plot, self.f(x=x_plot), label=f"{self.__class__.__name__}"
@@ -71,7 +71,15 @@ class MultiFidelityFunctions(Functions):
             plt.show()
         else:
             raise ValueError("Unexpected value of 'num_dimension'!", num_dim)
+        
+    @classmethod
+    def is_dim_compatible(cls, num_dim):
+        assert (
+            num_dim == cls.num_dim
+        ), f"Can not change dimension for {cls.__name__} function"
 
+        return num_dim
+    
     def __call__(self, x: dict) -> dict:
         out = {}
         out["hf"] = None
@@ -111,14 +119,6 @@ class Forrester_1a(MultiFidelityFunctions):
     low_fidelity: bool = True
     cost_ratio: list = None
 
-    @classmethod
-    def is_dim_compatible(cls, num_dim):
-        assert (
-            num_dim == cls.num_dim
-        ), f"Can not change dimension for {cls.__name__} function"
-
-        return num_dim
-
     def __init__(self, num_dim: int = 1, cost: list = [1.0, 0.2]) -> None:
         # check the dimension
         self.is_dim_compatible(num_dim=num_dim)
@@ -141,22 +141,9 @@ class Forrester_1a(MultiFidelityFunctions):
 
 class Forrester_1b(MultiFidelityFunctions):
     """
-    Forrester function
-    This file contains the definition of an adapted version of the simple 1D
-    example function as presented in:
-        Forrester Alexander I.J, Sóbester András and Keane Andy J "Multi-fidelity
-        Optimization via Surrogate Modelling", Proceedings of the Royal Society A,
-        vol. 463, http://doi.org/10.1098/rspa.2007.1900
-    Function definitions:
-    .. math::
-        f_h(x) = (6x-2)^2 \sin(12x-4)
-    For the low fidelity functions, they are different among different publications, in
-    this code, the version adopted from :
-        Jiang, P., Cheng, J., Zhou, Q., Shu, L., & Hu, J. (2019). Variable-fidelity lower
-        confidence bounding approach for engineering optimization problems with expensive
-        simulations. AIAA Journal, 57(12), 5416-5430.
-    """
+    Forrester function from Jicheng
 
+    """
     num_dim: int = 1
     num_obj: int = 1
     num_cons: int = 0
@@ -166,14 +153,6 @@ class Forrester_1b(MultiFidelityFunctions):
     optimum_scheme: list = [0.757248757841856]
     low_fidelity: bool = True
     cost_ratio: list = None
-
-    @classmethod
-    def is_dim_compatible(cls, num_dim):
-        assert (
-            num_dim == cls.num_dim
-        ), f"Can not change dimension for {cls.__name__} function"
-
-        return num_dim
 
     def __init__(self, num_dim: int = 1, cost: list = [1.0, 0.2]) -> None:
         # check the dimension
@@ -200,19 +179,6 @@ class Forrester_1b(MultiFidelityFunctions):
 class Forrester_1c(MultiFidelityFunctions):
     """
     Forrester function
-    This file contains the definition of an adapted version of the simple 1D
-    example function as presented in:
-        Forrester Alexander I.J, Sóbester András and Keane Andy J "Multi-fidelity
-        Optimization via Surrogate Modelling", Proceedings of the Royal Society A,
-        vol. 463, http://doi.org/10.1098/rspa.2007.1900
-    Function definitions:
-    .. math::
-        f_h(x) = (6x-2)^2 \sin(12x-4)
-    For the low fidelity functions, they are different among different publications, in
-    this code, the version adopted from :
-        Jiang, P., Cheng, J., Zhou, Q., Shu, L., & Hu, J. (2019). Variable-fidelity lower
-        confidence bounding approach for engineering optimization problems with expensive
-        simulations. AIAA Journal, 57(12), 5416-5430.
     """
 
     num_dim: int = 1
@@ -224,14 +190,6 @@ class Forrester_1c(MultiFidelityFunctions):
     optimum_scheme: list = [0.757248757841856]
     low_fidelity: bool = True
     cost_ratio: list = None
-
-    @classmethod
-    def is_dim_compatible(cls, num_dim):
-        assert (
-            num_dim == cls.num_dim
-        ), f"Can not change dimension for {cls.__name__} function"
-
-        return num_dim
 
     def __init__(self, num_dim: int = 1, cost: list = [1.0, 0.2]) -> None:
         # check the dimension
@@ -254,11 +212,16 @@ class Forrester_1c(MultiFidelityFunctions):
 
 
 class mf_Hartman3(MultiFidelityFunctions):
-    """_summary_
+    """multi fidelity Hartman3 function 
 
     Parameters
     ----------
-    Functions : _type_
+    MultiFidelityFunctions : parent class 
+        multi-fidelity function 
+
+    Returns
+    -------
+    _type_
         _description_
     """
 
@@ -270,14 +233,6 @@ class mf_Hartman3(MultiFidelityFunctions):
     optimum: float = -3.86278214782076
     optimum_scheme: list = [0.1, 0.55592003, 0.85218259]
     low_fidelity: list = ["low"]
-
-    @classmethod
-    def is_dim_compatible(cls, num_dim):
-        assert (
-            num_dim == cls.num_dim
-        ), f"Can not change dimension for {cls.__name__} function"
-
-        return num_dim
 
     def __init__(self, num_dim: int = 3, cost: list = [1.0, 0.2]) -> None:
         # check the dimension
@@ -357,14 +312,6 @@ class mf_Sixhump(MultiFidelityFunctions):
     optimum: float = -1.0316
     optimum_scheme: list = [[0.0898, -0.7126], [-0.0898, 0.7126]]
     low_fidelity: list = None
-
-    @classmethod
-    def is_dim_compatible(cls, num_dim):
-        assert (
-            num_dim == cls.num_dim
-        ), f"Can not change dimension for {cls.__name__} function"
-
-        return num_dim
 
     def __init__(self, num_dim: int = 2) -> None:
         """
@@ -452,14 +399,6 @@ class mf_Hartman6(MultiFidelityFunctions):
     ]
     low_fidelity: list = None
 
-    @classmethod
-    def is_dim_compatible(cls, num_dim):
-        assert (
-            num_dim == cls.num_dim
-        ), f"Can not change dimension for {cls.__name__} function"
-
-        return num_dim
-
     def __init__(self, num_dim: int = 6) -> None:
         """
         Initialization
@@ -526,3 +465,132 @@ class mf_Hartman6(MultiFidelityFunctions):
             )
         obj = np.reshape(obj, (x.shape[0], 1))
         return -np.log(-obj)
+
+class mf_Discontinuous(MultiFidelityFunctions): 
+    """multi-fidelity discontinuous function 
+
+    Parameters
+    ----------
+    MultiFidelityFunctions : class 
+        multifidelity function class 
+    """
+    num_dim: int = 1
+    num_obj: int = 1
+    num_cons: int = 0
+    input_domain = np.array([[0.0, 1.0]])
+    design_space: dict = {"x": [0.0, 1.0]}
+    optimum: float = None
+    optimum_scheme: list = None 
+    low_fidelity: list = None
+
+    def __init__(self, num_dim: int = 1) -> None:
+        super().__init__()
+        # check dimension 
+        self.is_dim_compatible(num_dim=num_dim)
+    
+    @staticmethod
+    def lf(x: np.ndarray) -> np.ndarray: 
+        # num of samples
+        y = np.zeros((x.shape[0], 1))
+        # get objective for every point 
+        for ii in range(x.shape[0]):
+            if x[ii, 0] <= 0.5: 
+                y[ii, 0] = 0.5 * (6 * x[ii, 0] - 2) ** 2 * np.sin(12 * x[ii,0] - 4) + 10 * (x[ii, 0] - 0.5) -5
+            else: 
+                y[ii, 0] = 3 + 0.5 * (6 * x[ii,0] - 2) ** 2 * np.sin(12 * x[ii,0] - 4) + 10 * (x[ii,0] - 0.5) -5
+
+        return y.reshape((-1, 1))        
+    
+    @staticmethod
+    def hf(x: np.ndarray) -> np.ndarray: 
+
+        y = np.zeros((x.shape[0], 1))
+
+        for ii in range(x.shape[0]):
+            if x[ii, 0] <= 0.5: 
+                y[ii, 0 ] = 2*(0.5 * (6 * x[ii, 0] - 2) ** 2 * np.sin(12 * x[ii,0] - 4) + 10 * (x[ii, 0] - 0.5) -5) -20*x[ii,0] +20
+            else: 
+                y[ii, 0] = 4 + 2*( 3 + 0.5 * (6 * x[ii,0] - 2) ** 2 * np.sin(12 * x[ii,0] - 4) + 10 * (x[ii,0] - 0.5) -5) - 20*x[ii,0] +20
+        
+        return y.reshape((-1,1))
+        
+
+class ContinuousNonlinearCorrelation1D(MultiFidelityFunctions):
+    """_summary_
+
+    Parameters
+    ----------
+    MultiFidelityFunctions : _type_
+        _description_
+
+    Returns
+    -------
+    _type_
+        _description_
+    """
+    num_dim: int = 1
+    num_obj: int = 1
+    num_cons: int = 0
+    input_domain = np.array([[0.0, 1.0]])
+    design_space: dict = {"x": [0.0, 1.0]}
+    optimum: float = None
+    optimum_scheme: list = None 
+    low_fidelity: list = None
+
+    def __init__(self, num_dim: int = 1) -> None:
+        super().__init__()
+        # check dimension 
+        self.is_dim_compatible(num_dim=num_dim)
+    
+    @staticmethod
+    def lf(x: np.ndarray) -> np.ndarray: 
+        y = np.sin(8*np.pi*x) 
+
+        return y.reshape((-1,1))
+    
+    @staticmethod
+    def hf(x: np.ndarray) -> np.ndarray: 
+        y = np.sin(8*np.pi*x) **2 * (x-np.sqrt(2))
+
+        return y.reshape((-1,1))
+
+class PhaseShiftedOscillations(MultiFidelityFunctions): 
+    """_summary_
+
+    Parameters
+    ----------
+    MultiFidelityFunctions : _type_
+        _description_
+
+    Returns
+    -------
+    _type_
+        _description_
+    """
+    num_dim: int = 1
+    num_obj: int = 1
+    num_cons: int = 0
+    input_domain = np.array([[0.0, 1.0]])
+    design_space: dict = {"x": [0.0, 1.0]}
+    optimum: float = None
+    optimum_scheme: list = None 
+    low_fidelity: list = None    
+
+    def __init__(self, num_dim: int = 1) -> None:
+        super().__init__()
+        # check dimension 
+        self.is_dim_compatible(num_dim=num_dim)
+    
+    @staticmethod
+    def lf(x: np.ndarray) -> np.ndarray: 
+         
+         y = np.sin(8*np.pi * x ) 
+         
+         return y.reshape((-1,1)) 
+
+    @staticmethod 
+    def hf(x: np.ndarray) -> np.ndarray: 
+
+        y = x**2 + (np.sin(8*np.pi*x+np.pi/10))**2 
+
+        return y.reshape((-1,1))

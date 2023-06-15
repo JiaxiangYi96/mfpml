@@ -10,7 +10,7 @@ sys.path.insert(0, folder_path)
 
 # import local functions
 from mfpml.design_of_experiment.sf_samplers import LatinHyperCube
-from mfpml.problems.sf_functions import Forrester
+from mfpml.problems.singlefidelity_functions import Forrester
 from mfpml.design_of_experiment.plot_figures import plot_sf_sampling
 from mfpml.models.pytorch_gpy import GPR
 

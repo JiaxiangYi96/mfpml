@@ -6,14 +6,10 @@ import numpy as np
 
 from mfpml.design_of_experiment.mf_samplers import LatinHyperCube
 from mfpml.models.mf_surrogates import HierarchicalKriging
-from mfpml.optimization.mf_acqusitions import (
-    augmentedEI,
-    extendedPI,
-    vfei,
-    vflcb,
-)
+from mfpml.optimization.mf_acqusitions import (augmentedEI, extendedPI, vfei,
+                                               vflcb)
 from mfpml.optimization.mfBO import MFSOBO
-from mfpml.problems.mf_functions import Forrester_1a, mf_Hartman3
+from mfpml.problems.multifidelity_functions import Forrester_1a, mf_Hartman3
 
 func = Forrester_1a()
 print(func.optimum)

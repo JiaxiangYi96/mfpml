@@ -1,5 +1,6 @@
 import re
 from turtle import st
+
 import torch
 from torch import nn
 from torch.utils import data
@@ -42,7 +43,7 @@ class MLP(nn.Module):
         layers.append(nn.Linear(self.hiden_layers[-1], self.num_outputs))
         return layers
 
-    def _get_activation(self):
+    def _get_activation(self) -> any:
         if self.activation == "relu":
             return nn.ReLU()
         elif self.activation == "tanh":

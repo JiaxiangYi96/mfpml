@@ -1,1 +1,2 @@
-from .mf_functions import *
+from .multifidelity_functions import *
+from .singlefidelity_functions import *

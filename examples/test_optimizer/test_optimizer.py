@@ -3,7 +3,7 @@ import sys
 import time
 
 from mfpml.optimization.evolutionary_algorithms import DE, PSO
-from mfpml.problems.sf_functions import Ackley
+from mfpml.problems.singlefidelity_functions import Ackley
 
 function = Ackley(num_dim=3)
 design_space = function._input_domain

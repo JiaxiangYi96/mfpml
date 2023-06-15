@@ -1,17 +1,18 @@
 import sys
-import torch
+
 import gpytorch
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
+import torch
 
 folder_path = "/home/yaga/Documents/GitHub/mfpml"
 sys.path.insert(0, folder_path)
 
+from mfpml.design_of_experiment.plot_figures import plot_sf_sampling
 # import local functions
 from mfpml.design_of_experiment.sf_samplers import LatinHyperCube
-from mfpml.problems.sf_functions import Forrester
-from mfpml.design_of_experiment.plot_figures import plot_sf_sampling
 from mfpml.models.pytorch_gpy import StandardGPRModel
+from mfpml.problems.singlefidelity_functions import Forrester
 
 # user-defined parameters
 num_sample = 10

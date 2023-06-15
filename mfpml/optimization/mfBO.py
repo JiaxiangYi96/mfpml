@@ -9,9 +9,7 @@ class MFSOBO:
     """
     Multi-fidelity single objective Bayesian optimization
     """
-    def __init__(
-        self,
-        problem: any) -> None: 
+    def __init__(self, problem: any) -> None: 
         """Initialize the multi-fidelity Bayesian optimization
 
         Parameters

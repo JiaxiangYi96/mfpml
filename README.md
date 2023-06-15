@@ -1,8 +1,6 @@
 # mfpml
 
-Multi-fidelity probability machine learning. This is a simple example package. You can use
-(https://github.com/JiaxiangYi96/mfpml.git)
-to write your content.
+Multi-fidelity probabilistic machine learning methods. This packages includes basics of bayesian machine learning methods, such as Gaussian process regression, Bayesian neural network, and so on. This package is under developing and testing. 
 
 --- 
 ## **Installation**
@@ -20,9 +18,9 @@ pip install --verbose --no-build-isolation --editable .
 pip install -r requirements.txt
 ```
 
-<!-- ## **Contents**
+## **Contents**
 
-> **Part I: Design of experiment**
+**Part I: Design of experiment**
 
 - Single-fidelity sampling methods
 
@@ -35,8 +33,8 @@ pip install -r requirements.txt
     1. (Nested) Latin Hypercube sampling
     2. (Nested) Sobol sequence sampling
 
-## Part II: Single-/Multi-fidelity probability machine learning methods
+**Part II: Single-/Multi-fidelity probability machine learning methods**
 
-## Part III: Multi-fidelity Bayesian learning
 
-## Part IV: Multi-fidelity Reliability analysis methods  -->
+**Part III: Multi-fidelity Bayesian learning**
+

@@ -14,7 +14,8 @@ from sklearn.metrics import max_error, mean_squared_error, r2_score
 from mfpml.design_of_experiment.sf_samplers import LatinHyperCube
 from mfpml.models.kriging import Kriging
 from mfpml.optimization.evolutionary_algorithms import PSO
-from mfpml.problems.sf_functions import Branin, Hartman3, Sasena, Sixhump
+from mfpml.problems.singlefidelity_functions import (Branin, Hartman3, Sasena,
+                                                     Sixhump)
 
 func = Hartman3()
 # func = mf_Hartman3()
