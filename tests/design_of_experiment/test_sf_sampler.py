@@ -3,7 +3,7 @@ from collections import OrderedDict
 import numpy as np
 import pytest
 
-from mfpml.design_of_experiment.sf_samplers import (
+from mfpml.mfpml.design_of_experiment.singlefideliy_samplers import (
     FixNumberSampler,
     LatinHyperCube,
     RandomSampler,

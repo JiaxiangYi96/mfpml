@@ -7,7 +7,7 @@ from sklearn.metrics import max_error, mean_squared_error, r2_score
 
 from mfpml.design_of_experiment.plot_figures import plot_sf_sampling
 # import local functions
-from mfpml.design_of_experiment.sf_samplers import LatinHyperCube
+from mfpml.mfpml.design_of_experiment.singlefideliy_samplers import LatinHyperCube
 from mfpml.models.pytorch_gpy import Kriging
 from mfpml.problems.singlefidelity_functions import (Branin, Forrester,
                                                      GoldPrice, Hartman3,

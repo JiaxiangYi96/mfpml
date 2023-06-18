@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 
-from mfpml.design_of_experiment.mf_samplers import (
+from mfpml.mfpml.design_of_experiment.multifidelity_samplers import (
     LatinHyperCube,
     SobolSequence,
 )
