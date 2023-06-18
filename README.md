@@ -13,11 +13,11 @@ git clone https://github.com/JiaxiangYi96/mfpml.git
 ```
 pip install --verbose --no-build-isolation --editable .
 ```
-3. install dependancies 
+3. install dependencies 
 ```
 pip install -r requirements.txt
 ```
-
+<!-- 
 ## **Contents**
 
 **Part I: Design of experiment**
@@ -36,5 +36,5 @@ pip install -r requirements.txt
 **Part II: Single-/Multi-fidelity probability machine learning methods**
 
 
-**Part III: Multi-fidelity Bayesian learning**
+**Part III: Multi-fidelity Bayesian learning** -->
 

@@ -6,7 +6,7 @@ import numpy as np
 import torch
 
 # import local functions
-from mfpml.mfpml.design_of_experiment.singlefideliy_samplers import LatinHyperCube
+from mfpml.design_of_experiment.singlefideliy_samplers import LatinHyperCube
 from mfpml.models.mlp import MLPModel
 from mfpml.problems.singlefidelity_functions import Forrester
 
