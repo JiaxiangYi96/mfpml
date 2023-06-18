@@ -1,6 +1,6 @@
 from setuptools import find_packages, setup
 
-VERSION = "0.0.4"
+VERSION = "1.0.0"
 DESCRIPTION = "Probabilistic machine learning methods"
 LONG_DESCRIPTION = (
     "A package that used for establishing multi-fidelity probabilistic machine learning models "
@@ -14,7 +14,7 @@ setup(
     version=VERSION,
     author="Jiaxiang Yi (Delft University of Technology), Ji Cheng (City University of Hong Kong)",
     author_email="<yagafighting@gmail.com>",
-    url="https://github.com/JiaxiangYi96/MFPML.git",
+    url="https://github.com/JiaxiangYi96/mfpml.git",
     description=DESCRIPTION,
     long_description_content_type="text/markdown",
     long_description=LONG_DESCRIPTION,
@@ -25,7 +25,6 @@ setup(
         "python",
         "multi-fidelity machine learning",
         "Bayesian Optimization",
-        "reliability analysis",
     ],
     classifiers=[
         "Development Status :: 1 - Planning",
