@@ -726,7 +726,7 @@ class AckleyN2(SingleFidelityFunctions):
     name = 'Ackley N. 2'
     latex_formula = r'f(x, y) = -200exp(-0.2\sqrt{x^2 + y^2)}'
     latex_formula_dimension = r'd=2'
-    latex_formula_input_domain = r'x \in [-32, 32], y \in [-32, 32]'
+    latex_formula_input_domain = r'$x \in [-32, 32], y \in [-32, 32]$'
     latex_formula_global_minimum = r'f(0, 0)=-200'
     continuous = False
     convex = True
