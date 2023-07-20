@@ -1,5 +1,6 @@
 
 from abc import ABC
+from typing import Any
 
 import numpy as np
 
@@ -22,7 +23,7 @@ class Functions(ABC):
         Raises
         ------
         NotImplementedError
-            Raised when not implemented. Subclasses should implement this method.
+            Raised when not implemented.
         """
 
         raise NotImplementedError("Subclasses should implement this method.")
@@ -65,7 +66,7 @@ class Functions(ABC):
         Raises
         ------
         NotImplementedError
-            Raised when not implemented. Subclasses should implement this method.
+            Raised when not implemented.
         """
 
         raise NotImplementedError("Subclasses should implement this method.")
@@ -90,7 +91,7 @@ class Functions(ABC):
         Raises
         ------
         NotImplementedError
-            Raised when not implemented. Subclasses should implement this method.
+            Raised when not implemented.
         """
 
         raise NotImplementedError("Subclasses should implement this method.")
@@ -113,7 +114,7 @@ class Functions(ABC):
         Raises
         ------
         NotImplementedError
-            Raised when not implemented. Subclasses should implement this method.
+            Raised when not implemented.
         """
 
         raise NotImplementedError("Subclasses should implement this method.")
@@ -136,7 +137,7 @@ class Functions(ABC):
         Raises
         ------
         NotImplementedError
-            Raised when not implemented. Subclasses should implement this method.
+            Raised when not implemented.
         """
 
         raise NotImplementedError("Subclasses should implement this method.")
@@ -159,7 +160,7 @@ class Functions(ABC):
         Raises
         ------
         NotImplementedError
-            Raised when not implemented. Subclasses should implement this method.
+            Raised when not implemented.
         """
         raise NotImplementedError("Subclasses should implement this method.")
 
@@ -181,7 +182,7 @@ class Functions(ABC):
         Raises
         ------
         NotImplementedError
-            Raised when not implemented. Subclasses should implement this method.
+            Raised when not implemented.
         """
         raise NotImplementedError("Subclasses should implement this method.")
 
@@ -203,7 +204,7 @@ class Functions(ABC):
         Raises
         ------
         NotImplementedError
-            Raised when not implemented. Subclasses should implement this method.
+            Raised when not implemented.
         """
         raise NotImplementedError("Subclasses should implement this method.")
 
@@ -299,10 +300,10 @@ class Functions(ABC):
 
 class FunctionWrapper:
     """
-    Object to wrap user's function, allowing picklability
+    Object to wrap user's function, allowing pick lability
     """
 
-    def __init__(self, function: any, args: tuple = ()) -> None:
+    def __init__(self, function: Any, args: tuple = ()) -> None:
         """function wrapper
 
         Parameters
@@ -316,6 +317,5 @@ class FunctionWrapper:
 
         self.args = [] if args is None else args
 
-    def __call__(self, x):
+    def __call__(self, x) -> Any:
         return self.function(x, *self.args)
-

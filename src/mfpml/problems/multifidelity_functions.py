@@ -14,7 +14,7 @@ class MultiFidelityFunctions(Functions):
         if num_dim == 1:
             # draw the samples from design space
             x_plot = np.linspace(
-                start=self._input_domian[0, 0],
+                start=self._input_domain[0, 0],
                 stop=self._input_domain[0, 1],
                 num=num_plot,
             )
@@ -92,22 +92,6 @@ class MultiFidelityFunctions(Functions):
 
 
 class Forrester_1a(MultiFidelityFunctions):
-    """
-    Forrester function
-    This file contains the definition of an adapted version of the simple 1D
-    example function as presented in:
-        Forrester Alexander I.J, Sóbester András and Keane Andy J "Multi-fidelity
-        Optimization via Surrogate Modelling", Proceedings of the Royal Society A,
-        vol. 463, http://doi.org/10.1098/rspa.2007.1900
-    Function definitions:
-    .. math::
-        f_h(x) = (6x-2)^2 \sin(12x-4)
-    For the low fidelity functions, they are different among different publications, in
-    this code, the version adopted from :
-        Jiang, P., Cheng, J., Zhou, Q., Shu, L., & Hu, J. (2019). Variable-fidelity lower
-        confidence bounding approach for engineering optimization problems with expensive
-        simulations. AIAA Journal, 57(12), 5416-5430.
-    """
 
     num_dim: int = 1
     num_obj: int = 1
@@ -133,7 +117,7 @@ class Forrester_1a(MultiFidelityFunctions):
         return obj
 
     @staticmethod
-    def lf(x: np.ndarray, factor: float = None) -> np.ndarray:
+    def lf(x: np.ndarray, factor: float = None) -> np.ndarray: # type: ignore
         obj = (6 * x - 2) ** 2 * np.sin(12 * x - 4) - 5
         obj = np.reshape(obj, (x.shape[0], 1))
         return obj
@@ -352,20 +336,7 @@ class mf_Sixhump(MultiFidelityFunctions):
 
 
 class mf_Hartman6(MultiFidelityFunctions):
-    """
-    Hartman 6 Test Function for Nonlinear Optimization
-    Taken from "Towards Global Optimization 2",edited by L.C.W. Dixon and G.P.
-    Szego, North-Holland Publishing Company, 1978. ISBN 0 444 85171 2
-    0 <= x1 <= 1
-    0 <= x2 <= 1
-    0 <= x3 <= 1
-    0 <= x4 <= 1
-    0 <= x5 <= 1
-    0 <= x6 <= 1
-    fmin = -3.32236801141551;
-    xmin = [0.20168952;  0.15001069;  0.47687398;  0.27533243;  0.31165162;  0.65730054]
-    http://www4.ncsu.edu/~definkel/research/index.html
-    """
+
 
     num_dim: int = 6
     num_obj: int = 1
@@ -408,6 +379,8 @@ class mf_Hartman6(MultiFidelityFunctions):
 
     @staticmethod
     def hf(x: np.ndarray) -> np.ndarray:
+        """hf
+        """
         a = np.array(
             [
                 [10.00, 3.0, 17.00, 3.5, 1.7, 8],
@@ -436,6 +409,7 @@ class mf_Hartman6(MultiFidelityFunctions):
 
     @staticmethod
     def lf(x: np.ndarray) -> np.ndarray:
+
         # different from lf
         a = np.array(
             [
@@ -495,9 +469,11 @@ class mf_Discontinuous(MultiFidelityFunctions):
         # get objective for every point 
         for ii in range(x.shape[0]):
             if x[ii, 0] <= 0.5: 
-                y[ii, 0] = 0.5 * (6 * x[ii, 0] - 2) ** 2 * np.sin(12 * x[ii,0] - 4) + 10 * (x[ii, 0] - 0.5) -5
+                y[ii, 0] = 0.5 * (6 * x[ii, 0] - 2) ** 2 * \
+                    np.sin(12 * x[ii, 0] - 4) + 10 * (x[ii, 0] - 0.5) - 5
             else: 
-                y[ii, 0] = 3 + 0.5 * (6 * x[ii,0] - 2) ** 2 * np.sin(12 * x[ii,0] - 4) + 10 * (x[ii,0] - 0.5) -5
+                y[ii, 0] = 3 + 0.5 * (6 * x[ii, 0] - 2) ** 2 * \
+                    np.sin(12 * x[ii, 0] - 4) + 10 * (x[ii, 0] - 0.5) - 5
 
         return y.reshape((-1, 1))        
     
@@ -509,12 +485,12 @@ class mf_Discontinuous(MultiFidelityFunctions):
         for ii in range(x.shape[0]):
             if x[ii, 0] <= 0.5: 
                 y[ii, 0] = 2*(0.5 * (6 * x[ii, 0] - 2) ** 2 * \
-                            np.sin(12 * x[ii, 0] - 4) + \
-                            10 * (x[ii, 0] - 0.5) -5) -20 * x[ii,0] +20
+                                np.sin(12 * x[ii, 0] - 4) + \
+                                10 * (x[ii, 0] - 0.5) - 5) - 20 * x[ii, 0] + 20
             else: 
                 y[ii, 0] = 4 + 2*(3 + 0.5 * (6 * x[ii, 0] - 2) ** 2 * \
-                                np.sin(12 * x[ii,0] - 4) + \
-                                10 * (x[ii,0] - 0.5) -5) - 20*x[ii, 0] + 20
+                                np.sin(12 * x[ii, 0] - 4) + \
+                                10 * (x[ii, 0] - 0.5) - 5) - 20 * x[ii, 0] + 20
         
         return y.reshape((-1, 1))        
 
