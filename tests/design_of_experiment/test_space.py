@@ -10,7 +10,7 @@ pytestmark = pytest.mark.smoke
 
 
 # @pytest.mark.smoke
-def test_design_space():
+def test_design_space() -> None:
     space_dict = {"x1": [0.0, 1.0], "x2": [0.0, 1.0]}
     space_array = np.array([[0.0, 1.0], [0.0, 1.0]])
 
