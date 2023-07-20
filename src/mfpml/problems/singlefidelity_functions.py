@@ -1,4 +1,4 @@
-from abc import ABC
+
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -108,17 +108,7 @@ class Forrester(SingleFidelityFunctions):
 
 
 class Branin(SingleFidelityFunctions):
-    """
-    Branin Test Function for Nonlinear Optimization
-    Taken from "Towards Global Optimisation 2",edited by L.C.W. Dixon and G.P.
-    Szego, North-Holland Publishing Company, 1978. ISBN 0 444 85171 2
 
-    -5 <= x1 <= 10
-     0 <= x2 <= 15
-    fmin = 0.397887357729739
-    xmin =   9.42477796   -3.14159265  3.14159265
-             2.47499998   12.27500000  2.27500000
-    """
 
     num_dim: int = 2
     num_obj: int = 1
@@ -167,18 +157,7 @@ class Branin(SingleFidelityFunctions):
 
 
 class GoldPrice(SingleFidelityFunctions):
-    """
-    Goldstein-Price Test Function for Nonlinear Optimization
-    Taken from "Towards Global Optimisation 2",edited by L.C.W. Dixon and G.P.
-    Szego, North-Holland Publishing Company, 1978. ISBN 0 444 85171 2
 
-    -2 <= x1 <= 2
-    -2 <= x2 <= 2
-    fmin = 3
-    xmin =[ 0, -1]
-
-    http://www4.ncsu.edu/~definkel/research/index.html
-    """
 
     num_dim: int = 2
     num_obj: int = 1
@@ -238,21 +217,7 @@ class GoldPrice(SingleFidelityFunctions):
 
 
 class Sixhump(SingleFidelityFunctions):
-    """
-    6-Hump Camel Test Function for Nonlinear Optimization
 
-    Taken from "Towards Global Optimisation 2",edited by L.C.W. Dixon and G.P.
-    Szego, North-Holland Publishing Company, 1978. ISBN 0 444 85171 2
-
-     -3 <= x1 <= 3
-     -2 <= x2 <= 2
-    fmin = -1.0316284535
-    xmin = 0.08984201  -0.08984201
-          -0.71265640   0.71265640
-
-    http://www4.ncsu.edu/~definkel/research/index.html
-
-    """
 
     num_dim: int = 2
     num_obj: int = 1
@@ -295,16 +260,7 @@ class Sixhump(SingleFidelityFunctions):
 
 
 class Sasena(SingleFidelityFunctions):
-    """
-    Sasena function (called mystery function by Sasena)
-    Sasena, M. J., ¡°Flexibility and Efficiency Enhancements for
-    Constrained Global Design Optimization with Kriging Approximations,¡±
-    Ph.D. Thesis, Univ. of Michigan, Ann Arbor, MI, 2002.
-    0 <= x1 <= 5
-    0 <= x2 <= 5
-    xmin = [2.5044,2.5778]
-    fmin = -1.4565
-    """
+
 
     num_dim: int = 2
     num_obj: int = 1
@@ -348,18 +304,7 @@ class Sasena(SingleFidelityFunctions):
 
 
 class Hartman3(SingleFidelityFunctions):
-    """
-    Hartman 3 Test Function for Nonlinear Optimization
-    Taken from "Towards Global Optimisation 2",edited by L.C.W. Dixon and G.P.
-    Szego, North-Holland Publishing Company, 1978. ISBN 0 444 85171 2
 
-    0 <= x1 <= 1
-    0 <= x2 <= 1
-    0 <= x3 <= 1
-    fmin = -3.86278214782076
-    xmin = [0.1, 0.55592003,0.85218259]
-    http://www4.ncsu.edu/~definkel/research/index.html
-    """
 
     num_dim: int = 3
     num_obj: int = 1
@@ -417,26 +362,12 @@ class Hartman3(SingleFidelityFunctions):
 
 
 class Hartman6(SingleFidelityFunctions):
-    """
-    Hartman 6 Test Function for Nonlinear Optimization
-    Taken from "Towards Global Optimization 2",edited by L.C.W. Dixon and G.P.
-    Szego, North-Holland Publishing Company, 1978. ISBN 0 444 85171 2
-    0 <= x1 <= 1
-    0 <= x2 <= 1
-    0 <= x3 <= 1
-    0 <= x4 <= 1
-    0 <= x5 <= 1
-    0 <= x6 <= 1
-    fmin = -3.32236801141551;
-    xmin = [0.20168952;  0.15001069;  0.47687398;  0.27533243;  0.31165162;  0.65730054]
-    http://www4.ncsu.edu/~definkel/research/index.html
-    """
+
 
     num_dim: int = 6
     num_obj: int = 1
     num_cons: int = 0
-    # low_bound: list = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-    # high_bound: list = [1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+
     input_domain = np.array(
         [
             [0.0, 1.0],
@@ -511,23 +442,7 @@ class Hartman6(SingleFidelityFunctions):
 
 
 class Thevenot(SingleFidelityFunctions):
-    """
-    latex_formula = r'f(\mathbf{x}) = exp(-\sum_{i=1}^{d}(x_i / \beta)^{2m}) - 2exp(-\prod_{i=1}^{d}x_i^2) \prod_{i=1}^{d}cos^ 2(x_i) '
-    latex_formula_dimension = r'd \in \mathbb{N}_{+}^{*}'
-    latex_formula_input_domain = r'x_i \in [-2\pi, 2\pi], \forall i \in \llbracket 1, d\rrbracket'
-    latex_formula_global_minimum = r'f(0, ..., 0)=-1, \text{ for}, m=5, \beta=15'
-    continuous = True
-    convex = True
-    separable = True
-    differentiable = True
-    mutimodal = True
-    randomized_term = False
-    parametric = True
 
-    Created by Axel Thevenot (2020)
-    Github repository: https://github.com/AxelThevenot/Python_Benchmark_Test_Optimization_Function_Single_Objective
-
-    """
 
     num_dim: int = None
     num_obj: int = 1
@@ -587,16 +502,9 @@ class Thevenot(SingleFidelityFunctions):
         return obj
 
     def __update_parameters(self):
-        """
-        update the class variable information
-        Returns
-        -------
 
-        """
 
         self.__class__.num_dim = self.num_dim
-        # self.__class__.low_bound = np.array([-2 * np.pi for _ in range(self.num_dim)]).tolist()
-        # self.__class__.high_bound = np.array([2 * np.pi for _ in range(self.num_dim)]).tolist()
         for ii in range(self.input_domain.shape[0]):
             self.__class__.design_space[f"x{ii + 1}"] = self.input_domain[
                 ii, :
@@ -611,23 +519,7 @@ class Thevenot(SingleFidelityFunctions):
 
 
 class Ackley(SingleFidelityFunctions):
-    """
-    name = 'Ackley'
-    latex_formula = r'f(\mathbf{x}) = -a \cdot exp(-b\sqrt{\frac{1}{d}\sum_{i=1}^{d}x_i^2})-exp(\frac{1}{d}\sum_{i=1}^{d}cos(c \cdot x_i))+ a + exp(1)'
-    latex_formula_dimension = r'd \in \mathbb{N}_{+}^{*}'
-    latex_formula_input_domain = r'x_i \in [-32, 32], \forall i \in \llbracket 1, d\rrbracket'
-    latex_formula_global_minimum = r'f((0, ..., 0)) = 0'
-    continuous = True
-    convex = False
-    separable = True
-    differentiable = True
-    mutimodal = True
-    randomized_term = False
-    parametric = True
 
-    Github repository: https://github.com/AxelThevenot/Python_Benchmark_Test_Optimization_Function_Single_Objective
-
-    """
 
     num_dim: int = None
     num_obj: int = 1
@@ -706,8 +598,7 @@ class Ackley(SingleFidelityFunctions):
         """
 
         self.__class__.num_dim = self.num_dim
-        # self.__class__.low_bound = np.array([-32.0 for _ in range(self.num_dim)]).tolist()
-        # self.__class__.high_bound = np.array([32.0 for _ in range(self.num_dim)]).tolist()
+
         for ii in range(self.input_domain.shape[0]):
             self.__class__.design_space[f"x{ii + 1}"] = self.input_domain[
                 ii, :
@@ -722,20 +613,6 @@ class Ackley(SingleFidelityFunctions):
 
 
 class AckleyN2(SingleFidelityFunctions):
-    """
-    name = 'Ackley N. 2'
-    latex_formula = r'f(x, y) = -200exp(-0.2\sqrt{x^2 + y^2)}'
-    latex_formula_dimension = r'd=2'
-    latex_formula_input_domain = r'$x \in [-32, 32], y \in [-32, 32]$'
-    latex_formula_global_minimum = r'f(0, 0)=-200'
-    continuous = False
-    convex = True
-    separable = False
-    differentiable = True
-    mutimodal = False
-    randomized_term = False
-    parametric = False
-    """
 
     num_dim: int = 2
     num_obj: int = 1

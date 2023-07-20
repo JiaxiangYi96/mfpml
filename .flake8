@@ -20,6 +20,7 @@
 		setup.py
 		tutorials/
 		examples/
+		tests/
 	# <<< UPDATE ACCORDING WITH YOUR PYTHON PROJECT
 	
 	
@@ -46,7 +47,7 @@
 	#       Remark: Use the appropriate delimiters if not following PEP8!
 	# E226: Missing whitespace around arithmetic operator
 	#       Remark: Flake8 does not distinguish +, - from *, /, ** cases yet.
-	extend-ignore = E226, E3
+	extend-ignore = E226, E3, W291, W293
 	
 	# List of (additional) error codes to check:
 	# E241 : Multiple spaces after ‘,’

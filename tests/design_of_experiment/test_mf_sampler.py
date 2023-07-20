@@ -8,7 +8,7 @@ from mfpml.design_of_experiment.space import DesignSpace
 pytestmark = pytest.mark.smoke
 
 
-def test_sobolsequence_nested() -> None:
+def test_sobol_sequence_nested() -> None:
     space = DesignSpace(
         names=["x1", "x2"], low_bound=[0.0, 0.0], high_bound=[1.0, 1.0]
     )
@@ -29,7 +29,7 @@ def test_sobolsequence_nested() -> None:
     assert results_lf == pytest.approx(samples["lf"])
 
 
-def test_sobolsequence_unnested() -> None:
+def test_sobol_sequence_unnested() -> None:
     space = DesignSpace(
         names=["x1", "x2"], low_bound=[0.0, 0.0], high_bound=[1.0, 1.0]
     )

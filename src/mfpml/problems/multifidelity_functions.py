@@ -508,12 +508,15 @@ class mf_Discontinuous(MultiFidelityFunctions):
 
         for ii in range(x.shape[0]):
             if x[ii, 0] <= 0.5: 
-                y[ii, 0 ] = 2*(0.5 * (6 * x[ii, 0] - 2) ** 2 * np.sin(12 * x[ii,0] - 4) + 10 * (x[ii, 0] - 0.5) -5) -20*x[ii,0] +20
+                y[ii, 0] = 2*(0.5 * (6 * x[ii, 0] - 2) ** 2 * \
+                            np.sin(12 * x[ii, 0] - 4) + \
+                            10 * (x[ii, 0] - 0.5) -5) -20 * x[ii,0] +20
             else: 
-                y[ii, 0] = 4 + 2*( 3 + 0.5 * (6 * x[ii,0] - 2) ** 2 * np.sin(12 * x[ii,0] - 4) + 10 * (x[ii,0] - 0.5) -5) - 20*x[ii,0] +20
+                y[ii, 0] = 4 + 2*(3 + 0.5 * (6 * x[ii, 0] - 2) ** 2 * \
+                                np.sin(12 * x[ii,0] - 4) + \
+                                10 * (x[ii,0] - 0.5) -5) - 20*x[ii, 0] + 20
         
-        return y.reshape((-1,1))
-        
+        return y.reshape((-1, 1))        
 
 class ContinuousNonlinearCorrelation1D(MultiFidelityFunctions):
     """_summary_
@@ -546,13 +549,14 @@ class ContinuousNonlinearCorrelation1D(MultiFidelityFunctions):
     def lf(x: np.ndarray) -> np.ndarray: 
         y = np.sin(8*np.pi*x) 
 
-        return y.reshape((-1,1))
+        return y.reshape((-1, 1))
     
     @staticmethod
     def hf(x: np.ndarray) -> np.ndarray: 
-        y = np.sin(8*np.pi*x) **2 * (x-np.sqrt(2))
 
-        return y.reshape((-1,1))
+        y = np.sin(8*np.pi*x) ** 2 * (x-np.sqrt(2))
+
+        return y.reshape((-1, 1))
 
 class PhaseShiftedOscillations(MultiFidelityFunctions): 
     """_summary_
@@ -573,24 +577,23 @@ class PhaseShiftedOscillations(MultiFidelityFunctions):
     input_domain = np.array([[0.0, 1.0]])
     design_space: dict = {"x": [0.0, 1.0]}
     optimum: float = None
-    optimum_scheme: list = None 
-    low_fidelity: list = None    
+    optimum_scheme: list = None
+    low_fidelity: list = None   
 
     def __init__(self, num_dim: int = 1) -> None:
         super().__init__()
-        # check dimension 
-        self.is_dim_compatible(num_dim=num_dim)
-    
+        # check dimension
+
+        self.is_dim_compatible(num_dim=num_dim)   
+
     @staticmethod
-    def lf(x: np.ndarray) -> np.ndarray: 
-         
-         y = np.sin(8*np.pi * x ) 
-         
-         return y.reshape((-1,1)) 
+    def lf(x: np.ndarray) -> np.ndarray:
+        y = np.sin(8*np.pi * x)        
+        return y.reshape((-1, 1))
 
-    @staticmethod 
-    def hf(x: np.ndarray) -> np.ndarray: 
+    @staticmethod
+    def hf(x: np.ndarray) -> np.ndarray:
 
-        y = x**2 + (np.sin(8*np.pi*x+np.pi/10))**2 
+        y = x**2 + (np.sin(8*np.pi*x+np.pi/10))**2
 
-        return y.reshape((-1,1))
+        return y.reshape((-1, 1))

@@ -37,9 +37,8 @@ class MultiFidelitySampler(Sampler):
         Returns
         -------
         """
-        assert (
-            self.num_lf_samples >= self.num_hf_samples
-        ), "samples of low fidelity should larger than tha of high fidelity"
+        assert (self.num_lf_samples >= self.num_hf_samples), \
+            "samples of low fidelity should larger than tha of high fidelity"
 
     def get_samples(self, num_samples: int = None, **kwargs) -> dict:
         """

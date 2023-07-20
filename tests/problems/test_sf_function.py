@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 
-from mfpml.mfpml.design_of_experiment.singlefideliy_samplers import LatinHyperCube
+from mfpml.design_of_experiment.singlefideliy_samplers import LatinHyperCube
 from mfpml.problems.singlefidelity_functions import Branin
 
 pytestmark = pytest.mark.smoke
