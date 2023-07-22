@@ -4,6 +4,7 @@ import numpy as np
 from mfpml.problems.functions import Functions
 
 
+# local module
 class MultiFidelityFunctions(Functions):
 
     def plot_function(
@@ -484,13 +485,9 @@ class mf_Discontinuous(MultiFidelityFunctions):
 
         for ii in range(x.shape[0]):
             if x[ii, 0] <= 0.5: 
-                y[ii, 0] = 2*(0.5 * (6 * x[ii, 0] - 2) ** 2 * \
-                                np.sin(12 * x[ii, 0] - 4) + \
-                                10 * (x[ii, 0] - 0.5) - 5) - 20 * x[ii, 0] + 20
+                y[ii, 0] = 2*(0.5 * (6 * x[ii, 0] - 2) ** 2 * np.sin(12 * x[ii, 0] - 4) + 10 * (x[ii, 0] - 0.5) - 5) - 20 * x[ii, 0] + 20
             else: 
-                y[ii, 0] = 4 + 2*(3 + 0.5 * (6 * x[ii, 0] - 2) ** 2 * \
-                                np.sin(12 * x[ii, 0] - 4) + \
-                                10 * (x[ii, 0] - 0.5) - 5) - 20 * x[ii, 0] + 20
+                y[ii, 0] = 4 + 2*(3 + 0.5 * (6 * x[ii, 0] - 2) ** 2 * np.sin(12 * x[ii, 0] - 4) + 10 * (x[ii, 0] - 0.5) - 5) - 20 * x[ii, 0] + 20
         
         return y.reshape((-1, 1))        
 
@@ -552,7 +549,7 @@ class PhaseShiftedOscillations(MultiFidelityFunctions):
     num_cons: int = 0
     input_domain = np.array([[0.0, 1.0]])
     design_space: dict = {"x": [0.0, 1.0]}
-    optimum: float = None
+    optimum: float = None 
     optimum_scheme: list = None
     low_fidelity: list = None   
 

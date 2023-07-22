@@ -319,3 +319,4 @@ class FunctionWrapper:
 
     def __call__(self, x) -> Any:
         return self.function(x, *self.args)
+    

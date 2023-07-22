@@ -40,7 +40,7 @@ class MultiFidelitySampler(Sampler):
         assert (self.num_lf_samples >= self.num_hf_samples), \
             "samples of low fidelity should larger than tha of high fidelity"
 
-    def get_samples(self, num_samples: int = None, **kwargs) -> dict:
+    def get_samples(self, **kwargs) -> dict:
         """
         Get the samples
         Parameters
@@ -59,7 +59,8 @@ class MultiFidelitySampler(Sampler):
     def _create_pandas_frame(self) -> None:
         """
         this function is used to create pandas framework for the doe
-        the output will be added at the end of the pandas dataframe but without giving names
+        the output will be added at the end of the pandas dataframe but
+        without giving names
         Parameters
         ----------
         Returns
@@ -76,7 +77,7 @@ class MultiFidelitySampler(Sampler):
         )
 
     def plot_samples(
-        self, figure_name: str = None, save_plot: bool = False, **kwargs
+        self, figure_name: str = 'mf.png', save_plot: bool = False, **kwargs
     ) -> None:
         """
         Visualization of mf sampling
@@ -108,8 +109,7 @@ class MultiFidelitySampler(Sampler):
             ax.legend()
             ax.set(xlabel=r"$x_1$")
             ax.set(ylabel=r"$x_2$")
-            # ax.autoscale(tight=True)
-            plt.grid("--")
+            plt.grid()
             plt.show()
             if save_plot is True:
                 fig.savefig(figure_name, dpi=300)
