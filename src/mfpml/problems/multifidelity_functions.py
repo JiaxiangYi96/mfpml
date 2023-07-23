@@ -197,12 +197,12 @@ class Forrester_1c(MultiFidelityFunctions):
 
 
 class mf_Hartman3(MultiFidelityFunctions):
-    """multi fidelity Hartman3 function 
+    """multi fidelity Hartman3 function
 
     Parameters
     ----------
-    MultiFidelityFunctions : parent class 
-        multi-fidelity function 
+    MultiFidelityFunctions : parent class
+        multi-fidelity function
 
     Returns
     -------
@@ -425,12 +425,12 @@ class mf_Hartman6(MultiFidelityFunctions):
 
 
 class mf_Discontinuous(MultiFidelityFunctions):
-    """multi-fidelity discontinuous function 
+    """multi-fidelity discontinuous function
 
     Parameters
     ----------
-    MultiFidelityFunctions : class 
-        multifidelity function class 
+    MultiFidelityFunctions : class
+        multifidelity function class
     """
     num_dim: int = 1
     num_obj: int = 1

@@ -8,12 +8,22 @@ Welcome to mfpml's documentation!
 
 .. toctree::
    :maxdepth: 3
-   :caption: Contents:
+   :caption: Overview:
 
-   readme
-   mfpml
+   readme.rst
+
+.. toctree::
+   :maxdepth: 3
+   :caption: Get started:
+
+   get_started.rst
+
+.. toctree::
+   :maxdepth: 3
+   :caption: API Reference:  
+
+   mfpml.rst
    
-
 
 Indices and tables
 ==================

@@ -1,7 +1,7 @@
 mfpml documentation
 ===================
 
-Subpackages
+Modules
 -----------
 
 .. toctree::
@@ -12,10 +12,3 @@ Subpackages
    mfpml.optimization
    mfpml.problems
 
-Module contents
----------------
-
-.. automodule:: mfpml
-   :members:
-   :undoc-members:
-   :show-inheritance:

@@ -7,7 +7,7 @@ from scipy.stats import norm
 
 class mfAcqusitionFunction:
     """
-    Base class for multi-fidelity acqusition functions. 
+    Base class for multi-fidelity acqusition functions.
 
     """
     pass
@@ -15,7 +15,7 @@ class mfAcqusitionFunction:
 
 class mfSingleObjAcf(mfAcqusitionFunction):
     """
-    Base class for mf acqusition functions for Single Objective Opti. 
+    Base class for mf acqusition functions for Single Objective Opti.
     """
     @staticmethod
     def _initial_update():
@@ -28,28 +28,17 @@ class mfSingleObjAcf(mfAcqusitionFunction):
 
 
 class augmentedEI(mfSingleObjAcf):
-    """Augmented Expected Improvement acqusition function 
-
-    Reference 
-    -------
-    [1] Huang, D., Allen, T. T., Notz, W. I., & Miller, R. A. (2006).
-    Sequential kriging optimization using multiple-fidelity evaluations.
-    Structural and Multidisciplinary Optimization, 32(5), 369-382.
-    [2] Reisenthel, P. H., & Allen, T. T. (2014). Application of multifidelity 
-        expected improvement algorithms to aeroelastic design optimization. In 
-        10th AIAA Multidisciplinary Design Optimization Conference (p. 1490).
-
-    """
+    """Augmented Expected Improvement acqusition function"""
 
     def __init__(
             self,
-            optimizer: any = None,
+            optimizer: Any = None,
             constraint: bool = False) -> None:
         """Initialize the multi-fidelity acqusition
 
         Parameters
         ----------
-        optimizer : any
+        optimizer : Any
             optimizer instance
         constraint : bool, optional
             whether to use for constrained optimization
@@ -98,12 +87,12 @@ class augmentedEI(mfSingleObjAcf):
         aei = aei * alpha1 * alpha3
         return (-aei).ravel()
 
-    def query(self, mf_surrogate: any, params: dict) -> dict:
+    def query(self, mf_surrogate: Any, params: dict) -> dict:
         """Query the acqusition function
 
         Parameters
         ----------
-        mf_surrogate : any
+        mf_surrogate : Any
             multi-fidelity surrogate instance
         params : dict
             parameters of Bayesian Optimization
@@ -111,7 +100,7 @@ class augmentedEI(mfSingleObjAcf):
         Returns
         -------
         dict
-            contains two values where 'hf' is the update points 
+            contains two values where 'hf' is the update points
             for high-fidelity and 'lf' for low-fidelity
         """
         update_x = self._initial_update()
@@ -141,12 +130,12 @@ class augmentedEI(mfSingleObjAcf):
         return update_x
 
     @staticmethod
-    def _effective_best(mf_surrogate: any, c: float = 1.) -> np.ndarray:
+    def _effective_best(mf_surrogate: Any, c: float = 1.) -> np.ndarray:
         """Return the effective best solution
 
         Parameters
         ----------
-        mf_surrogate : any
+        mf_surrogate : Any
             multi-fidelity surrogate instance
         c : float, optional
             degree of risk aversion, by default 1
@@ -163,14 +152,14 @@ class augmentedEI(mfSingleObjAcf):
         return x[np.argmin(u.squeeze()), :]
 
     @staticmethod
-    def corr(x: np.ndarray, mf_surrogate: any, fidelity: str) -> np.ndarray:
+    def corr(x: np.ndarray, mf_surrogate: Any, fidelity: str) -> np.ndarray:
         """Evaluate correlation between different fidelity
 
         Parameters
         ----------
         x : np.ndarray
             point to evaluate
-        mf_surrogate : any
+        mf_surrogate : Any
             multi-fidelity surrogate instance
         fidelity : str
             str indicating fidelity level
@@ -192,13 +181,13 @@ class augmentedEI(mfSingleObjAcf):
 class vfei(mfSingleObjAcf):
     def __init__(
             self,
-            optimizer: any = None,
+            optimizer: Any = None,
             constraint: bool = False) -> None:
         """Initialize the multi-fidelity acqusition
 
         Parameters
         ----------
-        optimizer : any
+        optimizer : Any
             optimizer instance
         constraint : bool, optional
             whether to use for constrained optimization
@@ -215,13 +204,13 @@ class vfei(mfSingleObjAcf):
         """
         Evaluates selected acqusition function at certain fidelity
 
-        Parameters: 
+        Parameters:
         -----------------
         x: np.ndarray
             point to evaluate
         fmin: float
             best observed function evaluation
-        mf_surrogate: any 
+        mf_surrogate: any
             multi-fidelity surrogate instance
         fidelity: str
             str indicating fidelity level
@@ -229,7 +218,7 @@ class vfei(mfSingleObjAcf):
         Returns
         -----------------
         np.ndarray
-            Acqusition function value w.r.t corresponding fidelity level. 
+            Acqusition function value w.r.t corresponding fidelity level.
         """
         pre, std = mf_surrogate.predict(x, return_std=True)
         if fidelity == 'hf':
@@ -245,12 +234,12 @@ class vfei(mfSingleObjAcf):
         vfei[s < np.finfo(float).eps] = 0.
         return (- vfei).ravel()
 
-    def query(self, mf_surrogate: any, params: dict) -> dict:
+    def query(self, mf_surrogate: Any, params: dict) -> dict:
         """Query the acqusition function
 
         Parameters
         ----------
-        mf_surrogate : any
+        mf_surrogate : Any
             multi-fidelity surrogate instance
         params : dict
             parameters of Bayesian Optimization
@@ -258,7 +247,7 @@ class vfei(mfSingleObjAcf):
         Returns
         -------
         dict
-            contains two values where 'hf' is the update points 
+            contains two values where 'hf' is the update points
             for high-fidelity and 'lf' for low-fidelity
         """
         update_x = self._initial_update()
@@ -289,21 +278,11 @@ class vfei(mfSingleObjAcf):
 
 
 class vflcb(mfSingleObjAcf):
-    """
-    Variable-fidelity Lower Confidence Bound function for single 
-    objective bayesian optimization. 
-
-    Reference 
-    -------
-    [1] Jiang, P., Cheng, J., Zhou, Q., Shu, L., & Hu, J. (2019). 
-    Variable-fidelity lower confidence bounding approach for engineering 
-    optimization problems with expensive simulations. AIAA Journal, 57(12), 
-    5416-5430.
-    """
+    """Variable-fidelity Lower Confidence Bound acqusition function"""
 
     def __init__(
             self,
-            optimizer: any = None,
+            optimizer: Any = None,
             kappa: list = [1., 1.96],
             constraint: bool = False) -> None:
         """Initialize the vflcb acqusition
@@ -372,7 +351,7 @@ class vflcb(mfSingleObjAcf):
         Returns
         -------
         dict
-            contains two values where 'hf' is the update points 
+            contains two values where 'hf' is the update points
             for high-fidelity and 'lf' for low-fidelity
         """
         update_x = self._initial_update()
@@ -403,20 +382,20 @@ class vflcb(mfSingleObjAcf):
 
 
 class extendedPI(mfSingleObjAcf):
-    """Extended Probability Improvement acqusition function 
+    """Extended Probability Improvement acqusition function
 
-    Reference 
-    -------
-    [1] Ruan, X., Jiang, P., Zhou, Q., Hu, J., & Shu, L. (2020). 
-    Variable-fidelity probability of improvement method for 
-    efficient global optimization of expensive black-box problems. 
+    Reference
+    ---------
+    [1] Ruan, X., Jiang, P., Zhou, Q., Hu, J., & Shu, L. (2020).
+    Variable-fidelity probability of improvement method for
+    efficient global optimization of expensive black-box problems.
     Structural and Multidisciplinary Optimization, 62(6), 3021-3052.
 
     """
 
     def __init__(
             self,
-            optimizer: any = None,
+            optimizer: Any = None,
             constraint: bool = False) -> None:
         """Initialize the multi-fidelity acqusition
 
@@ -433,7 +412,7 @@ class extendedPI(mfSingleObjAcf):
 
     def eval(self,
              x: np.ndarray,
-             mf_surrogate: any,
+             mf_surrogate: Any,
              fmin: np.ndarray,
              cost_ratio: dict,
              fidelity: str) -> np.ndarray:
@@ -443,7 +422,7 @@ class extendedPI(mfSingleObjAcf):
         ----------
         x : np.ndarray
             point to evaluate
-        mf_surrogate : any
+        mf_surrogate : Any
             multi-fidelity surrogate instance
         fmin : np.ndarray
             best prediction of multi-fidelity model
@@ -485,7 +464,7 @@ class extendedPI(mfSingleObjAcf):
         Returns
         -------
         dict
-            contains two values where 'hf' is the update points 
+            contains two values where 'hf' is the update points
             for high-fidelity and 'lf' for low-fidelity
         """
         premin = differential_evolution(mf_surrogate.predict,

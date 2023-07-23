@@ -51,7 +51,7 @@ class MFSOBO:
                       print_info: bool = True,
                       resume: bool = False,
                       **kwargs) -> None:
-        """Multi-fidelity Bayesian optimization 
+        """Multi-fidelity Bayesian optimization
 
         Parameters
         ----------
@@ -64,7 +64,7 @@ class MFSOBO:
         max_cost : float, optional
             stop condition of cost, by default float('inf')
         print_info : bool, optional
-            whether to print information during the optimization 
+            whether to print information during the optimization
             process, by default True
         resume : bool, optional
             whether to proceed optimization with the last run
@@ -115,7 +115,7 @@ class MFSOBO:
     def _first_run(self, mf_surrogate: Any,
                    X: dict,
                    Y: dict,
-                   print_info: bool = True):
+                   print_info: bool = True) -> None:
         """Initialize parameters in the Bayesian optimization
 
         Parameters
@@ -123,7 +123,7 @@ class MFSOBO:
         mf_surrogate : any
             instance of multi-fidelity model
         X : dict
-            initial samples 
+            initial samples
         Y : dict
             initial responses
         print_info : bool, optional

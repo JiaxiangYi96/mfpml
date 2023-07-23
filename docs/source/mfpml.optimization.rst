@@ -1,10 +1,8 @@
-mfpml.optimization package
+mfpml.optimization module
 ==========================
 
-Submodules
-----------
 
-mfpml.optimization.evolutionary\_algorithms module
+mfpml.optimization.evolutionary\_algorithms
 --------------------------------------------------
 
 .. automodule:: mfpml.optimization.evolutionary_algorithms
@@ -12,7 +10,7 @@ mfpml.optimization.evolutionary\_algorithms module
    :undoc-members:
    :show-inheritance:
 
-mfpml.optimization.mfBO module
+mfpml.optimization.mfBO
 ------------------------------
 
 .. automodule:: mfpml.optimization.mfBO
@@ -20,18 +18,10 @@ mfpml.optimization.mfBO module
    :undoc-members:
    :show-inheritance:
 
-mfpml.optimization.mf\_acqusitions module
+mfpml.optimization.mf\_acqusitions
 -----------------------------------------
 
 .. automodule:: mfpml.optimization.mf_acqusitions
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Module contents
----------------
-
-.. automodule:: mfpml.optimization
    :members:
    :undoc-members:
    :show-inheritance:

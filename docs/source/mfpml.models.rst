@@ -1,10 +1,7 @@
-mfpml.models package
+mfpml.models module
 ====================
 
-Submodules
-----------
-
-mfpml.models.corrfunc module
+mfpml.models.corrfunc
 ----------------------------
 
 .. automodule:: mfpml.models.corrfunc
@@ -12,7 +9,7 @@ mfpml.models.corrfunc module
    :undoc-members:
    :show-inheritance:
 
-mfpml.models.kriging module
+mfpml.models.kriging
 ---------------------------
 
 .. automodule:: mfpml.models.kriging
@@ -20,18 +17,10 @@ mfpml.models.kriging module
    :undoc-members:
    :show-inheritance:
 
-mfpml.models.mf\_surrogates module
+mfpml.models.mf\_surrogates
 ----------------------------------
 
 .. automodule:: mfpml.models.mf_surrogates
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Module contents
----------------
-
-.. automodule:: mfpml.models
    :members:
    :undoc-members:
    :show-inheritance:

@@ -1,18 +1,16 @@
-.. _installation-instructions:
+.. image:: https://user-images.githubusercontent.com/25851824/200928507-a65327f9-bc70-4c12-beaa-bc6ba74d968e.svg
+   :alt: logo
+   :width: 60%
+   :align: center
 
-===============
-Getting Started
-===============
 
-``mfpml`` is a python package for multi-fidelity probabilistic machine learning.
-It is developed based on linux system so it is table on linux system. Since it 
-is a package under developing, it is recommend to install it via ``github --editable`` mode 
+`Docs <https://bessagroup.github.io/bessa-pypi-template/>`__ | `GitHub <https://github.com/JiaxiangYi96/mfpml.git>`__
 
-.. _install_from_source:
 
-Installing from source
-======================
+**First publication:** July 23, 2023
 
+Installation
+---------------
 
 Building from source is required to work on a contribution (bug fix, new feature, code or documentation improvement).
 We recommend using a `Linux distribution system <https://releases.ubuntu.com/focal/>`_.
@@ -60,4 +58,3 @@ We recommend using a `Linux distribution system <https://releases.ubuntu.com/foc
    .. code-block:: console
 
      pip install -r requirements.txt
-

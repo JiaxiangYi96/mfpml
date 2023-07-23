@@ -1,10 +1,7 @@
-mfpml.problems package
+mfpml.problems module
 ======================
 
-Submodules
-----------
-
-mfpml.problems.functions module
+mfpml.problems.functions
 -------------------------------
 
 .. automodule:: mfpml.problems.functions
@@ -12,7 +9,7 @@ mfpml.problems.functions module
    :undoc-members:
    :show-inheritance:
 
-mfpml.problems.multifidelity\_functions module
+mfpml.problems.multifidelity\_functions
 ----------------------------------------------
 
 .. automodule:: mfpml.problems.multifidelity_functions
@@ -20,18 +17,10 @@ mfpml.problems.multifidelity\_functions module
    :undoc-members:
    :show-inheritance:
 
-mfpml.problems.singlefidelity\_functions module
+mfpml.problems.singlefidelity\_functions
 -----------------------------------------------
 
 .. automodule:: mfpml.problems.singlefidelity_functions
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Module contents
----------------
-
-.. automodule:: mfpml.problems
    :members:
    :undoc-members:
    :show-inheritance:

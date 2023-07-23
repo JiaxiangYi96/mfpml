@@ -1,5 +1,4 @@
 
-
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
@@ -66,9 +65,10 @@ class SingleFidelitySampler(Sampler):
     ) -> None:
         """
         Visualization of sampling method
+
         Parameters
-        ----------s
-        figure_name:str
+        ----------
+        figure_name: str
             figure name
         save_plot: bool
             save the figure or not
