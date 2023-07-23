@@ -1,41 +1,18 @@
-.. image:: https://user-images.githubusercontent.com/25851824/200928507-a65327f9-bc70-4c12-beaa-bc6ba74d968e.svg
-   :alt: logo
-   :width: 60%
-   :align: center
+.. _installation-instructions:
 
+===============
+Getting Started
+===============
 
-`Docs <https://bessagroup.github.io/bessa-pypi-template/>`__ | `GitHub <https://github.com/JiaxiangYi96/mfpml.git>`__
+``mfpml`` is a python package for multi-fidelity probabilistic machine learning.
+It is developed based on linux system so it is table on linux system. Since it 
+is a package under developing, it is recommend to install it via ``github --editable`` mode 
 
-.. <!-- | `Installation <link_to_installation_instructions>` -->
-.. <!-- | `PyPI <link_to_pypi_package_website>` -->
+.. _install_from_source:
 
-**First publication:** June 14, 2023
+Installing from source
+======================
 
-
-
-Summary
--------
-
-This repository serves as a template for Python code. The template is compliant to the `Bessa Research Group Python Development Code of Conduct <https://github.com/bessagroup/python_code_of_conduct>`__.
-
-The repository is suitable for any Python code that works in version 3.7+.
-
-Statement of need
------------------
-
-Members of the Bessa Research Group can use this template to create new Python repositories. The template is compliant to the `Bessa Research Group Python Development Code of Conduct <https://github.com/bessagroup/python_code_of_conduct>`__.
-
-Authorship
-----------
-
-**Authors**:
-    - Jiaxiang Yi(J.Yi@tudelft.nl)
-
-**Authors afilliation:**
-    - Delft University of Technology
-
-Getting started
----------------
 
 Building from source is required to work on a contribution (bug fix, new feature, code or documentation improvement).
 We recommend using a `Linux distribution system <https://releases.ubuntu.com/focal/>`_.
@@ -84,17 +61,3 @@ We recommend using a `Linux distribution system <https://releases.ubuntu.com/foc
 
      pip install -r requirements.txt
 
-
-Community Support
------------------
-
-If you find any issues, bugs or problems with this developer
-
-License
--------
-
-Copyright 2023, Jiaxiang Yi
-
-All rights reserved.
-
-This project is licensed under the MIT License. See `LICENSE <https://github.com/bessagroup/bessa-pypi-template/blob/main/LICENSE>`__ for the full license text.
