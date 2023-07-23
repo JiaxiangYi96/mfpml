@@ -45,7 +45,8 @@ class Functions(ABC):
         Raises
         ------
         NotImplementedError
-            Raised when not implemented. Subclasses should implement this method.
+            Raised when not implemented. Subclasses should implement this
+            method.
         """
         raise NotImplementedError("Subclasses should implement this method.")
 
@@ -319,4 +320,3 @@ class FunctionWrapper:
 
     def __call__(self, x) -> Any:
         return self.function(x, *self.args)
-    

@@ -1,5 +1,5 @@
 import pickle
-from operator import index
+from typing import Any
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -10,11 +10,11 @@ from mfpml.problems.functions import FunctionWrapper
 class EABase:
     def run_optimizer(
         self,
-        func: any,
+        func: Any,
         num_dim: int,
         design_space: np.ndarray,
         print_info: bool = False,
-        args: any = (),
+        args: Any = (),
     ) -> dict:
         """main function
 
@@ -115,7 +115,7 @@ class EABase:
             "best_x": self.gen_best_x,
             "best_y": self.gen_best,
             "best_x_historical": self.gen_best_x,
-            "best_x_historical": self.gen_best,
+            "best_y_historical": self.gen_best,
             "all_samples": self.samples,
             "all_responses": self.responses,
             "design_space": self.design_space,
@@ -128,8 +128,9 @@ class EABase:
 
     def print_info(self, iter: int) -> None:
         print(
-            f"iteration:{iter}, optimum:{self.gen_best[iter,:].flatten()}, best_x:{self.gen_best_x[iter,:].flatten()}\n"
-        )
+            f"iteration:{iter},\
+                optimum:{self.gen_best[iter,:].flatten()},\
+                    best_x:{self.gen_best_x[iter,:].flatten()}\n")
 
 
 class PSO(EABase):
@@ -215,7 +216,7 @@ class PSO(EABase):
         # main iteration
         for iter in range(self.num_gen):
             # print info
-            if print_info == True:
+            if print_info:
                 self.print_info(iter=iter)
             # update the location information
             self.__update_pop(iter=iter)
@@ -237,7 +238,7 @@ class PSO(EABase):
             "best_x": self.gen_best_x[-1, :],
             "best_y": self.gen_best[-1, :],
             "best_x_historical": self.gen_best_x,
-            "best_x_historical": self.gen_best,
+            "best_y_historical": self.gen_best,
             "all_samples": self.samples,
             "all_responses": self.responses,
             "design_space": design_space,
@@ -318,6 +319,7 @@ class PSO(EABase):
         index = np.where(self.obj <= self.pop_best)
         self.pop_best[index[0], :] = self.obj[index[0], :]
         self.pop_best_x[index[0], :] = self.x[index[0], :]
+        del index
 
     def __update_gen_optimum(self, iter: int) -> None:
         """update the generation optimum information"""
@@ -332,11 +334,11 @@ class PSO(EABase):
 
     def __velocity_cons(self) -> None:
         for ii in range(self.num_dim):
-            index = np.where(np.abs(self.v[:, ii]) > self.v_max[ii])
-            self.v[index[0], ii] = (
-                self.v[index[0], ii]
+            index_vel = np.where(np.abs(self.v[:, ii]) > self.v_max[ii])
+            self.v[index_vel[0], ii] = (
+                self.v[index_vel[0], ii]
                 * self.v_max[ii]
-                / np.abs(self.v[index[0], ii])
+                / np.abs(self.v[index_vel[0], ii])
             )
 
 
@@ -385,7 +387,7 @@ class DE(EABase):
         # main iteration
         for iter in range(self.num_gen):
             # print info
-            if print_info == True:
+            if print_info:
                 self.print_info(iter=iter)
             # update the location information
             self.__update_pop(iter=iter)
@@ -403,7 +405,7 @@ class DE(EABase):
             "best_x": self.gen_best_x[-1, :],
             "best_y": self.gen_best[-1, :],
             "best_x_historical": self.gen_best_x,
-            "best_x_historical": self.gen_best,
+            "best_y_historical": self.gen_best,
             "all_samples": self.samples,
             "all_responses": self.responses,
             "design_space": design_space,

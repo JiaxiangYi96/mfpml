@@ -1,5 +1,7 @@
-from .multifidelity_samplers import *
-from .plot_figures import *
-from .sampler import *
-from .singlefideliy_samplers import *
-from .space import *
+from .multifidelity_samplers import LatinHyperCube, SobolSequence
+from .plot_figures import (plot_1d_model_prediction, plot_mf_sampling,
+                           plot_sf_sampling)
+from .sampler import Sampler
+from .singlefideliy_samplers import (FixNumberSampler, LatinHyperCube,
+                                     RandomSampler, SobolSequence)
+from .space import DesignSpace

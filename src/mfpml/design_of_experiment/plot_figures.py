@@ -1,7 +1,6 @@
-from typing import Any, Tuple
+from typing import Any
 
 import numpy as np
-import pandas as pd
 from matplotlib import pyplot as plt
 
 from mfpml.problems.functions import Functions
@@ -142,8 +141,8 @@ def plot_mf_sampling(
             "o",
             label="ls Samples",
         )
-        ax.plot(x_plot, yh_plot, "-", label=f"High fidelity function")
-        ax.plot(x_plot, yl_plot, "--", label=f"Low fidelity function")
+        ax.plot(x_plot, yh_plot, "-", label="High fidelity function")
+        ax.plot(x_plot, yl_plot, "--", label="Low fidelity function")
         ax.legend()
         ax.set(xlabel=r"$x$")
         ax.set(ylabel=r"$y$")

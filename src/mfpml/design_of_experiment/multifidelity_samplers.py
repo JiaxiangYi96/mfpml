@@ -310,7 +310,7 @@ class SobolSequence(MultiFidelitySampler):
         Returns
         -------
         """
-        hf_sample = self._lf_samples[0 : self.num_hf_samples, :]
+        hf_sample = self._lf_samples[0: self.num_hf_samples, :]
         self._hf_samples = hf_sample
         return hf_sample
 

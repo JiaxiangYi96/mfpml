@@ -72,7 +72,7 @@ class MultiFidelityFunctions(Functions):
             plt.show()
         else:
             raise ValueError("Unexpected value of 'num_dimension'!", num_dim)
-        
+
     @classmethod
     def is_dim_compatible(cls, num_dim):
         assert (
@@ -80,7 +80,7 @@ class MultiFidelityFunctions(Functions):
         ), f"Can not change dimension for {cls.__name__} function"
 
         return num_dim
-    
+
     def __call__(self, x: dict) -> dict:
         out = {}
         out["hf"] = None
@@ -118,7 +118,7 @@ class Forrester_1a(MultiFidelityFunctions):
         return obj
 
     @staticmethod
-    def lf(x: np.ndarray, factor: float = None) -> np.ndarray: # type: ignore
+    def lf(x: np.ndarray, factor: float = None) -> np.ndarray:  # type: ignore
         obj = (6 * x - 2) ** 2 * np.sin(12 * x - 4) - 5
         obj = np.reshape(obj, (x.shape[0], 1))
         return obj
@@ -271,23 +271,6 @@ class mf_Hartman3(MultiFidelityFunctions):
 
 
 class mf_Sixhump(MultiFidelityFunctions):
-    r"""Implementation of the bi-fidelity Six-hump Camel-back function
-    as defined in:
-
-        Dong, H., Song, B., Wang, P. et al. Multi-fidelity information
-        fusion based on prediction of kriging. Struct Multidisc Optim
-        51, 1267–1280 (2015) doi:10.1007/s00158-014-1213-9
-
-    Function definitions:
-
-    .. math::
-
-        f_h(x_1, x_2) = 4x_1^2 - 2.1x_1^4 + \dfrac{x_1^6}{3} + x_1x_2 - 4x_2^2 + 4x_2^4
-
-    .. math::
-
-        f_l(x_1, x_2) = f_h(0.7x_1, 0.7x_2) + x_1x_2 - 15
-    """
 
     num_dim: int = 2
     num_obj: int = 1
@@ -337,7 +320,6 @@ class mf_Sixhump(MultiFidelityFunctions):
 
 
 class mf_Hartman6(MultiFidelityFunctions):
-
 
     num_dim: int = 6
     num_obj: int = 1
@@ -429,19 +411,20 @@ class mf_Hartman6(MultiFidelityFunctions):
             ]
         )
         c = np.array([1.1, 0.8, 2.5, 3])
-        l = np.array([0.75, 1, 0.8, 1.3, 0.7, 1.1])
+        l_array = np.array([0.75, 1, 0.8, 1.3, 0.7, 1.1])
         # number of samples
         num_samples = x.shape[0]
         obj = np.zeros((num_samples, 1))
         for i in range(num_samples):
             obj[i, :] = -np.dot(
                 c,
-                np.exp(-np.sum(a * (l * x[i, :] - p) ** 2, axis=1)),
+                np.exp(-np.sum(a * (l_array * x[i, :] - p) ** 2, axis=1)),
             )
         obj = np.reshape(obj, (x.shape[0], 1))
         return -np.log(-obj)
 
-class mf_Discontinuous(MultiFidelityFunctions): 
+
+class mf_Discontinuous(MultiFidelityFunctions):
     """multi-fidelity discontinuous function 
 
     Parameters
@@ -455,41 +438,46 @@ class mf_Discontinuous(MultiFidelityFunctions):
     input_domain = np.array([[0.0, 1.0]])
     design_space: dict = {"x": [0.0, 1.0]}
     optimum: float = None
-    optimum_scheme: list = None 
+    optimum_scheme: list = None
     low_fidelity: list = None
 
     def __init__(self, num_dim: int = 1) -> None:
         super().__init__()
-        # check dimension 
+        # check dimension
         self.is_dim_compatible(num_dim=num_dim)
-    
+
     @staticmethod
-    def lf(x: np.ndarray) -> np.ndarray: 
+    def lf(x: np.ndarray) -> np.ndarray:
         # num of samples
         y = np.zeros((x.shape[0], 1))
-        # get objective for every point 
+        # get objective for every point
         for ii in range(x.shape[0]):
-            if x[ii, 0] <= 0.5: 
+            if x[ii, 0] <= 0.5:
                 y[ii, 0] = 0.5 * (6 * x[ii, 0] - 2) ** 2 * \
                     np.sin(12 * x[ii, 0] - 4) + 10 * (x[ii, 0] - 0.5) - 5
-            else: 
+            else:
                 y[ii, 0] = 3 + 0.5 * (6 * x[ii, 0] - 2) ** 2 * \
                     np.sin(12 * x[ii, 0] - 4) + 10 * (x[ii, 0] - 0.5) - 5
 
-        return y.reshape((-1, 1))        
-    
+        return y.reshape((-1, 1))
+
     @staticmethod
-    def hf(x: np.ndarray) -> np.ndarray: 
+    def hf(x: np.ndarray) -> np.ndarray:
 
         y = np.zeros((x.shape[0], 1))
 
         for ii in range(x.shape[0]):
-            if x[ii, 0] <= 0.5: 
-                y[ii, 0] = 2*(0.5 * (6 * x[ii, 0] - 2) ** 2 * np.sin(12 * x[ii, 0] - 4) + 10 * (x[ii, 0] - 0.5) - 5) - 20 * x[ii, 0] + 20
-            else: 
-                y[ii, 0] = 4 + 2*(3 + 0.5 * (6 * x[ii, 0] - 2) ** 2 * np.sin(12 * x[ii, 0] - 4) + 10 * (x[ii, 0] - 0.5) - 5) - 20 * x[ii, 0] + 20
-        
-        return y.reshape((-1, 1))        
+            if x[ii, 0] <= 0.5:
+                y[ii, 0] = 2*(0.5 * (6 * x[ii, 0] - 2) ** 2 *
+                              np.sin(12 * x[ii, 0] - 4) +
+                              10 * (x[ii, 0] - 0.5) - 5) - 20 * x[ii, 0] + 20
+            else:
+                y[ii, 0] = 4 + 2*(3 + 0.5 * (6 * x[ii, 0] - 2) ** 2 * np.sin(
+                    12 * x[ii, 0] - 4) + 10 * (x[ii, 0] - 0.5) - 5) - \
+                    20 * x[ii, 0] + 20
+
+        return y.reshape((-1, 1))
+
 
 class ContinuousNonlinearCorrelation1D(MultiFidelityFunctions):
     """_summary_
@@ -510,28 +498,29 @@ class ContinuousNonlinearCorrelation1D(MultiFidelityFunctions):
     input_domain = np.array([[0.0, 1.0]])
     design_space: dict = {"x": [0.0, 1.0]}
     optimum: float = None
-    optimum_scheme: list = None 
+    optimum_scheme: list = None
     low_fidelity: list = None
 
     def __init__(self, num_dim: int = 1) -> None:
         super().__init__()
-        # check dimension 
+        # check dimension
         self.is_dim_compatible(num_dim=num_dim)
-    
+
     @staticmethod
-    def lf(x: np.ndarray) -> np.ndarray: 
-        y = np.sin(8*np.pi*x) 
+    def lf(x: np.ndarray) -> np.ndarray:
+        y = np.sin(8*np.pi*x)
 
         return y.reshape((-1, 1))
-    
+
     @staticmethod
-    def hf(x: np.ndarray) -> np.ndarray: 
+    def hf(x: np.ndarray) -> np.ndarray:
 
         y = np.sin(8*np.pi*x) ** 2 * (x-np.sqrt(2))
 
         return y.reshape((-1, 1))
 
-class PhaseShiftedOscillations(MultiFidelityFunctions): 
+
+class PhaseShiftedOscillations(MultiFidelityFunctions):
     """_summary_
 
     Parameters
@@ -549,19 +538,19 @@ class PhaseShiftedOscillations(MultiFidelityFunctions):
     num_cons: int = 0
     input_domain = np.array([[0.0, 1.0]])
     design_space: dict = {"x": [0.0, 1.0]}
-    optimum: float = None 
+    optimum: float = None
     optimum_scheme: list = None
-    low_fidelity: list = None   
+    low_fidelity: list = None
 
     def __init__(self, num_dim: int = 1) -> None:
         super().__init__()
         # check dimension
 
-        self.is_dim_compatible(num_dim=num_dim)   
+        self.is_dim_compatible(num_dim=num_dim)
 
     @staticmethod
     def lf(x: np.ndarray) -> np.ndarray:
-        y = np.sin(8*np.pi * x)        
+        y = np.sin(8*np.pi * x)
         return y.reshape((-1, 1))
 
     @staticmethod

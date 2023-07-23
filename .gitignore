@@ -80,3 +80,4 @@ __pycache__/
 # folders
 examples/
 coverage_html_report/
+src/mfpml/_legacy/

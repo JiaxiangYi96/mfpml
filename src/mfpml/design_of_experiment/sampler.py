@@ -1,8 +1,6 @@
 # third-party
 from abc import ABC
 
-import pandas as pd
-
 
 class Sampler(ABC):
     """
@@ -53,7 +51,8 @@ class Sampler(ABC):
     def _create_pandas_frame(self):
         """
         this function is used to create pandas framework for the doe
-        the output will be added at the end of the pandas dataframe but without giving names
+        the output will be added at the end of the pandas dataframe
+        but without giving names
 
         Parameters
         ----------
