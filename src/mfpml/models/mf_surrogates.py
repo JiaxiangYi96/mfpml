@@ -1,11 +1,12 @@
 
 
+from typing import Any
+
 import numpy as np
 from scipy.linalg import cholesky, solve
 from scipy.optimize import minimize
 
-from mfpml.models.corrfunc import KRG
-
+from .kernels import RBF
 from .kriging import Kriging
 
 
@@ -72,8 +73,8 @@ class mf_model:
                 YH = np.concatenate((self.sample_YH, YHnew))
                 self._train_hf(XH, YH)
 
-    def _update_optimizer_hf(self, optimizer: any) -> None:
-        """Change the optimizer for high-fidelity hyperparameters
+    def _update_optimizer_hf(self, optimizer: Any) -> None:
+        """Change the optimizer for high-fidelity hyper parameters
 
         Parameters
         ----------
@@ -82,8 +83,8 @@ class mf_model:
         """
         self.optimizer = optimizer
 
-    def _update_optimizer_lf(self, optimizer: any) -> None:
-        """Change the optimizer for low-fidelity hyperparameters
+    def _update_optimizer_lf(self, optimizer: Any) -> None:
+        """Change the optimizer for low-fidelity hyper parameters
 
         Parameters
         ----------
@@ -231,7 +232,7 @@ class HierarchicalKriging(mf_model):
     def __init__(
         self,
         design_space: np.ndarray,
-        optimizer: any = None,
+        optimizer: Any = None,
         kernel_bound: list = [-4.0, 2.0],
     ) -> None:
         """Initialize hierarchical Kriging model
@@ -253,7 +254,7 @@ class HierarchicalKriging(mf_model):
         self.bounds = design_space
         self.optimizer = optimizer
         self.num_dim = design_space.shape[0]
-        self.kernel = KRG(theta=np.zeros(self.num_dim), bounds=kernel_bound)
+        self.kernel = RBF(theta=np.zeros(self.num_dim), bounds=kernel_bound)
 
         self.lf_model = Kriging(design_space=design_space, optimizer=optimizer)
 
@@ -411,9 +412,9 @@ class ScaledKriging(mf_model):
     def __init__(
         self,
         design_space: np.ndarray,
-        lf_model: any = None,
-        disc_model: any = None,
-        optimizer: any = None,
+        lf_model: Any = None,
+        disc_model: Any = None,
+        optimizer: Any = None,
         kernel_bound: list = [-4.0, 3.0],
         rho_optimize: bool = False,
         rho_method: str = "error",
@@ -463,7 +464,7 @@ class ScaledKriging(mf_model):
         self.rho_optimizer = rho_optimizer
 
         self.num_dim = design_space.shape[0]
-        self.kernel = KRG(theta=np.zeros(self.num_dim), bounds=kernel_bound)
+        self.kernel = RBF(theta=np.zeros(self.num_dim), bounds=kernel_bound)
         if lf_model is None:
             self.lf_model = Kriging(
                 design_space=design_space, optimizer=optimizer
@@ -534,7 +535,7 @@ class ScaledKriging(mf_model):
         """
         return self.sample_YH - self.rho * self.predict_lf(self.sample_XH)
 
-    def _update_optimizer_hf(self, optimizer: any) -> None:
+    def _update_optimizer_hf(self, optimizer: Any) -> None:
         """Change the optimizer for high-fidelity hyperparameters
 
         Parameters
@@ -634,7 +635,7 @@ class CoKriging(mf_model):
     def __init__(
         self,
         design_space: np.ndarray,
-        optimizer: any = None,
+        optimizer: Any = None,
         kernel_bound: list = [-4.0, 3.0],
         rho_bound: list = [1e-2, 1e2],
     ) -> None:
@@ -645,7 +646,7 @@ class CoKriging(mf_model):
         design_space : np.ndarray
             array of shape=((num_dim,2)) where each row describes
             the bound for the variable on specfic dimension
-        optimizer : any, optional
+        optimizer : Any, optional
             instance of the optimizer used to optimize the hyperparameters
             with the use style optimizer.run_optimizer(objective function,
             number of dimension, design space of variables), if not assigned,
@@ -662,7 +663,7 @@ class CoKriging(mf_model):
         self.num_dim = design_space.shape[0]
         self.rho_bound = rho_bound
         # initialize kernel and low-fidelity model
-        self.kernel = KRG(theta=np.zeros(self.num_dim), bounds=kernel_bound)
+        self.kernel = RBF(theta=np.zeros(self.num_dim), bounds=kernel_bound)
         self.lf_model = Kriging(design_space=design_space, optimizer=optimizer)
 
     def _train_hf(self, XH: np.ndarray, YH: np.ndarray) -> None:

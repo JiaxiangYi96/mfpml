@@ -169,13 +169,13 @@ class PSO(EABase):
 
     def run_optimizer(
         self,
-        func: any,
+        func: Any,
         num_dim: int,
         design_space: np.ndarray,
         print_info: bool = False,
-        save_step_results: bool = True,
+        save_step_results: bool = False,
         stopping_error: float = None,
-        args: any = (),
+        args: Any = (),
     ) -> dict:
         """main function of pso algorithm
 
@@ -359,13 +359,13 @@ class DE(EABase):
 
     def run_optimizer(
         self,
-        func: any,
+        func: Any,
         num_dim: int,
         design_space: np.ndarray,
         print_info: bool = False,
-        save_step_results: bool = True,
+        save_step_results: bool = False,
         stopping_error: float = None,
-        args: any = (),
+        args: Any = (),
     ) -> np.ndarray:
         # update some params
         self.stopping_error = stopping_error

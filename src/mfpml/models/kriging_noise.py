@@ -7,9 +7,9 @@ from scipy.optimize import minimize
 from .kernels import RBF
 
 
-class Kriging:
+class gpr:
     """
-    Kriging model with out noise term
+    gpr model with noise term
     """
 
     def __init__(
@@ -17,7 +17,7 @@ class Kriging:
         design_space: np.ndarray,
         optimizer: Any = None,
         kernel_bound: list = [-4.0, 3.0],
-        mean_prior: float = 0.0,
+        noise: float = 1.0,
     ) -> None:
         """Initialize the Kriging model
 
@@ -33,20 +33,19 @@ class Kriging:
             the 'L-BFGS-B' method in scipy is used
         kernel_bound : list, optional
             log bound for the Kriging kernel, by default [-4, 3]
-        mean_prior : float, optional
+        noise : float, optional
             mean value for the prior, by default 0
         """
         # dimension of the modeling problem
         self.num_dim = design_space.shape[0]
         # bounds of the design space
         self.bounds = design_space
-        # kernel
-        self.kernel = RBF(theta=np.zeros(
-            self.num_dim), bounds=kernel_bound, noise_sigma=1.0)
         # optimizer
         self.optimizer = optimizer
-        # mean prior
-        self.mean_prior = mean_prior
+        # noise
+        self.noise = noise
+        # kernel
+        self.kernel = RBF(theta=np.zeros(self.num_dim), bounds=kernel_bound)
 
     def train(self, X: np.ndarray, Y: np.ndarray) -> None:
         """Train the Kriging model
@@ -92,15 +91,16 @@ class Kriging:
         if not return_std:
             return fmean.reshape(-1, 1)
         else:
-            # one = np.ones((self.num_samples, 1))
+            one = np.ones((self.num_samples, 1))
             delta = solve(self.L.T, solve(self.L, knew))
-            # mse = self.sigma2 * (1 - np.diag(np.dot(knew.T, delta)) +
-            #                      np.diag((1 - knew.T.dot(delta)) ** 2
-            #                              / one.T.dot(self.beta)))
-            mse = self.sigma2 * (1 - np.diag(np.dot(knew.T, delta)))
-            return fmean.reshape(-1, 1), np.sqrt(np.maximum(mse, 0)).reshape(
-                -1, 1
-            )
+            # epistemic uncertainty
+            mse = self.sigma2 * (1 - np.diag(np.dot(knew.T, delta)) +
+                                 np.diag((1 - knew.T.dot(delta)) ** 2
+                                         / one.T.dot(self.beta)))
+            # aleatoric uncertainty
+            data_noise = self.noise**2
+            # mse = self.sigma2 * (1 - np.diag(np.dot(knew.T, delta)))
+            return fmean.reshape(-1, 1), np.sqrt(np.maximum(mse+data_noise, 0)).reshape(-1, 1)
 
     def _hyper_paras_optimization(self, grads: bool = None):
         """Optimize the hyper_parameters
@@ -110,32 +110,47 @@ class Kriging:
         grads : bool, optional
             whether to use gradients, by default None
         """
+        # set up the optimization problems
+        lower_bound_theta = self.kernel._get_low_bound
+        upper_bound_theta = self.kernel._get_high_bound
+        # set up the bounds for noise sigma
+        lower_bound_sigma = 1e-5
+        upper_bound_sigma = 10
+        # set up the bounds for the hyper-parameters
+        lower_bound = np.hstack((lower_bound_theta, lower_bound_sigma))
+        upper_bound = np.hstack((upper_bound_theta, upper_bound_sigma))
+        # bounds for the hyper-parameters
+        hyper_bounds = np.vstack((lower_bound, upper_bound)).T
+        # number of hyper-parameters
+        num_hyper = self.kernel._get_num_para + 1
 
         if self.optimizer is None:
             n_trials = 10
             opt_fs = float("inf")
             for _ in range(n_trials):
                 x0 = np.random.uniform(
-                    self.kernel._get_low_bound,
-                    self.kernel._get_high_bound,
-                    self.kernel._get_num_para,
+                    low=lower_bound,
+                    high=upper_bound,
+                    size=num_hyper,
                 )
                 optRes = minimize(
                     self._logLikelihood,
                     x0=x0,
                     method="L-BFGS-B",
-                    bounds=self.kernel._get_bounds_list,
+                    bounds=hyper_bounds,
                 )
                 if optRes.fun < opt_fs:
                     opt_param = optRes.x
                     opt_fs = optRes.fun
         else:
-            optRes = self.optimizer.run_optimizer(
+            _, _, opt_param = self.optimizer.run_optimizer(
                 self._logLikelihood,
-                num_dim=self.kernel._get_num_para,
-                design_space=self.kernel._get_bounds,
+                num_dim=num_hyper,
+                design_space=hyper_bounds,
             )
-            opt_param = optRes["best_x"]
+            self.optimizer.plot_optimization_history()
+            # opt_param = optRes["best_x"]
+        # best hyper-parameters
         self.opt_param = opt_param
 
     def _logLikelihood(self, params: np.ndarray) -> np.ndarray:
@@ -152,15 +167,18 @@ class Kriging:
             log likelihood
         """
         params = np.atleast_2d(params)
+        num_params = params.shape[1]
         out = np.zeros(params.shape[0])
 
         for i in range(params.shape[0]):
             # for optimization every row is a parameter set
-            param = params[i, :]
+            param = params[i, 0: num_params-1]
+            noise_sigma = params[i, -1]
 
             # correlation matrix R
             # calculate the covariance matrix
-            K = self.kernel(self.X, self.X, param)
+            K = self.kernel(self.X, self.X, param) + \
+                np.eye(self.num_samples) * noise_sigma**2
             #
             L = cholesky(K, lower=True)
             # R^(-1)Y
@@ -176,17 +194,22 @@ class Kriging:
 
             sigma2 = np.dot((self.sample_Y - mu).T, gamma) / self.num_samples
 
-            logp = -0.5 * self.num_samples * \
-                np.log(sigma2) - np.sum(np.log(np.diag(L)))
+            # logp = -0.5 * self.num_samples * \
+            #     np.log(sigma2) - np.sum(np.log(np.diag(L)))
+            logp = -0.5 * np.dot(self.sample_Y.T, alpha) - np.sum(
+                np.log(np.diag(L))) - 0.5*self.num_samples*np.log(2*np.pi)
+
             out[i] = logp.ravel()
 
         return -out
 
     def _update_kernel_matrix(self) -> None:
         # assign the best hyper-parameter to the kernel
-        self.kernel.set_params(self.opt_param)
+        self.kernel.set_params(self.opt_param[0:(len(self.opt_param)-1)])
+        self.noise = self.opt_param[-1]
         # update parameters with optimized hyper-parameters
-        self.K = self.kernel.get_kernel_matrix(self.X, self.X)
+        self.K = self.kernel.get_kernel_matrix(
+            self.X, self.X) + np.eye(self.num_samples) * self.noise**2
         self.L = cholesky(self.K, lower=True)
         self.alpha = solve(self.L.T, solve(self.L, self.sample_Y))
         one = np.ones((self.num_samples, 1))
@@ -196,8 +219,10 @@ class Kriging:
         self.sigma2 = (
             np.dot((self.sample_Y - self.mu).T, self.gamma) / self.num_samples
         ).item()
-        self.logp = (-0.5 * self.num_samples * np.log(self.sigma2) -
-                     np.sum(np.log(np.diag(self.L)))).item()
+        # self.logp = (-0.5 * self.num_samples * np.log(self.sigma2) -
+        #              np.sum(np.log(np.diag(self.L)))).item()
+        self.logp = -0.5 * np.dot(self.sample_Y.T, self.alpha) - np.sum(
+            np.log(np.diag(self.L))) - 0.5*self.num_samples*np.log(2*np.pi)
 
     def _update_optimizer(self, optimizer: Any) -> None:
         """Change the optimizer for optimizing hyper parameters

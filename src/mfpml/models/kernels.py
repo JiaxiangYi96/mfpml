@@ -2,7 +2,7 @@ import numpy as np
 from scipy.spatial.distance import cdist
 
 
-class corrfunc:
+class KernelCore:
     """
     Base class for kernel
     """
@@ -81,7 +81,7 @@ class corrfunc:
         return self.param
 
 
-class KRG(corrfunc):
+class RBF(KernelCore):
     def __init__(
         self,
         theta: np.ndarray,
@@ -121,17 +121,20 @@ class KRG(corrfunc):
 
         return dist
 
-    def __call__(
-        self, X: np.array, Y: np.array, param: np.array, eval_grad=False
-    ) -> np.ndarray:
+    def __call__(self,
+                 X: np.ndarray,
+                 Y: np.ndarray,
+                 param: np.ndarray,
+                 eval_grad=False
+                 ) -> np.ndarray:
         """
         Return the kernel k(x, y) and optionally its gradient.
 
         Parameters
         ----------
-        X : np.array
+        X : np.ndarray
             array of the first samples shape=((n1, num_dims))
-        Y : np.array
+        Y : np.ndarray
             array of the second samples shape=((n2, num_dims))
         param : np.array
             parameters in the specific kernel, shape=((1, num_params))
@@ -183,3 +186,105 @@ def kronDelta(X, Y):
         Kronecker delta between row pairs of `X` and `Xstar`.
     """
     return cdist(X, Y) < np.finfo(np.float32).eps
+
+
+class NoiseRBF(KernelCore):
+    def __init__(
+        self,
+        theta: np.ndarray,
+        parameters: list = ["theta"],
+        bounds: list = [-4, 3],
+        noise_sigma: float = 1.0,
+    ) -> None:
+        """calculate the rbf kernel
+
+        Parameters
+        ----------
+        theta : np.ndarray, shape=((1,num_dims))
+            initial guess of the parameters
+        parameters : list, optional
+            list the parameters to fit, by default ['theta']
+        bounds : list, optional
+            log bounds of the parameters, by default [-4, 3]
+        noise_sigma : float, optional
+            noise level, by default 1.0
+        """
+        self.param = 10**theta
+        self.sigma_noise_2 = noise_sigma**2
+        self.parameters = parameters
+        self.bounds = []
+        self.num_para = theta.size
+        for _ in range(self.num_para):
+            self.bounds.append(bounds)
+        self.bounds = np.array(self.bounds)
+
+    def get_kernel_matrix(self, X, Y) -> np.ndarray:
+        # deal with parameters
+        X = np.atleast_2d(X)
+        Y = np.atleast_2d(Y)
+        # compute the kernel matrix
+        dist = (np.sum(X**2 * self.param, 1).reshape((-1, 1)) +
+                np.sum(Y**2 * self.param, 1) - 2 *
+                np.dot(np.sqrt(self.param) * X, (np.sqrt(self.param) * Y).T))
+
+        # add a bit noise to the kernel matrix
+        dist = np.exp(-dist) + \
+            np.eye(X.shape[0], Y.shape[0]) * self.sigma_noise_2
+
+        return dist
+
+    def __call__(self,
+                 X: np.ndarray,
+                 Y: np.ndarray,
+                 param: np.ndarray,
+                 noise_sigma: float = 1.0,
+                 eval_grad=False
+                 ) -> np.ndarray:
+        """
+        Return the kernel k(x, y) and optionally its gradient.
+
+        Parameters
+        ----------
+        X : np.ndarray
+            array of the first samples shape=((n1, num_dims))
+        Y : np.ndarray
+            array of the second samples shape=((n2, num_dims))
+        param : np.array
+            parameters in the specific kernel, shape=((1, num_params))
+        noise_sigma : float, optional
+            noise level, by default 1.0
+        eval_grad : bool, optional
+            whether the gradient with respect to the log of the kernel
+            hyperparameter is computed, by default False
+            Only supported when Y is None
+
+        Returns
+        -------
+        np.array
+            kernel values with respect to parameters param
+        """
+        if eval_grad:
+            pass
+        else:
+            X = np.atleast_2d(X)
+            Y = np.atleast_2d(Y)
+            # deal with parameters
+            param = 10**param
+            # compute the distance
+            dist = (np.sum(X**2 * param, 1).reshape((-1, 1)) +
+                    np.sum(Y**2 * param, 1) -
+                    2 * np.dot(np.sqrt(param) * X, (np.sqrt(param) * Y).T))
+
+            # numerical stability
+            dist = np.exp(-dist) + \
+                np.eye(X.shape[0], Y.shape[0]) * noise_sigma**2
+
+            return dist
+
+    def set_params(self, params) -> None:
+        """
+        Set the parameters of the kernel.
+        """
+
+        setattr(self, "param", 10**params[0:(len(params)-1)])
+        setattr(self, "sigma_noise_2", params[-1]**2)
