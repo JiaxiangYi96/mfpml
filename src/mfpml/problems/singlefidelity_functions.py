@@ -109,7 +109,6 @@ class Forrester(SingleFidelityFunctions):
 
 class Branin(SingleFidelityFunctions):
 
-
     num_dim: int = 2
     num_obj: int = 1
     num_cons: int = 0
@@ -157,7 +156,6 @@ class Branin(SingleFidelityFunctions):
 
 
 class GoldPrice(SingleFidelityFunctions):
-
 
     num_dim: int = 2
     num_obj: int = 1
@@ -218,7 +216,6 @@ class GoldPrice(SingleFidelityFunctions):
 
 class Sixhump(SingleFidelityFunctions):
 
-
     num_dim: int = 2
     num_obj: int = 1
     num_cons: int = 0
@@ -260,7 +257,6 @@ class Sixhump(SingleFidelityFunctions):
 
 
 class Sasena(SingleFidelityFunctions):
-
 
     num_dim: int = 2
     num_obj: int = 1
@@ -304,7 +300,6 @@ class Sasena(SingleFidelityFunctions):
 
 
 class Hartman3(SingleFidelityFunctions):
-
 
     num_dim: int = 3
     num_obj: int = 1
@@ -362,7 +357,6 @@ class Hartman3(SingleFidelityFunctions):
 
 
 class Hartman6(SingleFidelityFunctions):
-
 
     num_dim: int = 6
     num_obj: int = 1
@@ -443,7 +437,6 @@ class Hartman6(SingleFidelityFunctions):
 
 class Thevenot(SingleFidelityFunctions):
 
-
     num_dim: int = None
     num_obj: int = 1
     num_cons: int = 0
@@ -503,7 +496,6 @@ class Thevenot(SingleFidelityFunctions):
 
     def __update_parameters(self):
 
-
         self.__class__.num_dim = self.num_dim
         for ii in range(self.input_domain.shape[0]):
             self.__class__.design_space[f"x{ii + 1}"] = self.input_domain[
@@ -519,7 +511,6 @@ class Thevenot(SingleFidelityFunctions):
 
 
 class Ackley(SingleFidelityFunctions):
-
 
     num_dim: int = None
     num_obj: int = 1

@@ -8,9 +8,9 @@ class corrfunc:
     """
 
     @property
-    def hyperparameters(self):
+    def hyperparameters(self) -> list:
         """
-        Returns a list of all hyperparameters specifications
+        Returns a list of all hyper_parameters specifications
         """
         return self.param.tolist()
 
@@ -84,11 +84,11 @@ class corrfunc:
 class KRG(corrfunc):
     def __init__(
         self,
-        theta: np.array,
+        theta: np.ndarray,
         parameters: list = ["theta"],
         bounds: list = [-4, 3],
     ) -> None:
-        """_summary_
+        """calculate the rbf kernel
 
         Parameters
         ----------
@@ -103,25 +103,27 @@ class KRG(corrfunc):
         self.parameters = parameters
         self.bounds = []
         self.num_para = theta.size
-        for i in range(self.num_para):
+        for _ in range(self.num_para):
             self.bounds.append(bounds)
         self.bounds = np.array(self.bounds)
 
-    def K(self, X, Y):
+    def get_kernel_matrix(self, X, Y) -> np.ndarray:
+        # deal with parameters
         X = np.atleast_2d(X)
         Y = np.atleast_2d(Y)
-        dist = (
-            np.sum(X**2 * self.param, 1).reshape(-1, 1)
-            + np.sum(Y**2 * self.param, 1)
-            - 2 * np.dot(np.sqrt(self.param) * X, (np.sqrt(self.param) * Y).T)
-        )
-        return np.exp(-dist) + np.finfo(float).eps * (
-            10 + X.shape[1]
-        ) * np.eye(X.shape[0], Y.shape[0])
+        # compute the kernel matrix
+        dist = (np.sum(X**2 * self.param, 1).reshape((-1, 1)) +
+                np.sum(Y**2 * self.param, 1) - 2 *
+                np.dot(np.sqrt(self.param) * X, (np.sqrt(self.param) * Y).T))
+
+        # add a bit noise to the kernel matrix
+        dist = np.exp(-dist) + np.eye(X.shape[0], Y.shape[0]) * 10 ** -10
+
+        return dist
 
     def __call__(
         self, X: np.array, Y: np.array, param: np.array, eval_grad=False
-    ):
+    ) -> np.ndarray:
         """
         Return the kernel k(x, y) and optionally its gradient.
 
@@ -148,15 +150,17 @@ class KRG(corrfunc):
         else:
             X = np.atleast_2d(X)
             Y = np.atleast_2d(Y)
+            # deal with parameters
             param = 10**param
-            dist = (
-                np.sum(X**2 * param, 1).reshape(-1, 1)
-                + np.sum(Y**2 * param, 1)
-                - 2 * np.dot(np.sqrt(param) * X, (np.sqrt(param) * Y).T)
-            )
-            return np.exp(-dist) + np.finfo(float).eps * (
-                10 + X.shape[1]
-            ) * np.eye(X.shape[0], Y.shape[0])
+            # compute the distance
+            dist = (np.sum(X**2 * param, 1).reshape((-1, 1)) +
+                    np.sum(Y**2 * param, 1) -
+                    2 * np.dot(np.sqrt(param) * X, (np.sqrt(param) * Y).T))
+
+            # numerical stability
+            dist = np.exp(-dist) + np.eye(X.shape[0], Y.shape[0]) * 10 ** -10
+
+            return dist
 
     def set_params(self, params):
         """

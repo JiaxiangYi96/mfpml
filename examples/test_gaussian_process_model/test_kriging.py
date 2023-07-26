@@ -11,7 +11,7 @@ from sklearn.metrics import max_error, mean_squared_error, r2_score
 #     ScaledKriging,
 #     CoKriging,
 # )
-from mfpml.mfpml.design_of_experiment.singlefideliy_samplers import LatinHyperCube
+from mfpml.design_of_experiment.singlefideliy_samplers import LatinHyperCube
 from mfpml.models.kriging import Kriging
 from mfpml.optimization.evolutionary_algorithms import PSO
 from mfpml.problems.singlefidelity_functions import (Branin, Hartman3, Sasena,
