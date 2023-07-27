@@ -348,7 +348,7 @@ class DE(EABase):
         num_pop: int,
         num_gen: int,
         step_size: float = 0.5,
-        crossover_rate: float = 0.1,
+        crossover_rate: float = 0.5,
         strategy: str = "DE/rand/1/bin",
     ) -> None:
         self.num_pop = num_pop

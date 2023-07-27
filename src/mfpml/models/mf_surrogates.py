@@ -7,12 +7,10 @@ from scipy.linalg import cholesky, solve
 from scipy.optimize import minimize
 
 from .kernels import RBF
-from .kriging import Kriging
+from .sf_gpr import Kriging
 
 
 class mf_model:
-    def __init__(self) -> None:
-        pass
 
     def train(self, X: dict, Y: dict) -> None:
         """Train the hierarchical Kriging model
