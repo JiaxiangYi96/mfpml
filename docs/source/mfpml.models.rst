@@ -1,18 +1,18 @@
-mfpml.models module
+mfpml.models
 ====================
 
-mfpml.models.corrfunc
+mfpml.models.kernels
 ----------------------------
 
-.. automodule:: mfpml.models.corrfunc
+.. automodule:: mfpml.models.kernels
    :members:
    :undoc-members:
    :show-inheritance:
 
-mfpml.models.kriging
+mfpml.models.sf\_gpr
 ---------------------------
 
-.. automodule:: mfpml.models.kriging
+.. automodule:: mfpml.models.sf_gpr
    :members:
    :undoc-members:
    :show-inheritance:
