@@ -19,25 +19,23 @@ class SingleFidelityFunctions(Functions):
                 stop=self._input_domain[0, 1],
                 num=num_plot,
             )
-
-            with plt.style.context(["ieee", "science"]):
-                fig, ax = plt.subplots()
-                ax.plot(
-                    x_plot,
-                    self.f(x=x_plot),
-                    label=f"{self.__class__.__name__}",
-                )
-                ax.legend()
-                ax.set(xlabel=r"$x$")
-                ax.set(ylabel=r"$y$")
-                # ax.autoscale(tight=True)
-                plt.xlim(
-                    left=self._input_domain[0, 0],
-                    right=self._input_domain[0, 1],
-                )
-                if save_figure is True:
-                    fig.savefig(self.__class__.__name__, dpi=300)
-                plt.show()
+            # plot the function
+            fig, ax = plt.subplots()
+            ax.plot(
+                x_plot,
+                self.f(x=x_plot),
+                label=f"{self.__class__.__name__}",
+            )
+            ax.legend()
+            ax.set(xlabel=r"$x$")
+            ax.set(ylabel=r"$y$")
+            plt.xlim(
+                left=self._input_domain[0, 0],
+                right=self._input_domain[0, 1],
+            )
+            if save_figure is True:
+                fig.savefig(self.__class__.__name__, dpi=300)
+            plt.show()
         elif num_dim == 2:
 
             x1_plot = np.linspace(
@@ -58,16 +56,14 @@ class SingleFidelityFunctions(Functions):
                     xy = np.array([X1[i, j], X2[i, j]])
                     xy = np.reshape(xy, (1, 2))
                     Y[i, j] = self.f(x=xy)
-            with plt.style.context(["ieee", "science"]):
-                fig, ax = plt.subplots()
-                cs = ax.contour(X1, X2, Y, 15)
-                plt.colorbar(cs)
-                ax.set(xlabel=r"$x_1$")
-                ax.set(ylabel=r"$x_2$")
-                if save_figure is True:
-                    fig.savefig(self.__class__.__name__, dpi=300)
-                plt.show(block=True)
-                plt.interactive(False)
+            fig, ax = plt.subplots()
+            cs = ax.contour(X1, X2, Y, 15)
+            plt.colorbar(cs)
+            ax.set(xlabel=r"$x_1$")
+            ax.set(ylabel=r"$x_2$")
+            if save_figure is True:
+                fig.savefig(self.__class__.__name__, dpi=300)
+            plt.show(block=True)
         else:
             raise ValueError("Unexpected value of 'num_dimension'!", num_dim)
 
@@ -113,8 +109,6 @@ class Branin(SingleFidelityFunctions):
     num_obj: int = 1
     num_cons: int = 0
     input_domain = np.array([[-5.0, 10.0], [0.0, 15.0]])
-    # low_bound: list = [-5.0, 0.0]
-    # high_bound: list = [10.0, 15.0]
     design_space: dict = {"x1": [-5.0, 10.0], "x2": [0.0, 15.0]}
     optimum: float = 0.397887
     optimum_scheme: list = [[-np.pi, 12.275], [np.pi, 2.275], [9.42478, 2.475]]
@@ -160,8 +154,6 @@ class GoldPrice(SingleFidelityFunctions):
     num_dim: int = 2
     num_obj: int = 1
     num_cons: int = 0
-    # low_bound: list = [-2.0, -2.0]
-    # high_bound: list = [2.0, 2.0]
     input_domain = np.array([[-2.0, 2.0], [-2.0, 2.0]])
     design_space: dict = {"x1": [-2.0, 2.0], "x2": [-2.0, 2.0]}
     optimum: float = 3.0
@@ -219,8 +211,6 @@ class Sixhump(SingleFidelityFunctions):
     num_dim: int = 2
     num_obj: int = 1
     num_cons: int = 0
-    # low_bound: list = [-3.0, -2.0]
-    # high_bound: list = [3.0, 2.0]
     input_domain = np.array([[-3.0, 3.0], [-2.0, 2.0]])
     design_space: dict = {"x1": [-3.0, 3.0], "x2": [-2.0, 2.0]}
     optimum: float = -1.0316
@@ -261,8 +251,6 @@ class Sasena(SingleFidelityFunctions):
     num_dim: int = 2
     num_obj: int = 1
     num_cons: int = 0
-    # low_bound: list = [0.0, 0.0]
-    # high_bound: list = [5.0, 5.0]
     input_domain = np.array([[0.0, 5.0], [0.0, 5.0]])
     design_space: dict = {"x1": [0.0, 5.0], "x2": [0.0, 5.0]}
     optimum: float = -1.4565
@@ -304,8 +292,6 @@ class Hartman3(SingleFidelityFunctions):
     num_dim: int = 3
     num_obj: int = 1
     num_cons: int = 0
-    # low_bound: list = [0.0, 0.0, 0.0]
-    # high_bound: list = [1.0, 1.0, 1.0]
     input_domain = np.array([[0.0, 1.0], [0.0, 1.0], [0.0, 1.0]])
     design_space: dict = {"x1": [0.0, 1.0], "x2": [0.0, 1.0], "x3": [0.0, 1.0]}
     optimum: float = -3.86278214782076
@@ -440,8 +426,6 @@ class Thevenot(SingleFidelityFunctions):
     num_dim: int = None
     num_obj: int = 1
     num_cons: int = 0
-    # low_bound: list = None
-    # high_bound: list = None
     design_space: dict = {}
     input_domain: np.ndarray = None
     optimum: float = None
@@ -515,8 +499,6 @@ class Ackley(SingleFidelityFunctions):
     num_dim: int = None
     num_obj: int = 1
     num_cons: int = 0
-    # low_bound: list = None
-    # high_bound: list = None
     design_space: dict = {}
     input_domain: np.ndarray = None
     optimum: float = None

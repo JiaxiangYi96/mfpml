@@ -1,6 +1,7 @@
 from typing import Any
 
 import numpy as np
+from matplotlib import pyplot as plt
 from scipy.linalg import cholesky, solve
 from scipy.optimize import minimize
 
@@ -44,6 +45,46 @@ class GP:
             instance of optimizer
         """
         self.optimizer = optimizer
+
+    def plot_prediction(self, fig_name: str = "gpr_pred",
+                        save_fig: bool = False, **kwargs,
+                        ) -> None:
+        """plot model prediction
+
+        Parameters
+        ----------
+        fig_name : str, optional
+            figure name, by default "gpr_pred"
+        save_fig : bool, optional
+            save figure otr not, by default False
+        """
+
+        if self.num_dim == 1:
+            x_plot = np.linspace(
+                start=self.bounds[0, 0], stop=self.bounds[0, 1], num=1000
+            )
+            x_plot = x_plot.reshape((-1, 1))
+            y_pred, y_sigma = self.predict(x_plot, return_std=True)
+            # with plt.style.context(["ieee", "science"]):
+            fig, ax = plt.subplots(**kwargs)
+            ax.plot(self.sample_X, self.sample_Y,
+                    "ro", label="samples",)
+            ax.plot(x_plot, y_pred, "--", color='b', label="pred mean")
+            ax.fill_between(
+                x_plot.ravel(),
+                (y_pred + 2 * y_sigma).ravel(),
+                (y_pred - 2 * y_sigma).ravel(),
+                color="lightgray",
+                label=r"95% confidence interval",
+            )
+            ax.legend(loc='best')
+            plt.xlabel(r"$x$", fontsize=12)
+            plt.ylabel(r"$y$", fontsize=12)
+            ax.tick_params(axis="both", which="major", labelsize=12)
+            ax.grid(True)
+            if save_figure is True:
+                fig.savefig(name, dpi=300, bbox_inches="tight")
+            plt.show()
 
     @staticmethod
     def normalize_input(X: np.ndarray, bounds: np.ndarray) -> np.ndarray:
@@ -122,7 +163,7 @@ class Kriging(GP):
 
     def predict(self,
                 x_predict: np.ndarray,
-                return_std: bool = False) -> [np.ndarray, np.ndarray]:
+                return_std: bool = False) -> tuple[np.ndarray, np.ndarray]:
         """Predict responses through the Kriging model
 
         Parameters

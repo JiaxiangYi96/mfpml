@@ -6,9 +6,9 @@ from sklearn.gaussian_process import GaussianProcessRegressor
 from sklearn.gaussian_process.kernels import RBF
 
 from mfpml.design_of_experiment.multifidelity_samplers import LatinHyperCube
-from mfpml.models.kriging import Kriging
 from mfpml.models.mf_surrogates import (CoKriging, HierarchicalKriging,
                                         ScaledKriging)
+from mfpml.models.sf_gpr import Kriging
 from mfpml.optimization.evolutionary_algorithms import PSO
 from mfpml.problems.multifidelity_functions import Forrester_1a, mf_Hartman3
 

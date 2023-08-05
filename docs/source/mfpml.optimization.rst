@@ -1,4 +1,4 @@
-mfpml.optimization module
+mfpml.optimization
 ==========================
 
 
@@ -22,6 +22,22 @@ mfpml.optimization.mf\_acqusitions
 -----------------------------------------
 
 .. automodule:: mfpml.optimization.mf_acqusitions
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+mfpml.optimization.sf\_acqusitions
+-----------------------------------------
+
+.. automodule:: mfpml.optimization.sf_acqusitions
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+mfpml.optimization.sfbo
+-----------------------------------------
+
+.. automodule:: mfpml.optimization.sfbo
    :members:
    :undoc-members:
    :show-inheritance:

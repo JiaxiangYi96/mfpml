@@ -188,7 +188,7 @@ class LatinHyperCube(SingleFidelitySampler):
             design_space=design_space, seed=seed
         )
 
-    def get_samples(self, num_samples: int, **kwargs) -> dict:
+    def get_samples(self, num_samples: int, **kwargs) -> np.ndarray:
         lhs_sampler = LatinHypercube(d=self.num_dim, seed=self.seed)
         sample = lhs_sampler.random(num_samples)
         for i, bounds in enumerate(self.design_space.values()):
@@ -218,7 +218,7 @@ class RandomSampler(SingleFidelitySampler):
             design_space=design_space, seed=seed
         )
 
-    def get_samples(self, num_samples: int, **kwargs) -> dict:
+    def get_samples(self, num_samples: int, **kwargs) -> np.ndarray:
         np.random.seed(self.seed)
         sample = np.random.random((num_samples, self.num_dim))
         for i, bounds in enumerate(self.design_space.values()):
@@ -256,7 +256,7 @@ class SobolSequence(SingleFidelitySampler):
         else:
             self.num_skip = num_skip
 
-    def get_samples(self, num_samples: int, **kwargs) -> dict:
+    def get_samples(self, num_samples: int, **kwargs) -> np.ndarray:
         sobol_sampler = Sobol(d=self.num_dim, seed=self.seed)
         # generate lots of samples first
         sobol_sampler.random_base2(m=num_samples)

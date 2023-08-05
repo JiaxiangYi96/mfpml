@@ -366,7 +366,7 @@ class DE(EABase):
         save_step_results: bool = False,
         stopping_error: float = None,
         args: Any = (),
-    ) -> np.ndarray:
+    ) -> tuple[dict, np.ndarray, np.ndarray]:
         # update some params
         self.stopping_error = stopping_error
         self.func = FunctionWrapper(function=func, args=args)

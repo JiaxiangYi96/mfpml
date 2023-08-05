@@ -79,5 +79,6 @@ __pycache__/
 
 # folders
 examples/
+examples/test_gaussian_process_model/
 coverage_html_report/
 src/mfpml/_legacy/

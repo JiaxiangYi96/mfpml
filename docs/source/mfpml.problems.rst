@@ -1,4 +1,4 @@
-mfpml.problems module
+mfpml.problems
 ======================
 
 mfpml.problems.functions
