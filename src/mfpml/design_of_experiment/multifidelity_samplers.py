@@ -175,7 +175,7 @@ class MultiFidelitySampler(Sampler):
         return {"hf": self._hf_samples, "lf": self._lf_samples}
 
 
-class LatinHyperCube(MultiFidelitySampler):
+class MFLatinHyperCube(MultiFidelitySampler):
     """
     Multi-fidelity Latin HyperCube sampling
     """
@@ -183,7 +183,7 @@ class LatinHyperCube(MultiFidelitySampler):
     def __init__(
         self, design_space: dict, nested: bool = False, seed: int = None
     ) -> None:
-        super(LatinHyperCube, self).__init__(
+        super(MFLatinHyperCube, self).__init__(
             design_space=design_space, seed=seed
         )
         self.nested = nested
@@ -248,7 +248,7 @@ class LatinHyperCube(MultiFidelitySampler):
         pass
 
 
-class SobolSequence(MultiFidelitySampler):
+class MFSobolSequence(MultiFidelitySampler):
     """
     Multi-fidelity sobol sequence sampling
     """
@@ -260,7 +260,7 @@ class SobolSequence(MultiFidelitySampler):
         seed: int = 123456,
         num_skip: int = None,
     ) -> None:
-        super(SobolSequence, self).__init__(
+        super(MFSobolSequence, self).__init__(
             design_space=design_space, seed=seed
         )
         self.nested = nested

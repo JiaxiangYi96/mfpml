@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 
-from mfpml.design_of_experiment.multifidelity_samplers import SobolSequence
+from mfpml.design_of_experiment.multifidelity_samplers import MFSobolSequence
 from mfpml.problems.multifidelity_functions import Forrester_1b
 
 pytestmark = pytest.mark.smoke
@@ -11,7 +11,7 @@ def test_forrester_1b() -> None:
     function = Forrester_1b()
     design_space = function.design_space
     # test sampling part
-    sampler = SobolSequence(design_space=design_space, seed=12, nested=True)
+    sampler = MFSobolSequence(design_space=design_space, seed=12, nested=True)
     samples = sampler.get_samples(num_lf_samples=10, num_hf_samples=4)
     sample_y = {}
     sample_y["hf"] = function.hf(samples["hf"])

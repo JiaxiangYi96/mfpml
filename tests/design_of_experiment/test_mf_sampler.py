@@ -1,8 +1,8 @@
 import numpy as np
 import pytest
 
-from mfpml.design_of_experiment.multifidelity_samplers import (LatinHyperCube,
-                                                               SobolSequence)
+from mfpml.design_of_experiment.multifidelity_samplers import (
+    MFLatinHyperCube, MFSobolSequence)
 from mfpml.design_of_experiment.space import DesignSpace
 
 pytestmark = pytest.mark.smoke
@@ -13,7 +13,8 @@ def test_sobol_sequence_nested() -> None:
         names=["x1", "x2"], low_bound=[0.0, 0.0], high_bound=[1.0, 1.0]
     )
     design_space = space.design_space
-    mf_sampler = SobolSequence(design_space=design_space, seed=10, nested=True)
+    mf_sampler = MFSobolSequence(
+        design_space=design_space, seed=10, nested=True)
     samples = mf_sampler.get_samples(num_lf_samples=4, num_hf_samples=2)
     # test results
     results_hf = np.array([[0.17129549, 0.73985035], [0.64001456, 0.39570647]])
@@ -34,7 +35,7 @@ def test_sobol_sequence_unnested() -> None:
         names=["x1", "x2"], low_bound=[0.0, 0.0], high_bound=[1.0, 1.0]
     )
     design_space = space.design_space
-    mf_sampler = SobolSequence(
+    mf_sampler = MFSobolSequence(
         design_space=design_space, seed=10, nested=False
     )
     samples = mf_sampler.get_samples(num_lf_samples=4, num_hf_samples=2)
@@ -57,7 +58,7 @@ def test_lhs_unnested() -> None:
         names=["x1", "x2"], low_bound=[0.0, 0.0], high_bound=[1.0, 1.0]
     )
     design_space = space.design_space
-    mf_sampler = LatinHyperCube(
+    mf_sampler = MFLatinHyperCube(
         design_space=design_space, seed=12, nested=False
     )
     samples = mf_sampler.get_samples(num_lf_samples=4, num_hf_samples=2)

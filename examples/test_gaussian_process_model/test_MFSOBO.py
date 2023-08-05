@@ -5,7 +5,7 @@ from time import process_time_ns
 import numpy as np
 
 from mfpml.design_of_experiment.multifidelity_samplers import LatinHyperCube
-from mfpml.models.mf_surrogates import HierarchicalKriging
+from mfpml.models.mf_gprs import HierarchicalKriging
 from mfpml.optimization.mf_acqusitions import (augmentedEI, extendedPI, vfei,
                                                vflcb)
 from mfpml.optimization.mfBO import MFSOBO
