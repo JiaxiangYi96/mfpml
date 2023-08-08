@@ -11,24 +11,25 @@ from .kernels import RBF
 class GP:
     """base class for Gaussian Process models"""
 
-    def train(self, X: np.ndarray, Y: np.ndarray) -> None:
+    def train(self, sample_x: np.ndarray, sample_y: np.ndarray) -> None:
         """traning procedure of gpr models
 
         Parameters
         ----------
-        X : np.ndarray
+        sample_x : np.ndarray
             sample array of sample
-        Y : np.ndarray
+        sample_y : np.ndarray
             responses of the sample
         """
         # normalize the input
-        self.sample_X = X
-        self.X = self.normalize_input(X, self.bounds)
+        # the original sample_x
+        self.sample_x = sample_x
+        self.sample_scaled_x = self.normalize_input(sample_x, self.bounds)
         # get the response
-        self.sample_Y = Y.reshape(-1, 1)
+        self.sample_y = sample_y.reshape(-1, 1)
 
         # get number samples
-        self.num_samples = self.X.shape[0]
+        self.num_samples = self.sample_x.shape[0]
 
         # optimizer hyper-parameters
         self._hyper_paras_optimization()
@@ -67,8 +68,7 @@ class GP:
             y_pred, y_sigma = self.predict(x_plot, return_std=True)
             # with plt.style.context(["ieee", "science"]):
             fig, ax = plt.subplots(**kwargs)
-            ax.plot(self.sample_X, self.sample_Y,
-                    "ro", label="samples",)
+            ax.plot(self.sample_x, self.sample_y, "ro", label="samples",)
             ax.plot(x_plot, y_pred, "--", color='b', label="pred mean")
             ax.fill_between(
                 x_plot.ravel(),
@@ -82,17 +82,18 @@ class GP:
             plt.ylabel(r"$y$", fontsize=12)
             ax.tick_params(axis="both", which="major", labelsize=12)
             ax.grid(True)
-            if save_figure is True:
-                fig.savefig(name, dpi=300, bbox_inches="tight")
+            if save_fig is True:
+                fig.savefig(fig_name, dpi=300, bbox_inches="tight")
             plt.show()
 
     @staticmethod
-    def normalize_input(X: np.ndarray, bounds: np.ndarray) -> np.ndarray:
+    def normalize_input(sample_x: np.ndarray,
+                        bounds: np.ndarray) -> np.ndarray:
         """Normalize samples to range [0, 1]
 
         Parameters
         ----------
-        X : np.ndarray
+        sample_x : np.ndarray
             samples to scale
         bounds : np.ndarray
             bounds with shape=((num_dim, 2))
@@ -102,10 +103,10 @@ class GP:
         np.ndarray
             normalized samples
         """
-        return (X - bounds[:, 0]) / (bounds[:, 1] - bounds[:, 0])
+        return (sample_x - bounds[:, 0]) / (bounds[:, 1] - bounds[:, 0])
 
     @property
-    def _num_X(self) -> int:
+    def _num_samples(self) -> int:
         """Return the number of samples
 
         Returns
@@ -113,7 +114,9 @@ class GP:
         num_samples : int
             num samples
         """
-        return self.sample_X.shape[0]
+        return self.sample_x.shape[0]
+
+# =========================================================================== #
 
 
 class Kriging(GP):
@@ -180,16 +183,16 @@ class Kriging(GP):
             return the prediction with shape (#Xinput, 1)
         """
         # normalize the input
-        X_new = self.normalize_input(x_predict, self.bounds)
-        X_new = np.atleast_2d(X_new)
-        # get the kernel matrix for predicted samples
-        knew = self.kernel.get_kernel_matrix(self.X, X_new)
+        sample_new = self.normalize_input(x_predict, self.bounds)
+        sample_new = np.atleast_2d(sample_new)
+        # get the kernel matrix for predicted samples(scaled sampless)
+        knew = self.kernel.get_kernel_matrix(self.sample_scaled_x, sample_new)
         # calculate the predicted mean
         fmean = self.mu + np.dot(knew.T, self.gamma)
         fmean = fmean.reshape(-1, 1)
         # calculate the standard deviation
         if not return_std:
-            return fmean, fmean
+            return fmean
         else:
             one = np.ones((self.num_samples, 1))
             delta = solve(self.L.T, solve(self.L, knew))
@@ -231,7 +234,7 @@ class Kriging(GP):
                     opt_fs = optRes.fun
         else:
             # use the optimizer in the repo
-            optRes = self.optimizer.run_optimizer(
+            optRes, _, _ = self.optimizer.run_optimizer(
                 self._logLikelihood,
                 num_dim=self.kernel._get_num_para,
                 design_space=self.kernel._get_bounds,
@@ -262,11 +265,13 @@ class Kriging(GP):
 
             # correlation matrix R
             # calculate the covariance matrix
-            K = self.kernel(self.X, self.X, param)
+            K = self.kernel(self.sample_scaled_x,
+                            self.sample_scaled_x,
+                            param)
             #
             L = cholesky(K, lower=True)
             # R^(-1)Y
-            alpha = solve(L.T, solve(L, self.sample_Y))
+            alpha = solve(L.T, solve(L, self.sample_y))
 
             one = np.ones((self.num_samples, 1))
             # R^(-1)1
@@ -274,9 +279,9 @@ class Kriging(GP):
             # 1R^(-1)Y / 1R^(-1)vector(1)
             mu = (np.dot(one.T, alpha) / np.dot(one.T, beta)).squeeze()
 
-            gamma = solve(L.T, solve(L, (self.sample_Y - mu)))
+            gamma = solve(L.T, solve(L, (self.sample_y - mu)))
 
-            sigma2 = np.dot((self.sample_Y - mu).T, gamma) / self.num_samples
+            sigma2 = np.dot((self.sample_y - mu).T, gamma) / self.num_samples
 
             logp = -0.5 * self.num_samples * \
                 np.log(sigma2) - np.sum(np.log(np.diag(L)))
@@ -288,15 +293,16 @@ class Kriging(GP):
         # assign the best hyper-parameter to the kernel
         self.kernel.set_params(self.opt_param)
         # update parameters with optimized hyper-parameters
-        self.K = self.kernel.get_kernel_matrix(self.X, self.X)
+        self.K = self.kernel.get_kernel_matrix(self.sample_scaled_x,
+                                               self.sample_scaled_x)
         self.L = cholesky(self.K, lower=True)
-        self.alpha = solve(self.L.T, solve(self.L, self.sample_Y))
+        self.alpha = solve(self.L.T, solve(self.L, self.sample_y))
         one = np.ones((self.num_samples, 1))
         self.beta = solve(self.L.T, solve(self.L, one))
         self.mu = (np.dot(one.T, self.alpha) / np.dot(one.T, self.beta)).item()
-        self.gamma = solve(self.L.T, solve(self.L, (self.sample_Y - self.mu)))
+        self.gamma = solve(self.L.T, solve(self.L, (self.sample_y - self.mu)))
         self.sigma2 = (
-            np.dot((self.sample_Y - self.mu).T, self.gamma) / self.num_samples
+            np.dot((self.sample_y - self.mu).T, self.gamma) / self.num_samples
         ).item()
         self.logp = (-0.5 * self.num_samples * np.log(self.sigma2) -
                      np.sum(np.log(np.diag(self.L)))).item()
@@ -361,10 +367,10 @@ class GaussianProcessRegressor(GP):
             return the prediction with shape (#Xinput, 1)
         """
         # normalize the input
-        X_new = self.normalize_input(x_predict, self.bounds)
-        X_new = np.atleast_2d(X_new)
+        sample_new = self.normalize_input(x_predict, self.bounds)
+        sample_new = np.atleast_2d(sample_new)
         # calculate the kernel matrix for predicted samples
-        knew = self.kernel.get_kernel_matrix(self.X, X_new)
+        knew = self.kernel.get_kernel_matrix(self.sample_scaled_x, sample_new)
         # get the predicted mean
         fmean = self.mu + np.dot(knew.T, self.gamma)
         fmean = fmean.reshape(-1, 1)
@@ -460,14 +466,15 @@ class GaussianProcessRegressor(GP):
 
             # correlation matrix R
             # calculate the covariance matrix
-            K = self.kernel(self.X, self.X, param) + \
-                np.eye(self.num_samples) * noise_sigma**2
+            K = self.kernel(self.sample_scaled_x,
+                            self.sample_scaled_x,
+                            param) + np.eye(self.num_samples) * noise_sigma**2
             #
             L = cholesky(K, lower=True)
             # R^(-1)Y
-            alpha = solve(L.T, solve(L, self.sample_Y))
+            alpha = solve(L.T, solve(L, self.sample_y))
 
-            logp = -0.5 * np.dot(self.sample_Y.T, alpha) - np.sum(
+            logp = -0.5 * np.dot(self.sample_y.T, alpha) - np.sum(
                 np.log(np.diag(L))) - 0.5*self.num_samples*np.log(2*np.pi)
 
             out[i] = logp.ravel()
@@ -480,17 +487,18 @@ class GaussianProcessRegressor(GP):
         self.noise = self.opt_param[-1]
         # update parameters with optimized hyper-parameters
         self.K = self.kernel.get_kernel_matrix(
-            self.X, self.X) + np.eye(self.num_samples) * self.noise**2
+            self.sample_scaled_x,
+            self.sample_scaled_x) + np.eye(self.num_samples) * self.noise**2
         self.L = cholesky(self.K, lower=True)
-        self.alpha = solve(self.L.T, solve(self.L, self.sample_Y))
+        self.alpha = solve(self.L.T, solve(self.L, self.sample_y))
         one = np.ones((self.num_samples, 1))
         self.beta = solve(self.L.T, solve(self.L, one))
         self.mu = (np.dot(one.T, self.alpha) / np.dot(one.T, self.beta)).item()
-        self.gamma = solve(self.L.T, solve(self.L, (self.sample_Y - self.mu)))
+        self.gamma = solve(self.L.T, solve(self.L, (self.sample_y - self.mu)))
         self.sigma2 = (
-            np.dot((self.sample_Y - self.mu).T, self.gamma) / self.num_samples
+            np.dot((self.sample_y - self.mu).T, self.gamma) / self.num_samples
         ).item()
         # self.logp = (-0.5 * self.num_samples * np.log(self.sigma2) -
         #              np.sum(np.log(np.diag(self.L)))).item()
-        self.logp = -0.5 * np.dot(self.sample_Y.T, self.alpha) - np.sum(
+        self.logp = -0.5 * np.dot(self.sample_y.T, self.alpha) - np.sum(
             np.log(np.diag(self.L))) - 0.5*self.num_samples*np.log(2*np.pi)

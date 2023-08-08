@@ -80,7 +80,7 @@ class EI:
         """
         num_dim = self.model.num_dim
         x = np.array(x).reshape((-1, num_dim))
-        f_min = self.model.sample_Y.min()
+        f_min = self.model.sample_y.min()
         y_hat, sigma = self.model.predict(x, return_std=True)
         # expected improvement
         ei = (f_min - y_hat) * norm.cdf(
@@ -122,7 +122,7 @@ class PI:
         """
         num_dim = self.model.num_dim
         x = np.array(x).reshape((-1, num_dim))
-        f_min = self.model.sample_Y.min()
+        f_min = self.model.sample_y.min()
         # get predicted mean and standard deviation
         y_hat, sigma = self.model.predict(x, return_std=True)
         # probability improvement

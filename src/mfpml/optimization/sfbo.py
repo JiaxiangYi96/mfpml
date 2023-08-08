@@ -111,7 +111,7 @@ class SFBO(object):
         while iter < num_iter and error >= self.stopping_error:
             # update the best values
             self.__get_optimum(iter=iter)
-            self.model.train(X=self.samples, Y=self.responses)
+            self.model.train(sample_x=self.samples, sample_y=self.responses)
             # acquisition function
             self._acquisition(acq=acquisition)
             # optimization
