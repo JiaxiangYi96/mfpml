@@ -17,10 +17,34 @@ mfpml.models.sf\_gpr
    :undoc-members:
    :show-inheritance:
 
-mfpml.models.mf\_surrogates
+mfpml.models.mf\_gprs
 ----------------------------------
 
-.. automodule:: mfpml.models.mf_surrogates
+.. automodule:: mfpml.models.mf_gprs
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+mfpml.models.hierarchical\_kriging
+----------------------------------
+
+.. automodule:: mfpml.models.hierarchical_kriging
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+mfpml.models.co\_kriging
+----------------------------------
+
+.. automodule:: mfpml.models.co_kriging
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+mfpml.models.mf\_scale\_kriging
+----------------------------------
+
+.. automodule:: mfpml.models.mf_scale_kriging
    :members:
    :undoc-members:
    :show-inheritance:

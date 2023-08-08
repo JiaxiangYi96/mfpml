@@ -98,10 +98,12 @@ class CoKriging(mf_model):
             (
                 self.rho
                 * self.lf_model.sigma2
-                * self.lf_model.kernel.get_kernel_matrix(self.sample_xl_scaled, Xnew),
+                * self.lf_model.kernel.get_kernel_matrix(
+                    self.sample_xl_scaled, Xnew),
                 self.rho**2
                 * self.lf_model.sigma2
-                * self.lf_model.kernel.get_kernel_matrix(self.sample_xh_scaled, Xnew)
+                * self.lf_model.kernel.get_kernel_matrix(
+                    self.sample_xh_scaled, Xnew)
                 + self.sigma2 *
                 self.kernel.get_kernel_matrix(self.sample_xh_scaled, Xnew),
             ),

@@ -3,11 +3,6 @@
 from typing import Any
 
 import numpy as np
-from scipy.linalg import cholesky, solve
-from scipy.optimize import minimize
-
-from .kernels import RBF
-from .sf_gpr import Kriging
 
 
 class mf_model:
