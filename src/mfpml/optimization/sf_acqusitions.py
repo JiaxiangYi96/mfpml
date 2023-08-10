@@ -1,35 +1,86 @@
+from typing import Any
+
 import numpy as np
+from scipy.optimize import differential_evolution
 from scipy.stats import norm
 
 from mfpml.models.sf_gpr import Kriging
 
 
-# class of lower confidence bounding
-# =========================================================================== #
-class LCB:
-    """Lower confidence bounding"""
+class sfSingleObjAcf:
+    """base class for sf acquisition functions for single objective
+    """
 
-    def __init__(self, model: Kriging) -> None:
-        """Lower bound confidence acquisition function
+    def query(self, surrogate: Any, params: dict) -> np.ndarray:
+        """get the next location to evaluate
 
         Parameters
         ----------
-        model : Kriging
+        surrogate : Any
             Kriging model
-        """
-        self.model = model
+        params : dict
+            params of bayesian optimization
 
-    def __call__(self,
-                 x: np.ndarray,
-                 explore_factor: float = 1.96) -> np.ndarray:
+        Returns
+        -------
+        opt_x : np.ndarray
+            location of update point
+        """
+
+        if self.optimizer is None:
+            res = differential_evolution(self.eval,
+                                         bounds=params['design_space'],
+                                         args=(surrogate,),
+                                         maxiter=500,
+                                         popsize=40)
+            # get the next location
+            opt_x = res.x
+
+        else:
+            # use local optimizer
+            _, opt_acq, opt_x = self.optimizer.run_optimizer(
+                self.eval,
+                num_dim=surrogate.num_dim,
+                design_space=params['design_space'],
+            )
+
+        return opt_x
+# class of lower confidence bounding
+# =========================================================================== #
+
+
+class LCB(sfSingleObjAcf):
+    """Lower confidence bounding"""
+
+    def __init__(self,
+                 optimizer: Any = None,
+                 kappa: list = [1.0, 1.96]) -> None:
+        """initialize lcb acquisition function
+
+        Parameters
+        ----------
+        optimizer : Any
+            optimizer for getting update points
+        kappa : list, optional
+            factors for exploration and exploitation, by default [1.0, 1.96]
+        """
+        # optimizer for getting update points
+        self.optimizer = optimizer
+        # kappa for lcb (factor for exploration and exploitation)
+        self.kappa = kappa
+
+    def eval(self,
+             x: np.ndarray,
+             surrogate: Kriging,
+             ) -> np.ndarray:
         """
         Calculate values of LCB acquisition function
         Parameters
         ----------
         x: np.ndarray
             locations for evaluation
-        explore_factor: float
-            factor to control weight between exploration and exploitation
+        surrogate: Kriging
+            surrogate model
 
         Returns
         -------
@@ -37,13 +88,13 @@ class LCB:
             lcb values on x
         """
         # get dimension of input
-        num_dim = self.model.num_dim
+        num_dim = surrogate.num_dim
+        # reshape x
         x = x.reshape((-1, num_dim))
-
-        y_hat, sigma = self.model.predict(x, return_std=True)
-
+        # get predicted mean and standard deviation
+        y_hat, sigma = surrogate.predict(x, return_std=True)
         # acquisition function
-        lcb = y_hat - explore_factor * sigma
+        lcb = self.kappa[0]*y_hat - self.kappa[1] * sigma
         return lcb
 
 
@@ -51,37 +102,35 @@ class LCB:
 # =========================================================================== #
 
 
-class EI:
+class EI(sfSingleObjAcf):
     """
     Expected improvement acquisition function
     """
 
-    def __init__(self, model: Kriging) -> None:
-        """
-        Initialization of EI acquisition function
-        Parameters
-        ----------
-        model: Kriging
-           Kriging model
-        """
-        self.model = model
+    def __init__(self, optimizer: Any = None) -> None:
 
-    def __call__(self, x: np.ndarray) -> np.ndarray:
-        """
-        Calculate value of EI acquisition function
+        self.optimizer = optimizer
+
+    def eval(self, x: np.ndarray,
+             surrogate: Kriging) -> np.ndarray:
+        """core of expected improvement function
+
         Parameters
         ----------
-        x: np.ndarray
+        x : np.ndarray
             locations for evaluation
+        surrogate : Kriging
+            Kriging model at current iteration
+
         Returns
         -------
-        EI: np.ndarray
-            lcb values on x
+        -ei : np.ndarray
+            negative expected improvement values
         """
-        num_dim = self.model.num_dim
+        num_dim = surrogate.num_dim
         x = np.array(x).reshape((-1, num_dim))
-        f_min = self.model.sample_y.min()
-        y_hat, sigma = self.model.predict(x, return_std=True)
+        f_min = surrogate.sample_y.min()
+        y_hat, sigma = surrogate.predict(x, return_std=True)
         # expected improvement
         ei = (f_min - y_hat) * norm.cdf(
             (f_min - y_hat) / (sigma + 1e-9)
@@ -93,38 +142,43 @@ class EI:
 # =========================================================================== #
 
 
-class PI:
+class PI(sfSingleObjAcf):
     """
     Probability improvement acquisition function
     """
 
-    def __init__(self, model: Kriging) -> None:
-        """
-        Initialization of PI acquisition function
-        Parameters
-        ----------
-        model: Kriging
-            Kriging model
-        """
-        self.model = model
+    def __init__(self, optimizer: Any = None) -> None:
+        """initialization for PI
 
-    def __call__(self, x: np.ndarray) -> np.ndarray:
-        """
-        Calculate value of PI acquisition function
         Parameters
         ----------
-        x: np.ndarray
+        optimizer : Any, optional
+            optimizer for get new location, by default None
+        """
+        self.optimizer = optimizer
+
+    def eval(self, x: np.ndarray,
+             surrogate: Kriging) -> np.ndarray:
+        """core of probability improvement function
+
+        Parameters
+        ----------
+        x : np.ndarray
             locations for evaluation
+        surrogate : Kriging
+            Kriging model at current iteration
+
         Returns
         -------
-        PI: np.ndarray
-            lcb values on x
+        -pi : np.ndarray
+            negative probability improvement values
         """
-        num_dim = self.model.num_dim
+
+        num_dim = surrogate.num_dim
         x = np.array(x).reshape((-1, num_dim))
-        f_min = self.model.sample_y.min()
+        f_min = surrogate.sample_y.min()
         # get predicted mean and standard deviation
-        y_hat, sigma = self.model.predict(x, return_std=True)
+        y_hat, sigma = surrogate.predict(x, return_std=True)
         # probability improvement
         pi = norm.cdf((f_min - y_hat) / (sigma + 1e-9))
         return -pi

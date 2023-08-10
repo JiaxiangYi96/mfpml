@@ -10,10 +10,10 @@ mfpml.optimization.evolutionary\_algorithms
    :undoc-members:
    :show-inheritance:
 
-mfpml.optimization.mfBO
+mfpml.optimization.mfbo
 ------------------------------
 
-.. automodule:: mfpml.optimization.mfBO
+.. automodule:: mfpml.optimization.mfbo
    :members:
    :undoc-members:
    :show-inheritance:

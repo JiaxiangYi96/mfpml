@@ -158,6 +158,16 @@ class FixNumberSampler(SingleFidelitySampler):
         data: dict
             samples
 
+        Examples
+        --------
+        >>> design_space = {'x1': [0, 1], 'x2': [0, 1]}
+        >>> sampler = FixNumberSampler(design_space=design_space, seed=123456)
+        >>> samples = sampler.get_samples(num_samples=2)
+        >>> samples
+        {'inputs':    x1   x2
+        0  0.5  0.5
+        1  0.5  0.5}
+
         """
         fixed_value = list(self.design_space.values())
         samples = np.repeat(fixed_value[0], num_samples).reshape(
@@ -189,6 +199,27 @@ class LatinHyperCube(SingleFidelitySampler):
         )
 
     def get_samples(self, num_samples: int, **kwargs) -> np.ndarray:
+        """get samples
+
+        Parameters
+        ----------
+        num_samples : int
+            number of samples
+
+        Returns
+        -------
+        sample : np.ndarray
+            a numpy array of samples
+
+        Examples
+        --------
+        >>> design_space = {'x1': [0, 1], 'x2': [0, 1]}
+        >>> sampler = LatinHyperCube(design_space=design_space, seed=123456)
+        >>> samples = sampler.get_samples(num_samples=2)
+        >>> samples
+        array([[0.5, 0.5],
+                [0.5, 0.5]])
+        """
         lhs_sampler = LatinHypercube(d=self.num_dim, seed=self.seed)
         sample = lhs_sampler.random(num_samples)
         for i, bounds in enumerate(self.design_space.values()):
@@ -219,6 +250,28 @@ class RandomSampler(SingleFidelitySampler):
         )
 
     def get_samples(self, num_samples: int, **kwargs) -> np.ndarray:
+        """get samples
+
+        Parameters
+        ----------
+        num_samples : int
+            number of samples
+
+        Returns
+        -------
+        sample : np.ndarray
+            a numpy array of samples
+
+        Examples
+        --------
+        >>> design_space = {'x1': [0, 1], 'x2': [0, 1]}
+        >>> sampler = RandomSampler(design_space=design_space, seed=123456)
+        >>> samples = sampler.get_samples(num_samples=2)
+        >>> samples
+        array([[0.12696982, 0.96671784],
+                [0.26047601, 0.89750289]])
+
+        """
         np.random.seed(self.seed)
         sample = np.random.random((num_samples, self.num_dim))
         for i, bounds in enumerate(self.design_space.values()):
@@ -257,6 +310,27 @@ class SobolSequence(SingleFidelitySampler):
             self.num_skip = num_skip
 
     def get_samples(self, num_samples: int, **kwargs) -> np.ndarray:
+        """get samples
+
+        Parameters
+        ----------
+        num_samples : int
+            number of samples
+
+        Returns
+        -------
+        sample : np.ndarray
+            a numpy array of samples
+
+        Examples
+        --------
+        >>> design_space = {'x1': [0, 1], 'x2': [0, 1]}
+        >>> sampler = SobolSequence(design_space=design_space, seed=123456)
+        >>> samples = sampler.get_samples(num_samples=2)
+        >>> samples
+        array([[0.5, 0.5],
+                [0.5, 0.5]])
+        """
         sobol_sampler = Sobol(d=self.num_dim, seed=self.seed)
         # generate lots of samples first
         sobol_sampler.random_base2(m=num_samples)

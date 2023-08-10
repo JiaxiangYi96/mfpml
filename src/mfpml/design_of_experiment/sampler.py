@@ -44,6 +44,7 @@ class Sampler(ABC):
         ---------
         The function should be completed at the sub-sclass
 
+
         """
 
         raise NotImplementedError("Subclasses should implement this method.")
