@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-class MFSOBO:
+class mfBayesOpt:
     """
     Multi-fidelity single objective Bayesian optimization
     """
@@ -35,17 +35,19 @@ class MFSOBO:
         """Initialize parameters
         """
         self.iter = 0
-        self.params = {}
         self.best = None
         self.history_best = []
         self.best_x = None
         self.log = OrderedDict()
+        self.params = {}
         self.params['design_space'] = self.func._input_domain
         self.params['cr'] = self.func.cr
 
     def run_optimizer(self,
+                      init_x: dict,
+                      init_y: dict,
                       mf_surrogate: Any,
-                      acqusition: Any,
+                      acquisition: Any,
                       max_iter: float = float('inf'),
                       max_cost: float = float('inf'),
                       print_info: bool = True,
@@ -57,8 +59,8 @@ class MFSOBO:
         ----------
         mf_surrogate : Any
             instance of multi-fidelity model
-        acqusition : Any
-            instance of multi-fidelity acqusition
+        acquisition : Any
+            instance of multi-fidelity acquisition
         max_iter : float, optional
             stop condition of iteration, by default float('inf')
         max_cost : float, optional
@@ -68,29 +70,32 @@ class MFSOBO:
             process, by default True
         resume : bool, optional
             whether to proceed optimization with the last run
-            , by default True
+            , by default False
+        init_x : np.ndarray, optional
+            initial samples, by default None
+        init_y : np.ndarray, optional
+
         """
         if not resume:
             self._initialization()
-            if 'init_X' not in kwargs:
-                ValueError('initial samples "init_X" is not assigned.')
-            if 'init_Y' not in kwargs:
-                ValueError('initial responses "init_Y" is not assigned.')
             self._first_run(mf_surrogate=mf_surrogate,
-                            X=kwargs['init_X'], Y=kwargs['init_Y'])
+                            X=init_x, Y=init_y)
         iter = 0
         while iter < max_iter and self.params['cost'] < max_cost:
-            update_x = acqusition.query(
+            # get the next point to evaluate
+            update_x = acquisition.query(
                 mf_surrogate=mf_surrogate, params=self.params)
             update_y = self.func(update_x)
+            # update mf bo info
             self._update_para(update_x, update_y)
+            # update surrogate model
             mf_surrogate.update_model(update_x, update_y)
             iter += 1
             if print_info:
                 self._print_info(iter)
 
     def historical_plot(self, save_figure: bool = False,
-                        name: str = 'historical best observed values') -> None:
+                        name: str = 'historical_best.png', **kwarg) -> None:
         """Plot historical figure of best observed function values
 
         Parameters
@@ -98,19 +103,19 @@ class MFSOBO:
         save_figure : bool, optional
             save figure or not, by default False
         name : bool, optional
-            name of the figure, by default 'historical best observed values'
+            name of the figure, by default 'historical_best.png'
         """
         # with plt.style.context(['ieee', 'science']):
-        fig, ax = plt.subplots()
-        ax.plot(range(self.iter+1), self.history_best, '-o',
-                label="Iterative figure for best solutions")
-        ax.legend()
-        ax.set(xlabel=r"$Iteration$")
-        ax.set(ylabel=r"$Function values$")
+        fig, ax = plt.subplots(**kwarg)
+        ax.plot(range(self.iter+1), self.history_best, '-o', color='b',
+                label="historical_best")
+        ax.grid()
+        ax.legend(loc='best')
+        ax.set(xlabel=r"$Iter$")
+        ax.set(ylabel=r"$f(x)$")
         if save_figure is True:
-            fig.savefig(name, dpi=300)
-        plt.show(block=True)
-        plt.interactive(False)
+            fig.savefig(name, dpi=300, bbox_inches='tight')
+        plt.show()
 
     def _first_run(self, mf_surrogate: Any,
                    X: dict,
@@ -153,6 +158,7 @@ class MFSOBO:
             update responses
         """
         self.iter += 1
+        # update log
         self.log[self.iter] = (update_x, update_y)
         if update_x['hf'] is not None:
             min_y = np.min(update_y['hf'])
@@ -176,10 +182,11 @@ class MFSOBO:
         iter : int
             current iteration
         """
-        print(f'Iteration: {iter}, '
-              f'Eval HF: {self._get_num_hf()}, '
-              f'Eval LF: {self._get_num_lf()}, '
-              f'Current optimum: {self.best_objective()}')
+        print('===========================================')
+        print(f'iter: {iter}, '
+              f'eval HF: {self._get_num_hf()}, '
+              f'eval LF: {self._get_num_lf()}, '
+              f'found optimum: {self.best_objective():.5f}, ')
 
     def _get_num_hf(self) -> int:
         """Return the number of high-fidelity samples

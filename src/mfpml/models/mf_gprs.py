@@ -44,23 +44,23 @@ class mf_model:
             if XHnew is not None and YHnew is not None:
                 X = {}
                 Y = {}
-                X["hf"] = np.concatenate((self.sample_XH, XHnew))
-                Y["hf"] = np.concatenate((self.sample_YH, YHnew))
-                X["lf"] = np.concatenate((self.sample_XL, XLnew))
-                Y["lf"] = np.concatenate((self.sample_YL, YLnew))
+                X["hf"] = np.concatenate((self.sample_xh, XHnew))
+                Y["hf"] = np.concatenate((self.sample_yh, YHnew))
+                X["lf"] = np.concatenate((self.sample_xl, XLnew))
+                Y["lf"] = np.concatenate((self.sample_yl, YLnew))
                 self.train(X, Y)
             else:
                 X = {}
                 Y = {}
-                X["hf"] = self.sample_XH
-                Y["hf"] = self.sample_YH
-                X["lf"] = np.concatenate((self.sample_XL, XLnew))
-                Y["lf"] = np.concatenate((self.sample_YL, YLnew))
+                X["hf"] = self.sample_xh
+                Y["hf"] = self.sample_yh
+                X["lf"] = np.concatenate((self.sample_xl, XLnew))
+                Y["lf"] = np.concatenate((self.sample_yl, YLnew))
                 self.train(X, Y)
         else:
             if XHnew is not None and YHnew is not None:
-                XH = np.concatenate((self.sample_XH, XHnew))
-                YH = np.concatenate((self.sample_YH, YHnew))
+                XH = np.concatenate((self.sample_xh, XHnew))
+                YH = np.concatenate((self.sample_yh, YHnew))
                 self._train_hf(XH, YH)
 
     def _update_optimizer_hf(self, optimizer: Any) -> None:
@@ -199,9 +199,9 @@ class mf_model:
         X = self.normalize_input(X)
         Xprime = self.normalize_input(Xprime)
         if fidelity == "hf":
-            return self.kernel.K(X, Xprime)
+            return self.kernel.get_kernel_matrix(X, Xprime)
         elif fidelity == "lf":
-            return self.lf_model.kernel.K(X, Xprime)
+            return self.lf_model.kernel.get_kernel_matrix(X, Xprime)
         else:
             ValueError("Unknown fidelity input.")
 

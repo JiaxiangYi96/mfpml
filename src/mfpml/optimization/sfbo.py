@@ -29,16 +29,25 @@ class SFBO(object):
         self.problem = problem
         # design space
         self.design_space = design_space
-
         # number dimension
         self.num_dim = len(self.design_space)
         # get input domain
         self.input_domain = self._get_input_domain()
-        # sampler
+        # default sampler
         self.sampler = LatinHyperCube(design_space=self.design_space,
                                       seed=seed)
         # initial Kriging model
         self.model = Kriging(design_space=self.input_domain)
+
+    def change_sampler(self, sampler: Any) -> None:
+        """change the sampler
+
+        Parameters
+        ----------
+        sampler : Any
+            sampler
+        """
+        self.sampler = sampler
 
     def _get_input_domain(self) -> np.ndarray:
         """get input domain, i.e., the bounds of the design space"""

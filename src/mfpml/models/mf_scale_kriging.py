@@ -62,7 +62,7 @@ class ScaledKriging(mf_model):
         self.rho_bound = rho_bound
         self.rho_method = rho_method
         self.rho_optimizer = rho_optimizer
-
+        self.mu = 1.0
         self.num_dim = design_space.shape[0]
         self.kernel = RBF(theta=np.zeros(self.num_dim), bounds=kernel_bound)
         if lf_model is None:

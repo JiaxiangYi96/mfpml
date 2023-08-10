@@ -37,7 +37,7 @@ class GP:
         # update kernel matrix info with optimized hyper-parameters
         self._update_kernel_matrix()
 
-    def _update_optimizer(self, optimizer: Any) -> None:
+    def update_optimizer(self, optimizer: Any) -> None:
         """Change the optimizer for optimizing hyper parameters
 
         Parameters
@@ -46,6 +46,13 @@ class GP:
             instance of optimizer
         """
         self.optimizer = optimizer
+
+    def update_model(self, update_x: np.ndarray, update_y: np.ndarray) -> None:
+
+        sample_x = np.concatenate((self.sample_x, update_x))
+        sample_y = np.concatenate((self.sample_y, update_y))
+        # update the model
+        self.train(sample_x, sample_y)
 
     def plot_prediction(self, fig_name: str = "gpr_pred",
                         save_fig: bool = False, **kwargs,
