@@ -9,14 +9,6 @@ mfpml.design\_of\_experiment.multifidelity\_samplers
    :undoc-members:
    :show-inheritance:
 
-mfpml.design\_of\_experiment.plot\_figures
--------------------------------------------------
-
-.. automodule:: mfpml.design_of_experiment.plot_figures
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 mfpml.design\_of\_experiment.sampler
 -------------------------------------------
 

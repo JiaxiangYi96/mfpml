@@ -83,15 +83,15 @@ class Sampler(ABC):
         self._samples.to_json(json_name + ".json", index=True)
 
     def plot_samples(
-        self, figure_name: str = None, save_plot: bool = False
+        self, fig_name: str = "figure", save_fig: bool = False
     ) -> None:
         """
         function to visualize the one dimension design of experiment
         Parameters
         ----------
-        figure_name: str
+        fig_name: str
             name of the figure file
-        save_plot: bool
+        save_fig: bool
             operator to claim save the figure or not
 
         Returns

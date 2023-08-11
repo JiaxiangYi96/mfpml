@@ -1,8 +1,10 @@
 from collections import OrderedDict
 
 import numpy as np
+import pandas as pd
 import pytest
 
+from mfpml.design_of_experiment.sampler import Sampler
 from mfpml.design_of_experiment.singlefideliy_samplers import (
     FixNumberSampler, LatinHyperCube, RandomSampler, SobolSequence)
 from mfpml.design_of_experiment.space import DesignSpace
@@ -75,3 +77,21 @@ def test_fix_sampler() -> None:
     samples = sampler.get_samples(num_samples=2)
     results = np.array([[0.1], [0.1]])
     assert results == pytest.approx(samples)
+
+
+def test_create_pandas_frame_not_implemented():
+    # Test _create_pandas_frame raises NotImplementedError
+    design_space = {'x1': [0, 1], 'x2': [0, 1]}
+    sampler = Sampler(design_space)
+
+    with pytest.raises(NotImplementedError):
+        sampler._create_pandas_frame()
+
+
+def test_plot_samples_not_implemented():
+    # Test plot_samples raises NotImplementedError
+    design_space = {'x1': [0, 1], 'x2': [0, 1]}
+    sampler = Sampler(design_space)
+
+    with pytest.raises(NotImplementedError):
+        sampler.plot_samples()

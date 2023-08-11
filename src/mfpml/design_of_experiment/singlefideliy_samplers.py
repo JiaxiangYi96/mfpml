@@ -61,7 +61,8 @@ class SingleFidelitySampler(Sampler):
         raise NotImplementedError("Subclasses should implement this method.")
 
     def plot_samples(
-        self, figure_name: str = None, save_plot: bool = False, **kwargs
+        self, fig_name: str = "sf_sampler",
+        save_sig: bool = False, **kwargs
     ) -> None:
         """
         Visualization of sampling method
@@ -76,6 +77,13 @@ class SingleFidelitySampler(Sampler):
         Returns
         -------
 
+        Examples
+        --------
+        >>> design_space = {'x1': [0, 1], 'x2': [0, 1]}
+        >>> sampler = LatinHyperCube(design_space=design_space, seed=123456)
+        >>> samples = sampler.get_samples(num_samples=10)
+        >>> sampler.plot_samples(figure_name='sampler', save_plot=False)
+
         """
 
         if self.num_dim == 2:
@@ -87,15 +95,12 @@ class SingleFidelitySampler(Sampler):
                 label="Samples",
             )
             ax.legend()
-            # legend = ax.legend(loc='upper right', shadow=True)
-            # legend.get_frame().set_facecolor('b')
             ax.set(xlabel=r"$x_1$")
             ax.set(ylabel=r"$x_2$")
-            # ax.autoscale(tight=True)
-            plt.grid("--")
+            plt.grid()
             plt.show()
-            if save_plot is True:
-                fig.savefig(figure_name, dpi=300)
+            if save_sig is True:
+                fig.savefig(fig_name, dpi=300)
 
         elif self.num_dim == 1:
             fig, ax = plt.subplots(**kwargs)
@@ -109,10 +114,10 @@ class SingleFidelitySampler(Sampler):
             ax.set(xlabel=r"$x$")
             ax.set(ylabel=r"$y$")
             ax.autoscale(tight=True)
-            plt.grid("--")
+            plt.grid()
             plt.show()
-            if save_plot is True:
-                fig.savefig(figure_name, dpi=300)
+            if save_sig is True:
+                fig.savefig(fig_name, dpi=300)
 
         else:
             raise Exception("Can not plot figure more than two dimension! \n ")

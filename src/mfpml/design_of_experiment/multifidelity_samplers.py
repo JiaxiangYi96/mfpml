@@ -4,7 +4,7 @@ from matplotlib import pyplot as plt
 from scipy.stats.qmc import LatinHypercube, Sobol
 
 # local modulus
-from mfpml.design_of_experiment.sampler import Sampler
+from .sampler import Sampler
 
 
 class MultiFidelitySampler(Sampler):
@@ -77,15 +77,15 @@ class MultiFidelitySampler(Sampler):
         )
 
     def plot_samples(
-        self, figure_name: str = 'mf.png', save_plot: bool = False, **kwargs
+        self, fig_name: str = 'mf.png', save_fig: bool = False, **kwargs
     ) -> None:
         """
         Visualization of mf sampling
         Parameters
         ----------
-        figure_name: str
+        fig_name: str
             figure name
-        save_plot: bool
+        save_fig: bool
             save figure or not
         Returns
         -------
@@ -111,8 +111,8 @@ class MultiFidelitySampler(Sampler):
             ax.set(ylabel=r"$x_2$")
             plt.grid()
             plt.show()
-            if save_plot is True:
-                fig.savefig(figure_name, dpi=300)
+            if save_fig is True:
+                fig.savefig(fig_name, dpi=300, bbox_inches="tight")
 
         elif self.num_dim == 1:
             fig, ax = plt.subplots(**kwargs)
@@ -133,8 +133,8 @@ class MultiFidelitySampler(Sampler):
             ax.set(xlabel=r"$x$")
             ax.set(ylabel=r"$y$")
             plt.show()
-            if save_plot is True:
-                fig.savefig(figure_name, dpi=300)
+            if save_fig is True:
+                fig.savefig(fig_name, dpi=300, bbox_inches="tight")
 
         else:
             raise Exception("Can not plot figure more than two dimension! \n ")

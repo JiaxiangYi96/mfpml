@@ -20,6 +20,24 @@ Welcome to mfpml's documentation!
 
 .. toctree::
    :maxdepth: 3
+   :caption: Design of experiments:  
+   
+   design_of_experiments.rst
+
+.. toctree::
+   :maxdepth: 3
+   :caption: Problems:  
+   
+   problems.rst
+
+.. toctree::
+   :maxdepth: 3
+   :caption: Surrogates:  
+   
+   models.rst
+
+.. toctree::
+   :maxdepth: 3
    :caption: API Reference:  
 
    mfpml.rst

@@ -2,9 +2,11 @@ import numpy as np
 
 
 class DesignSpace:
-    def __init__(
-        self, names: list, low_bound: list, high_bound: list
-    ) -> np.ndarray:
+    def __init__(self,
+                 names: list,
+                 low_bound: list,
+                 high_bound: list
+                 ) -> None:
         """
         Parameters
         ----------
@@ -19,14 +21,28 @@ class DesignSpace:
         input_domain: list
             a list that contains design space information
 
+        Examples
+        --------
+        >>> from mfpml.design_of_experiment import DesignSpace
+        >>> names = ['x1', 'x2']
+        >>> low_bound = [0, 0]
+        >>> high_bound = [1, 1]
+        >>> design_space = DesignSpace(names, low_bound, high_bound)
+        >>> design_space.input_domain
+        array([[0, 1],
+                [0, 1]])
+        >>> design_space.design_space
+        {'x1': [0, 1], 'x2': [0, 1]}
+
         """
+        # check the type of variables
         self._input_domain = np.ndarray
         self._design_space = dict()
         # check the consistency of variable
         self.__check_consistency(
             names=names, low_bound=low_bound, high_bound=high_bound
         )
-        # check the magitude of variables
+        # check the magnitude of variables
         self.__check_magnitude(low_bound=low_bound, high_bound=high_bound)
 
         for ii, name in enumerate(names):
@@ -47,9 +63,6 @@ class DesignSpace:
             low bound
         high_bound: list
             high bound
-
-        Returns
-        -------
 
         """
         assert (
@@ -91,7 +104,7 @@ class DesignSpace:
 
         Returns
         -------
-        input domain: np.ndarray
+        input_domain: np.ndarray
             design space in numpy array form
 
         """
