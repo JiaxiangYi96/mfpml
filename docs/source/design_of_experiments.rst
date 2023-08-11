@@ -1,4 +1,4 @@
-Design of Experiments
+Design space
 =====================
 
 we can create a design space by using :attr:`~mfpml.design_of_experiments.design_space.DesignSpace`.

@@ -52,8 +52,23 @@ where :math:`n` is the number of samples
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 The negative log-likelihood of the Gaussian process is defined as:
 
+.. math:: 
+  \ln(L) =-\frac{n}{2}\ln(2\pi) - \frac{n}{2}\ln(\sigma_e^2) - \frac{1}{2}\ln|\mathbf{K}|  -\frac{(\mathbf{y}-\mathbf{1}\mu)^T\mathbf{K}^{-1}(\mathbf{y}-\mathbf{1}\mu)}{2\sigma_e^2}
 
+in which, :math:`\mathbf{y}` is the vector of observations, :math:`\mathbf{1}` is a vector of ones, :math:`\mu` is the mean function, :math:`\sigma_e^2` is the variance of the noise, :math:`\mathbf{K}` is the correlation matrix.
+Overall, it has 2n + 2 parameters to be optimized, furthermore, the hyper-parameters can be estimated with the following two steps:
 
+(1) step 1: take derivative of the negative log-likelihood with respect to the hyper-parameters :math:`\mu` and :math:`\sigma_e^2` and set them to zero, we can get the following equations:
+
+.. math::
+  \hat{\mu} = \frac{\mathbf{1}^T\mathbf{K}^{-1}\mathbf{y}}{\mathbf{1}^T\mathbf{K}^{-1}\mathbf{1}}, \,\, \hat{\sigma_e}^2 =\frac{(\mathbf{y}-\mathbf{1}\mu)^T\mathbf{K}^{-1}(\mathbf{y}-\mathbf{1}\mu)}{n}
+
+(2) step 2: substitute the estimated hyper-parameters into the negative log-likelihood, we can get the following equation:
+
+.. math::
+  \ln(L) = -\frac{n}{2} \ln(\hat{\sigma_e}^2) - \frac{1}{2} \ln |\mathbf{K}|
+
+which can be optimized by optimization algorithms.
 
 3. Inference
 ~~~~~~~~~~~~
@@ -68,146 +83,166 @@ The inference of the Gaussian process is defined as:
             K(X,X) & K(X, X^*) \\ K(X^*, X) & K(X^*, X^*)
         \end{bmatrix} \right)
 
- 
+ Therefore, the predicted mean and variance can be calculated as:
+
+.. math::
+  \mathbf{y^*} = m(X^*) +  K(X^*, X)K(X,X)^{-1}(\mathbf{y} - m(X))
+
+.. math::
+  \mathbf{s^2}^* = \sigma_e^2\left(1-K\left( X^*, X\right )K\left(X,X\right)^{-1}K\left(X, X^*\right)  \right)
+
+4. Implementation
+~~~~~~~~~~~~~~~~~
+The Kriging model is implemented in :attr:`~mfpml.surrogates.sf_gpr.Kriging` class. The following example is given to illustrate the usage of the Kriging model:
+
+.. code-block:: python
+
+  from mfpml.problem.single_fidelity_functions import Forrester
+  from mfpml.surrogates.sf_gpr import Kriging
+
+  problem = Forrester()
+
+  # define sample points
+  sample_x = np.array([0.0, 0.4, 0.6, 1.0]).reshape((-1, 1))
+  test_x = np.linspace(0, 1, 1001, endpoint=True).reshape(-1, 1)
+
+  # evaluate the function
+  sample_y = problem.f(sample_x)
+  test_y = problem.f(test_x)
+
+  # define the Kriging model(usually design space is required)
+  kriging = Kriging(design_space=problem._input_domain)
+  # train the Kriging model
+  kriging.train(sample_x, sample_y)
+  # predict the mean and variance
+  mean, var = kriging.predict(test_x,return_std=True)
+  # plot the results
+  fig, ax = plt.subplots(figsize=(5, 4))
+  ax.plot(test_x, test_y, "k-", label=r"$f(x)$")
+  ax.plot(test_x, sf_pre, "b--", label=r"$\hat{f}(x)$")
+  ax.plot(sample_x, sample_y, "ro", label="samples")
+  ax.fill_between(
+      test_x.reshape(-1),
+      (sf_pre - 1.96 * sf_std).reshape(-1),
+      (sf_pre + 1.96 * sf_std).reshape(-1),
+      alpha=0.25,
+      color="g",
+      label="95% confidence interval",
+  )
+  ax.legend(loc="best")
+  ax.grid()
+  plt.xlabel("x")
+  plt.ylabel("y")
+  plt.show()
+
+.. image:: figures/kriging.png
+   :width: 400
+   :align: center
+   :alt: pridiction of Kriging model
 
 
 mix-kernel Kriging model
 ------------------------
 
+1. basics of mix-kernel Kriging model
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+If we want to model a problem with noise within the outputs, where the problem can be formulated as:
+
+.. math::
+  y = f(x) + \epsilon
+
+where :math:`\epsilon` is the noise, which is assumed to be a Gaussian distribution with zero mean and variance :math:`\sigma_a^2`.
+Usually, this noise from data is called aleatory uncertainty, which is irreducible. So the mix-kernel Kriging model is proposed to model the aleatory uncertainty.
+The essence of the mix-kernel Kriging model is to model the noise as a white noise process, which is defined as:
+
+.. math::
+
+  k(\mathrm{x}, \mathrm{x}') = \sigma_a^2 \delta(\mathrm{x}, \mathrm{x}')
+
+Intuitively, the white noise Correlation matrix is a diagonal matrix with 
+diagonal elements :math:`\sigma_a^2`
+
+So the mix-kernel can be expressed as:
+
+.. math::
+  K_{mix}\left (\mathbf{X}, \mathbf{X} \right) =K_{RBF}\left (\mathbf{X}, \mathbf{X} \right)  + K_{noise}\left (\mathbf{X}, \mathbf{X} \right)
+
 .. note::
-   Till now, we only implement the problems for unconstrained optimization for 
-   single fidelity and multi fidelity single objective optimization.
+  The mix-kernel Kriging model is implemented in :attr:`~mfpml.surrogates.sf_gpr.GaussianProcessRegressor` class.
+  The hyper-parameter estimation and inference process of mix-kernel Kriging model is the same as the Kriging model, just the correlation matrix is different.
+  replace the original correlation matrix with the mix-kernel correlation matrix.
 
-Problems class structure
-------------------------
-
-Now, we want to introduce the basic :attr:`~mfpml.problems.function.Functions` class:
-
+2. Implementation
+~~~~~~~~~~~~~~~~~
+The mix-kernel Kriging model is implemented in :attr:`~mfpml.surrogates.sf_gpr.GaussianProcessRegressor` class.
+the differential evolution algorithm made in the repo :attr:`~mfpml.optimization.evolutionary_algorithms.DE` is used 
+for hyper-parameter estimation. The following example is given to illustrate the usage of the mix-kernel Kriging model:
+  
 .. code-block:: python
 
-   class Functions(ABC):
-    @staticmethod
-    def f(x: np.ndarray) -> np.ndarray:
-      ...
+  from mfpml.models.sf_gpr import GaussianProcessRegressor
+  from mfpml.optimization.evolutionary_algorithms import DE
+  from mfpml.design_of_experiment.singlefideliy_samplers import LatinHyperCube
 
-    @staticmethod
-    def f_der(x: np.ndarray) -> np.ndarray:
-      ...
-    @staticmethod
-    def hf(x: np.ndarray) -> np.ndarray:
-      ...
+  # sampling 
+  sampler = LatinHyperCube(design_space=func._design_space, seed=1)
+  sample_x = sampler.get_samples(num_samples=60)
+  test_x = np.linspace(0, 1, 101, endpoint=True).reshape(-1, 1)
 
-    @staticmethod
-    def lf(x: np.ndarray, factor: float) -> np.ndarray:
-      ...
-    @staticmethod
-    def hf_der(x: np.ndarray) -> np.ndarray:
-      ...
-    @staticmethod
-    def lf_der(x: np.ndarray) -> np.ndarray:
-      ...
-    @staticmethod
-    def f_cons(x: np.ndarray) -> np.ndarray:
-      ...
+  # get samples by adding noise to the true function
+  sample_y = func.f(sample_x) + np.random.normal(0, 0.2,
+                                                sample_x.shape[0]).reshape((-1, 1))
+  test_y = func.f(test_x) + np.random.normal(0, 0.2,
+                                            test_x.shape[0]).reshape((-1, 1))
+  test_mean = func.f(test_x)
 
-    @staticmethod
-    def hf_cons(x: np.ndarray) -> np.ndarray:
-      ...
+  # initialize optimizer
+  optimizer = DE(num_gen=1000, num_pop=50, crossover_rate=0.5,
+                strategy="DE/best/1/bin")
 
-    @staticmethod
-    def lf_cons(x: np.ndarray) -> np.ndarray:
-      ...
+  # initialize the regressor
+  sfK = GaussianProcessRegressor(
+      design_space=func._input_domain, optimizer=optimizer)
+  # train the model
+  sfK.train(sample_x, sample_y)
+  # get the prediction
+  sf_pre, sf_std, aleatoric = sfK.predict(test_x, return_std=True)
+  
+  # plot the results
+  fig, ax = plt.subplots(figsize=(5, 4))
+  ax.plot(test_x, test_y, "+", label="true noise data")
+  ax.plot(test_x, test_mean, "k-", label=r"$f(x)$")
+  ax.plot(test_x, sf_pre, "b--", label=r"$\hat{f}(x)$")
+  ax.plot(sample_x, sample_y, ".", label="samples")
+  ax.fill_between(
+      test_x.reshape(-1),
+      (sf_pre - 1.96 * sf_std).reshape(-1),
+      (sf_pre + 1.96 * sf_std).reshape(-1),
+      alpha=0.25,
+      color="g",
+      label="95% confidence interval",
+  )
+  ax.fill_between(
+      test_x.reshape(-1),
+      (sf_pre - 1.96 * aleatoric).reshape(-1),
+      (sf_pre + 1.96 * aleatoric).reshape(-1),
+      alpha=0.3,
+      color="m",
+      label="95% aleatotic interval",
+  )
+  ax.legend(loc="best")
+  ax.grid('--')
+  plt.xlabel("x")
+  plt.ylabel("y")
+  plt.show()
 
-Single fidelity problems
-========================
-
-Example for single fidelity function
-------------------------------------
-
-Here, an example of using function :attr:`~mfpml.problems.single_fidelity_functions.SingleFidelityFunctions` is given.
-The *Forrester* function :attr:`~mfpml.problems.single_fidelity_functions.Forrester.` is used to illustrate: 
-
-.. code-block:: python
-
-   from mfpml.problems.single_fidelity_functions import Forrester
-   forrester = Forrester()
-   # output the design space
-   forrester.design_space
-   >>> 
-   {'x': [0.0, 1.0]}
-   # output the input domain
-   forrester.input_domain
-   >>> 
-   [[0. 1.]]
-   # evaluate the function
-   x = np.array([0.5])
-   y = forrester.f(x)
-   >>> [[0.90929743]]
-
-
-Implemented single fidelity Functions
--------------------------------------
-
-======================== ========================================================================================
-Methods                   API of sampling methods                                            
-======================== ========================================================================================         
-Forrester                  :attr:`~mfpml.problems.single_fidelity_functions.Forrester`
-Branin                     :attr:`~mfpml.problems.single_fidelity_functions.Branin`
-Hartmann3                  :attr:`~mfpml.problems.single_fidelity_functions.Hartmann3`
-Hartmann6                  :attr:`~mfpml.problems.single_fidelity_functions.Hartmann6`
-Sixhump                    :attr:`~mfpml.problems.single_fidelity_functions.Sixhump`
-GoldPrice                  :attr:`~mfpml.problems.single_fidelity_functions.GoldPrice`
-Sasena                     :attr:`~mfpml.problems.single_fidelity_functions.Sasena` 
-Ackley                     :attr:`~mfpml.problems.single_fidelity_functions.Ackley`
-AckleyN2                   :attr:`~mfpml.problems.single_fidelity_functions.AckleyN2`
-Thevenot                   :attr:`~mfpml.problems.single_fidelity_functions.Thevenot`
-======================== ========================================================================================
+.. image:: figures/mix_kriging.png
+   :width: 400
+   :align: center
+   :alt: pridiction of mix-kernel Kriging model
 
 
-Multi fidelity problems
-========================
+Multi fidelity Kriging model
+============================
 
-Example for multi fidelity function
-------------------------------------
-
-Here, an example of using function :attr:`~mfpml.problems.multi_fidelity_functions.MultiFidelityFunctions` is given.
-The *Forrester_1a* function :attr:`~mfpml.problems.multi_fidelity_functions.Forrester_1a.` is used to illustrate:
-
-
-.. code-block:: python
-   
-      from mfpml.problems.multi_fidelity_functions import Forrester_1a
-      forrester_1a = Forrester_1a()
-      # output the design space
-      forrester_1a.design_space
-      >>> 
-      {'x': [0.0, 1.0]}
-      # output the input domain
-      forrester_1a.input_domain
-      >>> 
-      [[0. 1.]]
-      # evaluate the function
-      x = {'hf': np.array([[0.80792223]]),
-                  'lf': np.array([[0.80792223]])}
-      y["hf"] = function.hf(x["hf"])
-      y["lf"] = function.lf(x["lf"])
-      >>>
-      {'hf': array([[-4.49853898]]), 'lf': array([[-4.17004719]])}
-
-
-Implemented multi fidelity Functions
-------------------------------------
-
-================================    ========================================================================================
-Methods                                API of sampling methods
-================================    ========================================================================================
-Forrester_1a                        :attr:`~mfpml.problems.multi_fidelity_functions.Forrester_1a`
-Forrester_1b                        :attr:`~mfpml.problems.multi_fidelity_functions.Forrester_1b`
-Forrester_1c                        :attr:`~mfpml.problems.multi_fidelity_functions.Forrester_1c`
-mf_Hartmann3                        :attr:`~mfpml.problems.multi_fidelity_functions.mf_Hartmann3`
-mf_Hartmann6                        :attr:`~mfpml.problems.multi_fidelity_functions.mf_Hartmann6`
-mf_Sixhump                          :attr:`~mfpml.problems.multi_fidelity_functions.mf_Sixhump`
-mf_Discontinuous                    :attr:`~mfpml.problems.multi_fidelity_functions.mf_Discontinuous`
-PhaseShiftedOscillations            :attr:`~mfpml.problems.multi_fidelity_functions.PhaseShiftedOscillations`
-ContinuousNonlinearCorrelation1D    :attr:`~mfpml.problems.multi_fidelity_functions.ContinuousNonlinearCorrelation1D`
-================================    ========================================================================================
