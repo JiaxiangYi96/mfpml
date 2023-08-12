@@ -84,11 +84,11 @@ class GP:
                 color="lightgray",
                 label=r"95% confidence interval",
             )
-            ax.legend(loc='best')
+            ax.tick_params(axis="both", which="major", labelsize=12)
+            plt.legend(loc='best')
             plt.xlabel(r"$x$", fontsize=12)
             plt.ylabel(r"$y$", fontsize=12)
-            ax.tick_params(axis="both", which="major", labelsize=12)
-            ax.grid(True)
+            plt.grid()
             if save_fig is True:
                 fig.savefig(fig_name, dpi=300, bbox_inches="tight")
             plt.show()
@@ -398,7 +398,7 @@ class GaussianProcessRegressor(GP):
             std = np.sqrt(np.maximum(mse+data_noise, 0)).reshape(-1, 1)
             return fmean, std, self.noise
 
-    def _hyper_paras_optimization(self, grads: bool = None):
+    def _hyper_paras_optimization(self, grads: bool = None) -> None:
         """Optimize the hyper_parameters
 
         Parameters

@@ -281,11 +281,11 @@ class mf_Sixhump(MultiFidelityFunctions):
     optimum_scheme: list = [[0.0898, -0.7126], [-0.0898, 0.7126]]
     low_fidelity: list = None
 
-    def __init__(self, num_dim: int = 2) -> None:
+    def __init__(self, num_dim: int = 2, cost: list = [1.0, 0.2]) -> None:
         """
         Initialization
         """
-
+        self.cr = round(cost[0] / cost[1])
         self.is_dim_compatible(num_dim=num_dim)
 
     @staticmethod
@@ -353,11 +353,11 @@ class mf_Hartman6(MultiFidelityFunctions):
     ]
     low_fidelity: list = None
 
-    def __init__(self, num_dim: int = 6) -> None:
+    def __init__(self, num_dim: int = 6, cost: list = [1.0, 0.1]) -> None:
         """
         Initialization
         """
-
+        self.cr = round(cost[0] / cost[1])
         self.is_dim_compatible(num_dim=num_dim)
 
     @staticmethod

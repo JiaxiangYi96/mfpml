@@ -1,5 +1,5 @@
-Surrogates 
-===========
+Multi fidelity surrogates 
+==========================
 
 Surrogates is one of the most important part in the multi-fidelity optimization.
 In this module, we implement the surrogates for single fidelity and multi fidelity.
@@ -243,6 +243,4 @@ for hyper-parameter estimation. The following example is given to illustrate the
    :alt: pridiction of mix-kernel Kriging model
 
 
-Multi fidelity Kriging model
-============================
 

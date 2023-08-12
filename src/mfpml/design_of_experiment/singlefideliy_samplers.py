@@ -87,6 +87,7 @@ class SingleFidelitySampler(Sampler):
         """
 
         if self.num_dim == 2:
+            # two dimensional plot
             fig, ax = plt.subplots(**kwargs)
             ax.plot(
                 self.samples.iloc[:, 0],
@@ -103,6 +104,7 @@ class SingleFidelitySampler(Sampler):
                 fig.savefig(fig_name, dpi=300)
 
         elif self.num_dim == 1:
+            # one dimensional plot
             fig, ax = plt.subplots(**kwargs)
             ax.plot(
                 self.samples.iloc[:, 0],
@@ -124,10 +126,18 @@ class SingleFidelitySampler(Sampler):
 
     @property
     def samples(self) -> pd.DataFrame:
+        """get samples
+
+        Returns
+        -------
+        samples : pd.DataFrame
+            a pandas dataframe of samples
+        """
         return self._samples
 
     @property
     def data(self) -> dict[str, pd.DataFrame]:
+        """get data"""
         return {"inputs": self._samples}
 
 

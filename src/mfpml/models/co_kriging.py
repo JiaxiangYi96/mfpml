@@ -17,7 +17,7 @@ class CoKriging(mf_model):
         kernel_bound: list = [-4.0, 3.0],
         rho_bound: list = [1e-2, 1e2],
     ) -> None:
-        """co-kriging model for hanlding multi-fidelity data
+        """co-kriging model for handling multi-fidelity data
 
         Parameters
         ----------

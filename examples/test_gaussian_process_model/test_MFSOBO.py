@@ -11,11 +11,12 @@ from mfpml.models.mf_scale_kriging import ScaledKriging
 from mfpml.optimization.mf_acqusitions import (augmentedEI, extendedPI, vfei,
                                                vflcb)
 from mfpml.optimization.mfbo import mfBayesOpt
-from mfpml.problems.multifidelity_functions import Forrester_1a, mf_Hartman3
+from mfpml.problems.multifidelity_functions import (Forrester_1b, mf_Hartman3,
+                                                    mf_Hartman6, mf_Sixhump)
 
-func = Forrester_1a()
+func = mf_Hartman6()
 print(func.optimum)
-sampler = MFLatinHyperCube(design_space=func._design_space, seed=7)
+sampler = MFLatinHyperCube(design_space=func._design_space, seed=4)
 
 sample_x = sampler.get_samples(
     num_hf_samples=3 * func.num_dim, num_lf_samples=6 * func.num_dim
@@ -32,8 +33,8 @@ opti = mfBayesOpt(problem=func)
 
 opti.run_optimizer(
     mf_surrogate=HK,
-    acquisition=acf1,
-    max_iter=10,
+    acquisition=acf3,
+    max_iter=20,
     init_x=sample_x,
     init_y=sample_y,
 )

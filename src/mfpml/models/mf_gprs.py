@@ -82,7 +82,7 @@ class mf_model:
             instance of optimizer
         """
         # update the optimizer for low-fidelity model
-        self.lf_model._update_optimizer(optimizer)
+        self.lf_model.update_optimizer(optimizer)
 
     @property
     def _get_lf_model(self) -> Any:
@@ -127,7 +127,7 @@ class mf_model:
         np.ndarray
             high-fidelity samples
         """
-        return self.sample_yh
+        return self.sample_xh
 
     @property
     def _get_sample_lf(self) -> np.ndarray:

@@ -19,17 +19,17 @@ class mfBayesOpt:
         problem : Any
             optimization problem
         """
-        self.func = problem
+        self.problem = problem
 
-    def change_func(self, func: Any) -> None:
+    def change_problem(self, problem: Any) -> None:
         """Change the function for optimization
 
         Parameters
         ----------
-        func : any
+        problem : Any
             optimization problem
         """
-        self.func = func
+        self.problem = problem
 
     def _initialization(self) -> None:
         """Initialize parameters
@@ -40,8 +40,8 @@ class mfBayesOpt:
         self.best_x = None
         self.log = OrderedDict()
         self.params = {}
-        self.params['design_space'] = self.func._input_domain
-        self.params['cr'] = self.func.cr
+        self.params['design_space'] = self.problem._input_domain
+        self.params['cr'] = self.problem.cr
 
     def run_optimizer(self,
                       init_x: dict,
@@ -79,13 +79,13 @@ class mfBayesOpt:
         if not resume:
             self._initialization()
             self._first_run(mf_surrogate=mf_surrogate,
-                            X=init_x, Y=init_y)
+                            init_x=init_x, init_y=init_y)
         iter = 0
         while iter < max_iter and self.params['cost'] < max_cost:
             # get the next point to evaluate
             update_x = acquisition.query(
                 mf_surrogate=mf_surrogate, params=self.params)
-            update_y = self.func(update_x)
+            update_y = self.problem(update_x)
             # update mf bo info
             self._update_para(update_x, update_y)
             # update surrogate model
@@ -118,8 +118,8 @@ class mfBayesOpt:
         plt.show()
 
     def _first_run(self, mf_surrogate: Any,
-                   X: dict,
-                   Y: dict,
+                   init_x: dict,
+                   init_y: dict,
                    print_info: bool = True) -> None:
         """Initialize parameters in the Bayesian optimization
 
@@ -127,23 +127,23 @@ class mfBayesOpt:
         ----------
         mf_surrogate : any
             instance of multi-fidelity model
-        X : dict
+        init_x : dict
             initial samples
-        Y : dict
+        init_y : dict
             initial responses
         print_info : bool, optional
             whether to print information, by default True
         """
-        mf_surrogate.train(X, Y)
-        self.params['n_hf'] = X['hf'].shape[0]
-        self.params['n_lf'] = X['lf'].shape[0]
+        mf_surrogate.train(init_x, init_y)
+        self.params['n_hf'] = init_x['hf'].shape[0]
+        self.params['n_lf'] = init_x['lf'].shape[0]
         self.params['cost'] = self.params['n_hf'] + \
             self.params['n_lf'] / self.params['cr']
-        self.params['fmin'] = np.min(Y['hf'])
-        index = np.argmin(Y['hf'])
-        self.params['best_scheme'] = X['hf'][index, :]
+        self.params['fmin'] = np.min(init_y['hf'])
+        index = np.argmin(init_y['hf'])
+        self.params['best_scheme'] = init_x['hf'][index, :]
         self.history_best.append(self.params['fmin'])
-        self.log[0] = (X, Y)
+        self.log[0] = (init_x, init_y)
         if print_info:
             self._print_info(0)
 

@@ -34,7 +34,8 @@ Welcome to mfpml's documentation!
    :maxdepth: 3
    :caption: Surrogates:  
    
-   models.rst
+   single_fidelity_kriging_models.rst
+   multi_fidelity_kriging_models.rst
 
 .. toctree::
    :maxdepth: 3
