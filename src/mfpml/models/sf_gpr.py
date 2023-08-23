@@ -203,10 +203,36 @@ class Kriging(GP):
         else:
             one = np.ones((self.num_samples, 1))
             delta = solve(self.L.T, solve(self.L, knew))
-            mse = self.sigma2 * (1 - np.diag(np.dot(knew.T, delta)) +
-                                 np.diag((1 - knew.T.dot(delta)) ** 2
-                                         / one.T.dot(self.beta)))
-            # mse = self.sigma2 * (1 - np.diag(np.dot(knew.T, delta)))
+            # first use vectorization to calculate the epistemic uncertainty
+            try:
+                mse = self.sigma2 * (1 - np.diag(np.dot(knew.T, delta)) +
+                                     np.diag((1 - knew.T.dot(delta)) ** 2
+                                             / one.T.dot(self.beta)))
+            except Exception:
+                print("The matrix is too big, use for loop to calculate")
+                # if the matrix is too big, use for loop to calculate
+                mse = np.zeros((knew.shape[1], 1))
+                batch = 100
+                iter = knew.shape[1] / batch
+                for i in range(int(iter)):
+                    try:
+                        knew_i = knew[:, i * batch: (i+1)*batch]
+                        delta_i = solve(self.L.T, solve(self.L, knew_i))
+                        mse[i * batch: (i+1) * batch] = self.sigma2 * \
+                            (1 - np.diag(np.dot(knew_i.T, delta_i)) +
+                                np.diag((1 - knew_i.T.dot(delta_i)) ** 2
+                                        / one.T.dot(self.beta))).reshape(-1, 1)
+
+                    except Exception:
+                        # remain part of the matrix
+                        knew_i = knew[:, i * batch:]
+                        delta_i = solve(self.L.T, solve(self.L, knew_i))
+                        mse[i * batch:] = self.sigma2 * \
+                            (1 - np.diag(np.dot(knew_i.T, delta_i)) +
+                                np.diag((1 - knew_i.T.dot(delta_i)) ** 2
+                                        / one.T.dot(self.beta))).reshape(-1, 1)
+
+            # epistemic uncertainty
             std = np.sqrt(np.maximum(mse, 0)).reshape(-1, 1)
 
             return fmean, std
@@ -388,12 +414,34 @@ class GaussianProcessRegressor(GP):
             one = np.ones((self.num_samples, 1))
             delta = solve(self.L.T, solve(self.L, knew))
             # epistemic uncertainty
-            mse = self.sigma2 * (1 - np.diag(np.dot(knew.T, delta)) +
-                                 np.diag((1 - knew.T.dot(delta)) ** 2
-                                         / one.T.dot(self.beta)))
+            try:
+                mse = self.sigma2 * (1 - np.diag(np.dot(knew.T, delta)) +
+                                     np.diag((1 - knew.T.dot(delta)) ** 2
+                                             / one.T.dot(self.beta)))
+            except Exception:
+                print("The matrix is too big, use for loop to calculate")
+                mse = np.zeros((knew.shape[1], 1))
+                batch = 100
+                iter = knew.shape[1] / batch
+                for i in range(int(iter)):
+                    try:
+                        knew_i = knew[:, i * batch: (i+1)*batch]
+                        delta_i = solve(self.L.T, solve(self.L, knew_i))
+                        mse[i * batch: (i+1) * batch] = self.sigma2 * \
+                            (1 - np.diag(np.dot(knew_i.T, delta_i)) +
+                                np.diag((1 - knew_i.T.dot(delta_i)) ** 2
+                                        / one.T.dot(self.beta))).reshape(-1, 1)
+                    except Exception:
+                        # remain part of the matrix
+                        knew_i = knew[:, i * batch:]
+                        delta_i = solve(self.L.T, solve(self.L, knew_i))
+                        mse[i * batch:] = self.sigma2 * \
+                            (1 - np.diag(np.dot(knew_i.T, delta_i)) +
+                                np.diag((1 - knew_i.T.dot(delta_i)) ** 2
+                                        / one.T.dot(self.beta))).reshape(-1, 1)
             # aleatoric uncertainty
             data_noise = self.noise**2
-            # mse = self.sigma2 * (1 - np.diag(np.dot(knew.T, delta)))
+
             # total uncertainty
             std = np.sqrt(np.maximum(mse+data_noise, 0)).reshape(-1, 1)
             return fmean, std, self.noise
