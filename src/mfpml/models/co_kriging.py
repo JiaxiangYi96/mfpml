@@ -101,8 +101,8 @@ class CoKriging(mf_model):
                 * self.lf_model.kernel.get_kernel_matrix(
                     self.sample_xl_scaled, Xnew),
                 self.rho**2
-                * self.lf_model.sigma2
-                * self.lf_model.kernel.get_kernel_matrix(
+                * self.lf_model.sigma2 *
+                self.lf_model.kernel.get_kernel_matrix(
                     self.sample_xh_scaled, Xnew)
                 + self.sigma2 *
                 self.kernel.get_kernel_matrix(self.sample_xh_scaled, Xnew),
@@ -194,16 +194,16 @@ class CoKriging(mf_model):
             sigma2 = np.dot((diff_y - mu).T, gamma) / self._num_xh
             # negative log likelihood
             logp = -0.5 * self._num_xh * \
-                np.log(sigma2) - np.sum(np.log(np.diag(self.lf_model.L)))
+                np.log(sigma2) - np.sum(np.log(np.diag(L)))
             out[i] = logp.ravel()
         return -out
 
     def _update_parameters(self) -> None:
         """Update parameters of the model"""
         # correlation matrix R
-        K = self.kernel.get_kernel_matrix(self.sample_xh_scaled,
-                                          self.sample_xh_scaled)
-        L = cholesky(K, lower=True)
+        self.K = self.kernel.get_kernel_matrix(self.sample_xh_scaled,
+                                               self.sample_xh_scaled)
+        L = cholesky(self.K, lower=True)
         # R^(-1)Y
         self.diff_y = self.sample_yh - self.rho * self.pred_ylh
         alpha = solve(L.T, solve(L, self.diff_y))
@@ -216,7 +216,7 @@ class CoKriging(mf_model):
         self.sigma2 = (np.dot((self.diff_y - self.mu_d).T,
                        gamma) / self._num_xh).item()
         self.logp = (-0.5 * self._num_xh * np.log(self.sigma2) -
-                     np.sum(np.log(np.diag(self.lf_model.L)))).item()
+                     np.sum(np.log(np.diag(L)))).item()
         # cov matrix for Co-Kriging
         self.C = np.concatenate(
             (
@@ -239,7 +239,7 @@ class CoKriging(mf_model):
                         * self.lf_model.kernel.get_kernel_matrix(
                             self.sample_xh_scaled,
                             self.sample_xh_scaled)
-                        + self.sigma2 * K,
+                        + self.sigma2 * self.K,
                     ),
                     axis=1,
                 ),
@@ -254,4 +254,4 @@ class CoKriging(mf_model):
         oneC = np.ones((self.C.shape[0], 1))
         self.mu = oneC.T.dot(
             solve(self.LC.T, solve(self.LC, self.y))
-        ) / oneC.T.dot(solve(self.LC.T, solve(self.LC, oneC)))
+        ) / oneC.T.dot(solve(self.LC.T, solve(self.LC, oneC))).item()

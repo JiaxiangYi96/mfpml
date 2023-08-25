@@ -39,6 +39,19 @@ Welcome to mfpml's documentation!
 
 .. toctree::
    :maxdepth: 3
+   :caption: Optimization:  
+   
+   optimization.rst
+
+.. toctree::
+   :maxdepth: 3
+   :caption: reliability analysis:  
+   
+   reliability_analysis.rst
+
+
+.. toctree::
+   :maxdepth: 3
    :caption: API Reference:  
 
    mfpml.rst
