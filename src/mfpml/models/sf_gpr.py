@@ -81,7 +81,8 @@ class GP:
                 x_plot.ravel(),
                 (y_pred + 2 * y_sigma).ravel(),
                 (y_pred - 2 * y_sigma).ravel(),
-                color="lightgray",
+                color="g",
+                alpha=0.3,
                 label=r"95% confidence interval",
             )
             ax.tick_params(axis="both", which="major", labelsize=12)
@@ -444,7 +445,7 @@ class GaussianProcessRegressor(GP):
 
             # total uncertainty
             std = np.sqrt(np.maximum(mse+data_noise, 0)).reshape(-1, 1)
-            return fmean, std, self.noise
+            return fmean, std
 
     def _hyper_paras_optimization(self, grads: bool = None) -> None:
         """Optimize the hyper_parameters
