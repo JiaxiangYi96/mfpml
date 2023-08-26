@@ -5,6 +5,16 @@
 
 Welcome to mfpml's documentation!
 =================================
+.. image:: figures/logo.svg
+   :alt: logo
+   :width: 100%
+   :align: center
+
+
+`Docs <https://jiaxiangyi96.github.io/mfpml/>`__ | `GitHub <https://github.com/JiaxiangYi96/mfpml.git>`__
+
+
+**First publication:** August 23, 2023
 
 .. toctree::
    :maxdepth: 3
