@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>mfpml.models.co_kriging &mdash; mfpml 0.0.1 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/readthedocs-custom.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/documentation_options.js?v=d45e8c67"></script>
+        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            mfpml
+          </a>
+              <div class="version">
+                0.0.1
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Overview:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../readme.html">Summary</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Get started:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../get_started.html">Installation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Design of experiments:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../design_of_experiments.html">Design space</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../design_of_experiments.html#single-fidelity-sampler">Single fidelity sampler</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../design_of_experiments.html#multi-fidelity-sampler">Multi fidelity sampler</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Problems:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../problems.html">Problems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../problems.html#single-fidelity-problems">Single fidelity problems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../problems.html#multi-fidelity-problems">Multi fidelity problems</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Surrogates:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../single_fidelity_kriging_models.html">Single fidelity surrogates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../multi_fidelity_kriging_models.html">Multi fidelity surrogates</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Optimization:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../optimization.html">Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../optimization.html#evolutionary-algorithms">1. Evolutionary algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../optimization.html#bayesian-optimization">2. Bayesian optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../optimization.html#multi-fidelity-bayesian-optimization">3. Multi fidelity Bayesian optimization</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">reliability analysis:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../reliability_analysis.html">reliability analysis</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../mfpml.html">API Documentation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">mfpml</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">mfpml.models.co_kriging</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for mfpml.models.co_kriging</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">scipy.linalg</span> <span class="kn">import</span> <span class="n">cholesky</span><span class="p">,</span> <span class="n">solve</span>
+<span class="kn">from</span> <span class="nn">scipy.optimize</span> <span class="kn">import</span> <span class="n">minimize</span>
+
+<span class="kn">from</span> <span class="nn">.kernels</span> <span class="kn">import</span> <span class="n">RBF</span>
+<span class="kn">from</span> <span class="nn">.mf_gprs</span> <span class="kn">import</span> <span class="n">mf_model</span>
+<span class="kn">from</span> <span class="nn">.sf_gpr</span> <span class="kn">import</span> <span class="n">Kriging</span>
+
+
+<div class="viewcode-block" id="CoKriging">
+<a class="viewcode-back" href="../../../mfpml.models.html#mfpml.models.co_kriging.CoKriging">[docs]</a>
+<span class="k">class</span> <span class="nc">CoKriging</span><span class="p">(</span><span class="n">mf_model</span><span class="p">):</span>
+<div class="viewcode-block" id="CoKriging.__init__">
+<a class="viewcode-back" href="../../../mfpml.models.html#mfpml.models.co_kriging.CoKriging.__init__">[docs]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">design_space</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">optimizer</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">kernel_bound</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">],</span>
+        <span class="n">rho_bound</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1e-2</span><span class="p">,</span> <span class="mf">1e2</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;co-kriging model for handling multi-fidelity data</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        design_space : np.ndarray</span>
+<span class="sd">            array of shape=((num_dim,2)) where each row describes</span>
+<span class="sd">            the bound for the variable on specfic dimension</span>
+<span class="sd">        optimizer : Any, optional</span>
+<span class="sd">            instance of the optimizer used to optimize the hyperparameters</span>
+<span class="sd">            with the use style optimizer.run_optimizer(objective function,</span>
+<span class="sd">            number of dimension, design space of variables), if not assigned,</span>
+<span class="sd">            the &#39;L-BFGS-B&#39; method in scipy is used</span>
+<span class="sd">        kernel_bound : list, optional</span>
+<span class="sd">            log bound of the kernel for difference Gaussian process model,</span>
+<span class="sd">            by default [-4, 3]</span>
+<span class="sd">        rho_bound : list, optional</span>
+<span class="sd">            bound for scale factor, by default [1e-2, 1e2]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="c1"># get information of the modeling problem</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bounds</span> <span class="o">=</span> <span class="n">design_space</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span> <span class="o">=</span> <span class="n">optimizer</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_dim</span> <span class="o">=</span> <span class="n">design_space</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rho_bound</span> <span class="o">=</span> <span class="n">rho_bound</span>
+        <span class="c1"># initialize kernel and low-fidelity model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kernel</span> <span class="o">=</span> <span class="n">RBF</span><span class="p">(</span><span class="n">theta</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_dim</span><span class="p">),</span> <span class="n">bounds</span><span class="o">=</span><span class="n">kernel_bound</span><span class="p">)</span>
+        <span class="c1"># lf model is a Kriging model with RBF kernel</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lf_model</span> <span class="o">=</span> <span class="n">Kriging</span><span class="p">(</span><span class="n">design_space</span><span class="o">=</span><span class="n">design_space</span><span class="p">,</span> <span class="n">optimizer</span><span class="o">=</span><span class="n">optimizer</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="CoKriging._train_hf">
+<a class="viewcode-back" href="../../../mfpml.models.html#mfpml.models.co_kriging.CoKriging._train_hf">[docs]</a>
+    <span class="k">def</span> <span class="nf">_train_hf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sample_xh</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">sample_yh</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Train the high-fidelity model</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        sample_xh : np.ndarray</span>
+<span class="sd">            array of high-fidelity samples</span>
+<span class="sd">        sample_yh : np.ndarray</span>
+<span class="sd">            array of high-fidelity responses</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sample_xh</span> <span class="o">=</span> <span class="n">sample_xh</span>
+        <span class="c1"># normalize the input for high-fidelity</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sample_xh_scaled</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalize_input</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_xh</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
+        <span class="c1"># get the high-fidelity responses</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sample_yh</span> <span class="o">=</span> <span class="n">sample_yh</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="c1"># prediction of low-fidelity at high-fidelity locations</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pred_ylh</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict_lf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_xh</span><span class="p">,</span> <span class="n">return_std</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="c1"># optimize the hyper parameters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_optHyp</span><span class="p">()</span>
+        <span class="c1"># update rho value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rho</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">opt_param</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="c1"># calculate the covariance matrixs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kernel</span><span class="o">.</span><span class="n">set_params</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">opt_param</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update_parameters</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="CoKriging.predict">
+<a class="viewcode-back" href="../../../mfpml.models.html#mfpml.models.co_kriging.CoKriging.predict">[docs]</a>
+    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">Xnew</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">return_std</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Predict high-fidelity responses</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        Xnew : np.ndarray</span>
+<span class="sd">            array of high-fidelity to be predicted</span>
+<span class="sd">        return_std : bool, optional</span>
+<span class="sd">            whether to return std values, by default False</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        np.ndarray</span>
+<span class="sd">            prediction of high-fidelity</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># transfer to 2d array</span>
+        <span class="n">Xnew</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">normalize_input</span><span class="p">(</span><span class="n">Xnew</span><span class="p">))</span>
+        <span class="c1">#</span>
+        <span class="n">oneC</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">C</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="c1"># calculate the covariance matrix</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span>
+            <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">rho</span>
+                <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">lf_model</span><span class="o">.</span><span class="n">sigma2</span>
+                <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">lf_model</span><span class="o">.</span><span class="n">kernel</span><span class="o">.</span><span class="n">get_kernel_matrix</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">sample_xl_scaled</span><span class="p">,</span> <span class="n">Xnew</span><span class="p">),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">rho</span><span class="o">**</span><span class="mi">2</span>
+                <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">lf_model</span><span class="o">.</span><span class="n">sigma2</span> <span class="o">*</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">lf_model</span><span class="o">.</span><span class="n">kernel</span><span class="o">.</span><span class="n">get_kernel_matrix</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">sample_xh_scaled</span><span class="p">,</span> <span class="n">Xnew</span><span class="p">)</span>
+                <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma2</span> <span class="o">*</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">kernel</span><span class="o">.</span><span class="n">get_kernel_matrix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_xh_scaled</span><span class="p">,</span> <span class="n">Xnew</span><span class="p">),</span>
+            <span class="p">),</span>
+            <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="c1"># get the predicted mean and std</span>
+        <span class="n">fmean</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mu</span> <span class="o">+</span> <span class="n">c</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span>
+            <span class="n">solve</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">LC</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">solve</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">LC</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">mu</span><span class="p">)))</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">return_std</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">fmean</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">s2</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">rho</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">lf_model</span><span class="o">.</span><span class="n">sigma2</span>
+                <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma2</span>
+                <span class="o">-</span> <span class="n">c</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">solve</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">LC</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">solve</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">LC</span><span class="p">,</span> <span class="n">c</span><span class="p">)))</span>
+                <span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">oneC</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">solve</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">LC</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">solve</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">LC</span><span class="p">,</span> <span class="n">c</span><span class="p">))))</span> <span class="o">/</span>
+                <span class="n">oneC</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">solve</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">LC</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">solve</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">LC</span><span class="p">,</span> <span class="n">oneC</span><span class="p">)))</span>
+            <span class="p">)</span>
+            <span class="n">std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">s2</span><span class="p">),</span> <span class="mi">0</span><span class="p">))</span>
+            <span class="k">return</span> <span class="n">fmean</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">std</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="CoKriging._optHyp">
+<a class="viewcode-back" href="../../../mfpml.models.html#mfpml.models.co_kriging.CoKriging._optHyp">[docs]</a>
+    <span class="k">def</span> <span class="nf">_optHyp</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Optimize the hyperparameters&quot;&quot;&quot;</span>
+        <span class="n">bounds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span>
+            <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">rho_bound</span><span class="p">]),</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel</span><span class="o">.</span><span class="n">_get_bounds</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># define the number of trials of L-BFGS-B optimizations</span>
+            <span class="n">n_trials</span> <span class="o">=</span> <span class="mi">20</span>
+            <span class="n">opt_fs</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_trials</span><span class="p">):</span>
+                <span class="n">x0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span>
+                    <span class="n">bounds</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">bounds</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">bounds</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="p">)</span>
+                <span class="n">optRes</span> <span class="o">=</span> <span class="n">minimize</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_logLikelihood</span><span class="p">,</span>
+                    <span class="n">x0</span><span class="o">=</span><span class="n">x0</span><span class="p">,</span>
+                    <span class="n">method</span><span class="o">=</span><span class="s2">&quot;L-BFGS-B&quot;</span><span class="p">,</span>
+                    <span class="n">bounds</span><span class="o">=</span><span class="n">bounds</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="k">if</span> <span class="n">optRes</span><span class="o">.</span><span class="n">fun</span> <span class="o">&lt;</span> <span class="n">opt_fs</span><span class="p">:</span>
+                    <span class="n">opt_param</span> <span class="o">=</span> <span class="n">optRes</span><span class="o">.</span><span class="n">x</span>
+                    <span class="n">opt_fs</span> <span class="o">=</span> <span class="n">optRes</span><span class="o">.</span><span class="n">fun</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">optRes</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">run_optimizer</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_logLikelihood</span><span class="p">,</span>
+                <span class="n">num_dim</span><span class="o">=</span><span class="n">bounds</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                <span class="n">design_space</span><span class="o">=</span><span class="n">bounds</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">opt_param</span> <span class="o">=</span> <span class="n">optRes</span><span class="p">[</span><span class="s2">&quot;best_x&quot;</span><span class="p">]</span>
+        <span class="c1"># update the hyper-parameters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">opt_param</span> <span class="o">=</span> <span class="n">opt_param</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="CoKriging._logLikelihood">
+<a class="viewcode-back" href="../../../mfpml.models.html#mfpml.models.co_kriging.CoKriging._logLikelihood">[docs]</a>
+    <span class="k">def</span> <span class="nf">_logLikelihood</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the concentrated ln-likelihood</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        params : np.ndarray</span>
+<span class="sd">            parameters of the kernel</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        np.ndarray</span>
+<span class="sd">            log likelihood</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+            <span class="n">rho</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+            <span class="n">theta</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">:]</span>
+            <span class="c1"># correlation matrix R</span>
+            <span class="n">K</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_xh_scaled</span><span class="p">,</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">sample_xh_scaled</span><span class="p">,</span>
+                            <span class="n">theta</span><span class="p">)</span>
+            <span class="n">L</span> <span class="o">=</span> <span class="n">cholesky</span><span class="p">(</span><span class="n">K</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="c1"># responses for difference</span>
+            <span class="n">diff_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample_yh</span> <span class="o">-</span> <span class="n">rho</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">pred_ylh</span>
+            <span class="c1"># R^(-1)(Y - rho * YL)</span>
+            <span class="n">alpha</span> <span class="o">=</span> <span class="n">solve</span><span class="p">(</span><span class="n">L</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">solve</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">diff_y</span><span class="p">))</span>
+            <span class="n">one</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_xh</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+            <span class="c1"># R^(-1)1</span>
+            <span class="n">beta</span> <span class="o">=</span> <span class="n">solve</span><span class="p">(</span><span class="n">L</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">solve</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">one</span><span class="p">))</span>
+            <span class="c1"># 1R^(-1)Y / 1R^(-1)vector(1)</span>
+            <span class="n">mu</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">one</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">alpha</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">one</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">beta</span><span class="p">))</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
+            <span class="n">gamma</span> <span class="o">=</span> <span class="n">solve</span><span class="p">(</span><span class="n">L</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">solve</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="p">(</span><span class="n">diff_y</span> <span class="o">-</span> <span class="n">mu</span><span class="p">)))</span>
+            <span class="n">sigma2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">((</span><span class="n">diff_y</span> <span class="o">-</span> <span class="n">mu</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">gamma</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_xh</span>
+            <span class="c1"># negative log likelihood</span>
+            <span class="n">logp</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_xh</span> <span class="o">*</span> \
+                <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">sigma2</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">L</span><span class="p">)))</span>
+            <span class="n">out</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">logp</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+        <span class="k">return</span> <span class="o">-</span><span class="n">out</span></div>
+
+
+<div class="viewcode-block" id="CoKriging._update_parameters">
+<a class="viewcode-back" href="../../../mfpml.models.html#mfpml.models.co_kriging.CoKriging._update_parameters">[docs]</a>
+    <span class="k">def</span> <span class="nf">_update_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update parameters of the model&quot;&quot;&quot;</span>
+        <span class="c1"># correlation matrix R</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">K</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel</span><span class="o">.</span><span class="n">get_kernel_matrix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_xh_scaled</span><span class="p">,</span>
+                                               <span class="bp">self</span><span class="o">.</span><span class="n">sample_xh_scaled</span><span class="p">)</span>
+        <span class="n">L</span> <span class="o">=</span> <span class="n">cholesky</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">K</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="c1"># R^(-1)Y</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">diff_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample_yh</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">rho</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">pred_ylh</span>
+        <span class="n">alpha</span> <span class="o">=</span> <span class="n">solve</span><span class="p">(</span><span class="n">L</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">solve</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">diff_y</span><span class="p">))</span>
+        <span class="n">one</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_xh</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="c1"># R^(-1)1</span>
+        <span class="n">beta</span> <span class="o">=</span> <span class="n">solve</span><span class="p">(</span><span class="n">L</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">solve</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">one</span><span class="p">))</span>
+        <span class="c1"># 1R^(-1)Y / 1R^(-1)vector(1)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mu_d</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">one</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">alpha</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">one</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">beta</span><span class="p">))</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+        <span class="n">gamma</span> <span class="o">=</span> <span class="n">solve</span><span class="p">(</span><span class="n">L</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">solve</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">diff_y</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">mu_d</span><span class="p">)))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sigma2</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">diff_y</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">mu_d</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">,</span>
+                       <span class="n">gamma</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_xh</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logp</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_xh</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sigma2</span><span class="p">)</span> <span class="o">-</span>
+                     <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">L</span><span class="p">))))</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+        <span class="c1"># cov matrix for Co-Kriging</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">C</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span>
+            <span class="p">(</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span>
+                    <span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">lf_model</span><span class="o">.</span><span class="n">sigma2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">lf_model</span><span class="o">.</span><span class="n">K</span><span class="p">,</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">rho</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">lf_model</span><span class="o">.</span><span class="n">sigma2</span>
+                        <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">lf_model</span><span class="o">.</span><span class="n">kernel</span><span class="o">.</span><span class="n">get_kernel_matrix</span><span class="p">(</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">sample_xl_scaled</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample_xh_scaled</span><span class="p">),</span>
+                    <span class="p">),</span>
+                    <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                <span class="p">),</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span>
+                    <span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">rho</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">lf_model</span><span class="o">.</span><span class="n">sigma2</span>
+                        <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">lf_model</span><span class="o">.</span><span class="n">kernel</span><span class="o">.</span><span class="n">get_kernel_matrix</span><span class="p">(</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">sample_xh_scaled</span><span class="p">,</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">sample_xl_scaled</span><span class="p">),</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">rho</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">lf_model</span><span class="o">.</span><span class="n">sigma2</span>
+                        <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">lf_model</span><span class="o">.</span><span class="n">kernel</span><span class="o">.</span><span class="n">get_kernel_matrix</span><span class="p">(</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">sample_xh_scaled</span><span class="p">,</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">sample_xh_scaled</span><span class="p">)</span>
+                        <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">K</span><span class="p">,</span>
+                    <span class="p">),</span>
+                    <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                <span class="p">),</span>
+            <span class="p">),</span>
+            <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="c1"># all y values</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_yl</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample_yh</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">LC</span> <span class="o">=</span> <span class="n">cholesky</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">C</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">C</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">*</span> <span class="mi">10</span><span class="o">**-</span><span class="mi">10</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+        <span class="n">oneC</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">C</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mu</span> <span class="o">=</span> <span class="n">oneC</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span>
+            <span class="n">solve</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">LC</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">solve</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">LC</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">))</span>
+        <span class="p">)</span> <span class="o">/</span> <span class="n">oneC</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">solve</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">LC</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">solve</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">LC</span><span class="p">,</span> <span class="n">oneC</span><span class="p">)))</span><span class="o">.</span><span class="n">item</span><span class="p">()</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Jiaxiang Yi.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

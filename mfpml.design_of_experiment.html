@@ -128,15 +128,864 @@
 <h1>mfpml.design_of_experiment<a class="headerlink" href="#mfpml-design-of-experiment" title="Link to this heading">¶</a></h1>
 <section id="mfpml-design-of-experiment-multifidelity-samplers">
 <h2>mfpml.design_of_experiment.multifidelity_samplers<a class="headerlink" href="#mfpml-design-of-experiment-multifidelity-samplers" title="Link to this heading">¶</a></h2>
+<dl class="py class" id="module-mfpml.design_of_experiment.multifidelity_samplers">
+<dt class="sig sig-object py" id="mfpml.design_of_experiment.multifidelity_samplers.MFLatinHyperCube">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MFLatinHyperCube</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">design_space</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nested</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/design_of_experiment/multifidelity_samplers.html#MFLatinHyperCube"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.design_of_experiment.multifidelity_samplers.MFLatinHyperCube" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mfpml.design_of_experiment.multifidelity_samplers.MultiFidelitySampler" title="mfpml.design_of_experiment.multifidelity_samplers.MultiFidelitySampler"><code class="xref py py-class docutils literal notranslate"><span class="pre">MultiFidelitySampler</span></code></a></p>
+<p>Multi-fidelity Latin HyperCube sampling</p>
+<p>Initialization</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>design_space</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><em>dict</em></a>) – design space of the problem</p></li>
+<li><p><strong>nested</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a><em>, </em><em>optional</em>) – nested sampling or not, by default False</p></li>
+<li><p><strong>seed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a><em>, </em><em>optional</em>) – seed, by default None</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.design_of_experiment.multifidelity_samplers.MFLatinHyperCube.__get_lf_samples">
+<span class="sig-name descname"><span class="pre">__get_lf_samples</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mfpml.design_of_experiment.multifidelity_samplers.MFLatinHyperCube.__get_lf_samples" title="Link to this definition">¶</a></dt>
+<dd><p>get low fidelity samples</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>lf_samples</strong> – a numpy array contains low fidelity samples</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.design_of_experiment.multifidelity_samplers.MFLatinHyperCube.__get_nested_hf_samples">
+<span class="sig-name descname"><span class="pre">__get_nested_hf_samples</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mfpml.design_of_experiment.multifidelity_samplers.MFLatinHyperCube.__get_nested_hf_samples" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.design_of_experiment.multifidelity_samplers.MFLatinHyperCube.__get_non_nested_hf_samples">
+<span class="sig-name descname"><span class="pre">__get_non_nested_hf_samples</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mfpml.design_of_experiment.multifidelity_samplers.MFLatinHyperCube.__get_non_nested_hf_samples" title="Link to this definition">¶</a></dt>
+<dd><p>use  another LHS to generate samples for high fidelity
+:returns: <strong>hf_samples</strong> – a numpy array contains high fidelity samples
+:rtype: np.ndarray</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.design_of_experiment.multifidelity_samplers.MFLatinHyperCube.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">design_space</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nested</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/design_of_experiment/multifidelity_samplers.html#MFLatinHyperCube.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.design_of_experiment.multifidelity_samplers.MFLatinHyperCube.__init__" title="Link to this definition">¶</a></dt>
+<dd><p>Initialization</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>design_space</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><em>dict</em></a>) – design space of the problem</p></li>
+<li><p><strong>nested</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a><em>, </em><em>optional</em>) – nested sampling or not, by default False</p></li>
+<li><p><strong>seed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a><em>, </em><em>optional</em>) – seed, by default None</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mfpml.design_of_experiment.multifidelity_samplers.MFLatinHyperCube._abc_impl">
+<span class="sig-name descname"><span class="pre">_abc_impl</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;_abc._abc_data</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#mfpml.design_of_experiment.multifidelity_samplers.MFLatinHyperCube._abc_impl" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.design_of_experiment.multifidelity_samplers.MFLatinHyperCube.get_samples">
+<span class="sig-name descname"><span class="pre">get_samples</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/design_of_experiment/multifidelity_samplers.html#MFLatinHyperCube.get_samples"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.design_of_experiment.multifidelity_samplers.MFLatinHyperCube.get_samples" title="Link to this definition">¶</a></dt>
+<dd><p>get samples</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>num_samples</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a><em>, </em><em>optional</em>) – number of samples, by default None</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>samples</strong> – a dict contains low fidelity and high fidelity samples</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)">dict</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mfpml.design_of_experiment.multifidelity_samplers.MFSobolSequence">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MFSobolSequence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">design_space</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nested</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">123456</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_skip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/design_of_experiment/multifidelity_samplers.html#MFSobolSequence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.design_of_experiment.multifidelity_samplers.MFSobolSequence" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mfpml.design_of_experiment.multifidelity_samplers.MultiFidelitySampler" title="mfpml.design_of_experiment.multifidelity_samplers.MultiFidelitySampler"><code class="xref py py-class docutils literal notranslate"><span class="pre">MultiFidelitySampler</span></code></a></p>
+<p>Multi-fidelity sobol sequence sampling</p>
+<p>Initialization</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>design_space</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><em>dict</em></a>) – design space of the problem</p></li>
+<li><p><strong>nested</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a><em>, </em><em>optional</em>) – nested sampling or not, by default False</p></li>
+<li><p><strong>seed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a><em>, </em><em>optional</em>) – seed, by default 123456</p></li>
+<li><p><strong>num_skip</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a><em>, </em><em>optional</em>) – number of skip, by default None</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.design_of_experiment.multifidelity_samplers.MFSobolSequence.__get_lf_samples">
+<span class="sig-name descname"><span class="pre">__get_lf_samples</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mfpml.design_of_experiment.multifidelity_samplers.MFSobolSequence.__get_lf_samples" title="Link to this definition">¶</a></dt>
+<dd><p>get low fidelity samples</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>lf_samples</strong> – a numpy array contains low fidelity samples</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.design_of_experiment.multifidelity_samplers.MFSobolSequence.__get_nested_hf_samples">
+<span class="sig-name descname"><span class="pre">__get_nested_hf_samples</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mfpml.design_of_experiment.multifidelity_samplers.MFSobolSequence.__get_nested_hf_samples" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>hf_sample</strong> – a numpy array contains high fidelity samples</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.design_of_experiment.multifidelity_samplers.MFSobolSequence.__get_non_nested_hf_samples">
+<span class="sig-name descname"><span class="pre">__get_non_nested_hf_samples</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mfpml.design_of_experiment.multifidelity_samplers.MFSobolSequence.__get_non_nested_hf_samples" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>hf_sample</strong> – a numpy array contains high fidelity samples</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.design_of_experiment.multifidelity_samplers.MFSobolSequence.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">design_space</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nested</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">123456</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_skip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/design_of_experiment/multifidelity_samplers.html#MFSobolSequence.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.design_of_experiment.multifidelity_samplers.MFSobolSequence.__init__" title="Link to this definition">¶</a></dt>
+<dd><p>Initialization</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>design_space</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><em>dict</em></a>) – design space of the problem</p></li>
+<li><p><strong>nested</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a><em>, </em><em>optional</em>) – nested sampling or not, by default False</p></li>
+<li><p><strong>seed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a><em>, </em><em>optional</em>) – seed, by default 123456</p></li>
+<li><p><strong>num_skip</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a><em>, </em><em>optional</em>) – number of skip, by default None</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mfpml.design_of_experiment.multifidelity_samplers.MFSobolSequence._abc_impl">
+<span class="sig-name descname"><span class="pre">_abc_impl</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;_abc._abc_data</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#mfpml.design_of_experiment.multifidelity_samplers.MFSobolSequence._abc_impl" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.design_of_experiment.multifidelity_samplers.MFSobolSequence.get_samples">
+<span class="sig-name descname"><span class="pre">get_samples</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/design_of_experiment/multifidelity_samplers.html#MFSobolSequence.get_samples"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.design_of_experiment.multifidelity_samplers.MFSobolSequence.get_samples" title="Link to this definition">¶</a></dt>
+<dd><p>get samples</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>num_samples</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a><em>, </em><em>optional</em>) – number of samples, by default None</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>samples</strong> – a dict contains low fidelity and high fidelity samples</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)">dict</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mfpml.design_of_experiment.multifidelity_samplers.MultiFidelitySampler">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MultiFidelitySampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">design_space</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/design_of_experiment/multifidelity_samplers.html#MultiFidelitySampler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.design_of_experiment.multifidelity_samplers.MultiFidelitySampler" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mfpml.design_of_experiment.sampler.Sampler" title="mfpml.design_of_experiment.sampler.Sampler"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sampler</span></code></a></p>
+<p>Base class for multi-fidelity sampling</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>design_space</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><em>dict</em></a>) – design_space</p></li>
+<li><p><strong>seed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – seed s</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.design_of_experiment.multifidelity_samplers.MultiFidelitySampler.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">design_space</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/design_of_experiment/multifidelity_samplers.html#MultiFidelitySampler.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.design_of_experiment.multifidelity_samplers.MultiFidelitySampler.__init__" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>design_space</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><em>dict</em></a>) – design_space</p></li>
+<li><p><strong>seed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – seed s</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mfpml.design_of_experiment.multifidelity_samplers.MultiFidelitySampler._abc_impl">
+<span class="sig-name descname"><span class="pre">_abc_impl</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;_abc._abc_data</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#mfpml.design_of_experiment.multifidelity_samplers.MultiFidelitySampler._abc_impl" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.design_of_experiment.multifidelity_samplers.MultiFidelitySampler._create_pandas_frame">
+<span class="sig-name descname"><span class="pre">_create_pandas_frame</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/design_of_experiment/multifidelity_samplers.html#MultiFidelitySampler._create_pandas_frame"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.design_of_experiment.multifidelity_samplers.MultiFidelitySampler._create_pandas_frame" title="Link to this definition">¶</a></dt>
+<dd><p>this function is used to create pandas framework for the doe
+the output will be added at the end of the pandas dataframe but
+without giving names</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.design_of_experiment.multifidelity_samplers.MultiFidelitySampler._mf_samples_rules">
+<span class="sig-name descname"><span class="pre">_mf_samples_rules</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/design_of_experiment/multifidelity_samplers.html#MultiFidelitySampler._mf_samples_rules"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.design_of_experiment.multifidelity_samplers.MultiFidelitySampler._mf_samples_rules" title="Link to this definition">¶</a></dt>
+<dd><p>number of low fidelity samples should larger than high fidelity samples</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mfpml.design_of_experiment.multifidelity_samplers.MultiFidelitySampler.data">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">data</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><span class="pre">dict</span></a></em><a class="headerlink" href="#mfpml.design_of_experiment.multifidelity_samplers.MultiFidelitySampler.data" title="Link to this definition">¶</a></dt>
+<dd><p>samples for multi-fidelity
+:returns: <strong>data</strong> – samples includes high fidelity and low fidelity
+:rtype: dict</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.design_of_experiment.multifidelity_samplers.MultiFidelitySampler.get_samples">
+<span class="sig-name descname"><span class="pre">get_samples</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/design_of_experiment/multifidelity_samplers.html#MultiFidelitySampler.get_samples"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.design_of_experiment.multifidelity_samplers.MultiFidelitySampler.get_samples" title="Link to this definition">¶</a></dt>
+<dd><p>Get the samples
+:param num_samples: number of samples
+:type num_samples: int</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a></p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The function should be completed at the sub-sclass</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mfpml.design_of_experiment.multifidelity_samplers.MultiFidelitySampler.hf_samples">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">hf_samples</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">DataFrame</span></em><a class="headerlink" href="#mfpml.design_of_experiment.multifidelity_samplers.MultiFidelitySampler.hf_samples" title="Link to this definition">¶</a></dt>
+<dd><p>get the high fidelity samples
+:returns: <strong>hf_samples</strong> – high fidelity samples
+:rtype: pd.DataFrame</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mfpml.design_of_experiment.multifidelity_samplers.MultiFidelitySampler.lf_samples">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">lf_samples</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">DataFrame</span></em><a class="headerlink" href="#mfpml.design_of_experiment.multifidelity_samplers.MultiFidelitySampler.lf_samples" title="Link to this definition">¶</a></dt>
+<dd><p>get the low fidelity samples
+:returns: <strong>lf_samples</strong> – low fidelity samples
+:rtype: pd.DataFrame</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.design_of_experiment.multifidelity_samplers.MultiFidelitySampler.plot_samples">
+<span class="sig-name descname"><span class="pre">plot_samples</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fig_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mf.png'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_fig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/design_of_experiment/multifidelity_samplers.html#MultiFidelitySampler.plot_samples"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.design_of_experiment.multifidelity_samplers.MultiFidelitySampler.plot_samples" title="Link to this definition">¶</a></dt>
+<dd><p>Visualization of mf sampling
+:type fig_name: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>
+:param fig_name: figure name
+:type fig_name: str
+:type save_fig: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>
+:param save_fig: save figure or not
+:type save_fig: bool</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 <section id="mfpml-design-of-experiment-sampler">
 <h2>mfpml.design_of_experiment.sampler<a class="headerlink" href="#mfpml-design-of-experiment-sampler" title="Link to this heading">¶</a></h2>
+<dl class="py class" id="module-mfpml.design_of_experiment.sampler">
+<dt class="sig sig-object py" id="mfpml.design_of_experiment.sampler.Sampler">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Sampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">design_space</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">123456</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/design_of_experiment/sampler.html#Sampler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.design_of_experiment.sampler.Sampler" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/abc.html#abc.ABC" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></a></p>
+<p>Class for drawing samples from design space</p>
+<p>Initialization of sampler class
+:type design_space: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>
+:param design_space: design space
+:type design_space: dict
+:type seed: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>
+:param seed:
+:type seed: int</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.design_of_experiment.sampler.Sampler.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">design_space</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">123456</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/design_of_experiment/sampler.html#Sampler.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.design_of_experiment.sampler.Sampler.__init__" title="Link to this definition">¶</a></dt>
+<dd><p>Initialization of sampler class
+:type design_space: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>
+:param design_space: design space
+:type design_space: dict
+:type seed: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>
+:param seed:
+:type seed: int</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mfpml.design_of_experiment.sampler.Sampler._abc_impl">
+<span class="sig-name descname"><span class="pre">_abc_impl</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;_abc._abc_data</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#mfpml.design_of_experiment.sampler.Sampler._abc_impl" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.design_of_experiment.sampler.Sampler._create_pandas_frame">
+<span class="sig-name descname"><span class="pre">_create_pandas_frame</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/design_of_experiment/sampler.html#Sampler._create_pandas_frame"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.design_of_experiment.sampler.Sampler._create_pandas_frame" title="Link to this definition">¶</a></dt>
+<dd><p>this function is used to create pandas framework for the doe
+the output will be added at the end of the pandas dataframe
+but without giving names</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.design_of_experiment.sampler.Sampler.get_samples">
+<span class="sig-name descname"><span class="pre">get_samples</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_samples</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/design_of_experiment/sampler.html#Sampler.get_samples"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.design_of_experiment.sampler.Sampler.get_samples" title="Link to this definition">¶</a></dt>
+<dd><p>Get the samples</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>num_samples</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – number of samples</p></li>
+<li><p><strong>kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a><em>,</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – num_lf_samples: int
+num_hf_samples: int</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>samples</strong> – samples</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>any</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The function should be completed at the sub-sclass</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.design_of_experiment.sampler.Sampler.plot_samples">
+<span class="sig-name descname"><span class="pre">plot_samples</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fig_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'figure'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_fig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/design_of_experiment/sampler.html#Sampler.plot_samples"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.design_of_experiment.sampler.Sampler.plot_samples" title="Link to this definition">¶</a></dt>
+<dd><p>function to visualize the one dimension design of experiment
+:type fig_name: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>
+:param fig_name: name of the figure file
+:type fig_name: str
+:type save_fig: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>
+:param save_fig: operator to claim save the figure or not
+:type save_fig: bool</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.design_of_experiment.sampler.Sampler.save_doe">
+<span class="sig-name descname"><span class="pre">save_doe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">json_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'doe'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/design_of_experiment/sampler.html#Sampler.save_doe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.design_of_experiment.sampler.Sampler.save_doe" title="Link to this definition">¶</a></dt>
+<dd><p>This function is used to save the design_of_experiment to Json files</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>json_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – name for the Json.file</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 <section id="mfpml-design-of-experiment-singlefideliy-samplers">
 <h2>mfpml.design_of_experiment.singlefideliy_samplers<a class="headerlink" href="#mfpml-design-of-experiment-singlefideliy-samplers" title="Link to this heading">¶</a></h2>
+<dl class="py class" id="module-mfpml.design_of_experiment.singlefideliy_samplers">
+<dt class="sig sig-object py" id="mfpml.design_of_experiment.singlefideliy_samplers.FixNumberSampler">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">FixNumberSampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">design_space</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/design_of_experiment/singlefideliy_samplers.html#FixNumberSampler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.design_of_experiment.singlefideliy_samplers.FixNumberSampler" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mfpml.design_of_experiment.singlefideliy_samplers.SingleFidelitySampler" title="mfpml.design_of_experiment.singlefideliy_samplers.SingleFidelitySampler"><code class="xref py py-class docutils literal notranslate"><span class="pre">SingleFidelitySampler</span></code></a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>design_space</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><em>dict</em></a>) – design space</p></li>
+<li><p><strong>seed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – seed</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.design_of_experiment.singlefideliy_samplers.FixNumberSampler.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">design_space</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/design_of_experiment/singlefideliy_samplers.html#FixNumberSampler.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.design_of_experiment.singlefideliy_samplers.FixNumberSampler.__init__" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>design_space</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><em>dict</em></a>) – design space</p></li>
+<li><p><strong>seed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – seed</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mfpml.design_of_experiment.singlefideliy_samplers.FixNumberSampler._abc_impl">
+<span class="sig-name descname"><span class="pre">_abc_impl</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;_abc._abc_data</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#mfpml.design_of_experiment.singlefideliy_samplers.FixNumberSampler._abc_impl" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.design_of_experiment.singlefideliy_samplers.FixNumberSampler.get_samples">
+<span class="sig-name descname"><span class="pre">get_samples</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_samples</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/design_of_experiment/singlefideliy_samplers.html#FixNumberSampler.get_samples"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.design_of_experiment.singlefideliy_samplers.FixNumberSampler.get_samples" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>num_samples</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – number of samples</p></li>
+<li><p><strong>kwargs</strong> (<em>additional info</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>data</strong> – samples</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)">dict</a></p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">design_space</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;x1&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;x2&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sampler</span> <span class="o">=</span> <span class="n">FixNumberSampler</span><span class="p">(</span><span class="n">design_space</span><span class="o">=</span><span class="n">design_space</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">123456</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">samples</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">get_samples</span><span class="p">(</span><span class="n">num_samples</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">samples</span>
+<span class="go">{&#39;inputs&#39;:    x1   x2</span>
+<span class="go">0  0.5  0.5</span>
+<span class="go">1  0.5  0.5}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mfpml.design_of_experiment.singlefideliy_samplers.LatinHyperCube">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">LatinHyperCube</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">design_space</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/design_of_experiment/singlefideliy_samplers.html#LatinHyperCube"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.design_of_experiment.singlefideliy_samplers.LatinHyperCube" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mfpml.design_of_experiment.singlefideliy_samplers.SingleFidelitySampler" title="mfpml.design_of_experiment.singlefideliy_samplers.SingleFidelitySampler"><code class="xref py py-class docutils literal notranslate"><span class="pre">SingleFidelitySampler</span></code></a></p>
+<p>Latin Hyper cube sampling</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>design_space</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><em>dict</em></a>) – design space</p></li>
+<li><p><strong>seed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – seed</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.design_of_experiment.singlefideliy_samplers.LatinHyperCube.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">design_space</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/design_of_experiment/singlefideliy_samplers.html#LatinHyperCube.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.design_of_experiment.singlefideliy_samplers.LatinHyperCube.__init__" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>design_space</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><em>dict</em></a>) – design space</p></li>
+<li><p><strong>seed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – seed</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mfpml.design_of_experiment.singlefideliy_samplers.LatinHyperCube._abc_impl">
+<span class="sig-name descname"><span class="pre">_abc_impl</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;_abc._abc_data</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#mfpml.design_of_experiment.singlefideliy_samplers.LatinHyperCube._abc_impl" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.design_of_experiment.singlefideliy_samplers.LatinHyperCube.get_samples">
+<span class="sig-name descname"><span class="pre">get_samples</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_samples</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/design_of_experiment/singlefideliy_samplers.html#LatinHyperCube.get_samples"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.design_of_experiment.singlefideliy_samplers.LatinHyperCube.get_samples" title="Link to this definition">¶</a></dt>
+<dd><p>get samples</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>num_samples</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – number of samples</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>sample</strong> – a numpy array of samples</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">design_space</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;x1&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;x2&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sampler</span> <span class="o">=</span> <span class="n">LatinHyperCube</span><span class="p">(</span><span class="n">design_space</span><span class="o">=</span><span class="n">design_space</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">123456</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">samples</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">get_samples</span><span class="p">(</span><span class="n">num_samples</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">samples</span>
+<span class="go">array([[0.5, 0.5],</span>
+<span class="go">        [0.5, 0.5]])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mfpml.design_of_experiment.singlefideliy_samplers.RandomSampler">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">RandomSampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">design_space</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/design_of_experiment/singlefideliy_samplers.html#RandomSampler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.design_of_experiment.singlefideliy_samplers.RandomSampler" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mfpml.design_of_experiment.singlefideliy_samplers.SingleFidelitySampler" title="mfpml.design_of_experiment.singlefideliy_samplers.SingleFidelitySampler"><code class="xref py py-class docutils literal notranslate"><span class="pre">SingleFidelitySampler</span></code></a></p>
+<p>Random sampling</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>design_space</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><em>dict</em></a>) – design space</p></li>
+<li><p><strong>seed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – seed</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.design_of_experiment.singlefideliy_samplers.RandomSampler.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">design_space</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/design_of_experiment/singlefideliy_samplers.html#RandomSampler.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.design_of_experiment.singlefideliy_samplers.RandomSampler.__init__" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>design_space</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><em>dict</em></a>) – design space</p></li>
+<li><p><strong>seed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – seed</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mfpml.design_of_experiment.singlefideliy_samplers.RandomSampler._abc_impl">
+<span class="sig-name descname"><span class="pre">_abc_impl</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;_abc._abc_data</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#mfpml.design_of_experiment.singlefideliy_samplers.RandomSampler._abc_impl" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.design_of_experiment.singlefideliy_samplers.RandomSampler.get_samples">
+<span class="sig-name descname"><span class="pre">get_samples</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_samples</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/design_of_experiment/singlefideliy_samplers.html#RandomSampler.get_samples"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.design_of_experiment.singlefideliy_samplers.RandomSampler.get_samples" title="Link to this definition">¶</a></dt>
+<dd><p>get samples</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>num_samples</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – number of samples</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>sample</strong> – a numpy array of samples</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">design_space</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;x1&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;x2&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sampler</span> <span class="o">=</span> <span class="n">RandomSampler</span><span class="p">(</span><span class="n">design_space</span><span class="o">=</span><span class="n">design_space</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">123456</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">samples</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">get_samples</span><span class="p">(</span><span class="n">num_samples</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">samples</span>
+<span class="go">array([[0.12696982, 0.96671784],</span>
+<span class="go">        [0.26047601, 0.89750289]])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mfpml.design_of_experiment.singlefideliy_samplers.SingleFidelitySampler">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SingleFidelitySampler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">design_space</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/design_of_experiment/singlefideliy_samplers.html#SingleFidelitySampler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.design_of_experiment.singlefideliy_samplers.SingleFidelitySampler" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mfpml.design_of_experiment.sampler.Sampler" title="mfpml.design_of_experiment.sampler.Sampler"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sampler</span></code></a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>design_space</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><em>dict</em></a>) – design space</p></li>
+<li><p><strong>seed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – seed</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.design_of_experiment.singlefideliy_samplers.SingleFidelitySampler.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">design_space</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/design_of_experiment/singlefideliy_samplers.html#SingleFidelitySampler.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.design_of_experiment.singlefideliy_samplers.SingleFidelitySampler.__init__" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>design_space</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><em>dict</em></a>) – design space</p></li>
+<li><p><strong>seed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – seed</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mfpml.design_of_experiment.singlefideliy_samplers.SingleFidelitySampler._abc_impl">
+<span class="sig-name descname"><span class="pre">_abc_impl</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;_abc._abc_data</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#mfpml.design_of_experiment.singlefideliy_samplers.SingleFidelitySampler._abc_impl" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.design_of_experiment.singlefideliy_samplers.SingleFidelitySampler._create_pandas_frame">
+<span class="sig-name descname"><span class="pre">_create_pandas_frame</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/design_of_experiment/singlefideliy_samplers.html#SingleFidelitySampler._create_pandas_frame"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.design_of_experiment.singlefideliy_samplers.SingleFidelitySampler._create_pandas_frame" title="Link to this definition">¶</a></dt>
+<dd><p>create pandas frame for samples</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mfpml.design_of_experiment.singlefideliy_samplers.SingleFidelitySampler.data">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">data</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">DataFrame</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#mfpml.design_of_experiment.singlefideliy_samplers.SingleFidelitySampler.data" title="Link to this definition">¶</a></dt>
+<dd><p>get data</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.design_of_experiment.singlefideliy_samplers.SingleFidelitySampler.get_samples">
+<span class="sig-name descname"><span class="pre">get_samples</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_samples</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/design_of_experiment/singlefideliy_samplers.html#SingleFidelitySampler.get_samples"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.design_of_experiment.singlefideliy_samplers.SingleFidelitySampler.get_samples" title="Link to this definition">¶</a></dt>
+<dd><p>Get the samples</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>num_samples</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – number of samples</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>samples</strong> – samples generated from sampling methods</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The function should be completed at the sub-sclass</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.design_of_experiment.singlefideliy_samplers.SingleFidelitySampler.plot_samples">
+<span class="sig-name descname"><span class="pre">plot_samples</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fig_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sf_sampler'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_sig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/design_of_experiment/singlefideliy_samplers.html#SingleFidelitySampler.plot_samples"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.design_of_experiment.singlefideliy_samplers.SingleFidelitySampler.plot_samples" title="Link to this definition">¶</a></dt>
+<dd><p>Visualization of sampling method</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>figure_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – figure name</p></li>
+<li><p><strong>save_plot</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a>) – save the figure or not</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">design_space</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;x1&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;x2&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sampler</span> <span class="o">=</span> <span class="n">LatinHyperCube</span><span class="p">(</span><span class="n">design_space</span><span class="o">=</span><span class="n">design_space</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">123456</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">samples</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">get_samples</span><span class="p">(</span><span class="n">num_samples</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sampler</span><span class="o">.</span><span class="n">plot_samples</span><span class="p">(</span><span class="n">figure_name</span><span class="o">=</span><span class="s1">&#39;sampler&#39;</span><span class="p">,</span> <span class="n">save_plot</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mfpml.design_of_experiment.singlefideliy_samplers.SingleFidelitySampler.samples">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">samples</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">DataFrame</span></em><a class="headerlink" href="#mfpml.design_of_experiment.singlefideliy_samplers.SingleFidelitySampler.samples" title="Link to this definition">¶</a></dt>
+<dd><p>get samples</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>samples</strong> – a pandas dataframe of samples</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>pd.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mfpml.design_of_experiment.singlefideliy_samplers.SobolSequence">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SobolSequence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">design_space</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_skip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/design_of_experiment/singlefideliy_samplers.html#SobolSequence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.design_of_experiment.singlefideliy_samplers.SobolSequence" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mfpml.design_of_experiment.singlefideliy_samplers.SingleFidelitySampler" title="mfpml.design_of_experiment.singlefideliy_samplers.SingleFidelitySampler"><code class="xref py py-class docutils literal notranslate"><span class="pre">SingleFidelitySampler</span></code></a></p>
+<p>Sobol Sequence sampling</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>design_space</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><em>dict</em></a>) – design space</p></li>
+<li><p><strong>seed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – seed</p></li>
+<li><p><strong>num_skip</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – cut the first several samples s</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.design_of_experiment.singlefideliy_samplers.SobolSequence.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">design_space</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_skip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/design_of_experiment/singlefideliy_samplers.html#SobolSequence.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.design_of_experiment.singlefideliy_samplers.SobolSequence.__init__" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>design_space</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><em>dict</em></a>) – design space</p></li>
+<li><p><strong>seed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – seed</p></li>
+<li><p><strong>num_skip</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – cut the first several samples s</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mfpml.design_of_experiment.singlefideliy_samplers.SobolSequence._abc_impl">
+<span class="sig-name descname"><span class="pre">_abc_impl</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;_abc._abc_data</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#mfpml.design_of_experiment.singlefideliy_samplers.SobolSequence._abc_impl" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.design_of_experiment.singlefideliy_samplers.SobolSequence.get_samples">
+<span class="sig-name descname"><span class="pre">get_samples</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_samples</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/design_of_experiment/singlefideliy_samplers.html#SobolSequence.get_samples"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.design_of_experiment.singlefideliy_samplers.SobolSequence.get_samples" title="Link to this definition">¶</a></dt>
+<dd><p>get samples</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>num_samples</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – number of samples</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>sample</strong> – a numpy array of samples</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">design_space</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;x1&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;x2&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sampler</span> <span class="o">=</span> <span class="n">SobolSequence</span><span class="p">(</span><span class="n">design_space</span><span class="o">=</span><span class="n">design_space</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">123456</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">samples</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">get_samples</span><span class="p">(</span><span class="n">num_samples</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">samples</span>
+<span class="go">array([[0.5, 0.5],</span>
+<span class="go">        [0.5, 0.5]])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 <section id="mfpml-design-of-experiment-space">
 <h2>mfpml.design_of_experiment.space<a class="headerlink" href="#mfpml-design-of-experiment-space" title="Link to this heading">¶</a></h2>
+<dl class="py class" id="module-mfpml.design_of_experiment.space">
+<dt class="sig sig-object py" id="mfpml.design_of_experiment.space.DesignSpace">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">DesignSpace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">names</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">low_bound</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">high_bound</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/design_of_experiment/space.html#DesignSpace"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.design_of_experiment.space.DesignSpace" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>names</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.11)"><em>list</em></a>) – Names of added variables</p></li>
+<li><p><strong>low_bound</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.11)"><em>list</em></a>) – Lower bound of added design variables</p></li>
+<li><p><strong>high_bound</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.11)"><em>list</em></a>) – Higher bound of added design variables</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>input_domain</strong> – a list that contains design space information</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.11)">list</a></p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">mfpml.design_of_experiment</span> <span class="kn">import</span> <span class="n">DesignSpace</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;x1&#39;</span><span class="p">,</span> <span class="s1">&#39;x2&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">low_bound</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">high_bound</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">design_space</span> <span class="o">=</span> <span class="n">DesignSpace</span><span class="p">(</span><span class="n">names</span><span class="p">,</span> <span class="n">low_bound</span><span class="p">,</span> <span class="n">high_bound</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">design_space</span><span class="o">.</span><span class="n">input_domain</span>
+<span class="go">array([[0, 1],</span>
+<span class="go">        [0, 1]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">design_space</span><span class="o">.</span><span class="n">design_space</span>
+<span class="go">{&#39;x1&#39;: [0, 1], &#39;x2&#39;: [0, 1]}</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.design_of_experiment.space.DesignSpace.__check_consistency">
+<span class="sig-name descname"><span class="pre">__check_consistency</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">names</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">low_bound</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">high_bound</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mfpml.design_of_experiment.space.DesignSpace.__check_consistency" title="Link to this definition">¶</a></dt>
+<dd><p>check consistency
+:type names: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>
+:param names: names
+:type names: list
+:type low_bound: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>
+:param low_bound: low bound
+:type low_bound: list
+:type high_bound: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>
+:param high_bound: high bound
+:type high_bound: list</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.design_of_experiment.space.DesignSpace.__check_magnitude">
+<span class="sig-name descname"><span class="pre">__check_magnitude</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">low_bound</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">high_bound</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mfpml.design_of_experiment.space.DesignSpace.__check_magnitude" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>low_bound</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.11)"><em>list</em></a>) – low bound</p></li>
+<li><p><strong>high_bound</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.11)"><em>list</em></a>) – high bound</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.design_of_experiment.space.DesignSpace.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">names</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">low_bound</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">high_bound</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/design_of_experiment/space.html#DesignSpace.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.design_of_experiment.space.DesignSpace.__init__" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>names</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.11)"><em>list</em></a>) – Names of added variables</p></li>
+<li><p><strong>low_bound</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.11)"><em>list</em></a>) – Lower bound of added design variables</p></li>
+<li><p><strong>high_bound</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.11)"><em>list</em></a>) – Higher bound of added design variables</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>input_domain</strong> – a list that contains design space information</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.11)">list</a></p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">mfpml.design_of_experiment</span> <span class="kn">import</span> <span class="n">DesignSpace</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;x1&#39;</span><span class="p">,</span> <span class="s1">&#39;x2&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">low_bound</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">high_bound</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">design_space</span> <span class="o">=</span> <span class="n">DesignSpace</span><span class="p">(</span><span class="n">names</span><span class="p">,</span> <span class="n">low_bound</span><span class="p">,</span> <span class="n">high_bound</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">design_space</span><span class="o">.</span><span class="n">input_domain</span>
+<span class="go">array([[0, 1],</span>
+<span class="go">        [0, 1]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">design_space</span><span class="o">.</span><span class="n">design_space</span>
+<span class="go">{&#39;x1&#39;: [0, 1], &#39;x2&#39;: [0, 1]}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mfpml.design_of_experiment.space.DesignSpace.design_space">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">design_space</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><span class="pre">dict</span></a></em><a class="headerlink" href="#mfpml.design_of_experiment.space.DesignSpace.design_space" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mfpml.design_of_experiment.space.DesignSpace.input_domain">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">input_domain</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.25)"><span class="pre">ndarray</span></a></em><a class="headerlink" href="#mfpml.design_of_experiment.space.DesignSpace.input_domain" title="Link to this definition">¶</a></dt>
+<dd><p>returns: <strong>input_domain</strong> – design space in numpy array form
+:rtype: np.ndarray</p>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 </section>
 
