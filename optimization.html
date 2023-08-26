@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Optimization &mdash; mfpml 0.0.1 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/readthedocs-custom.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/documentation_options.js?v=d45e8c67"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="reliability analysis" href="reliability_analysis.html" />
+    <link rel="prev" title="Multi fidelity surrogates" href="multi_fidelity_kriging_models.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            mfpml
+          </a>
+              <div class="version">
+                0.0.1
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Overview:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="readme.html">Summary</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Get started:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="get_started.html">Installation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Design of experiments:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="design_of_experiments.html">Design space</a></li>
+<li class="toctree-l1"><a class="reference internal" href="design_of_experiments.html#single-fidelity-sampler">Single fidelity sampler</a></li>
+<li class="toctree-l1"><a class="reference internal" href="design_of_experiments.html#multi-fidelity-sampler">Multi fidelity sampler</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Problems:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="problems.html">Problems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="problems.html#single-fidelity-problems">Single fidelity problems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="problems.html#multi-fidelity-problems">Multi fidelity problems</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Surrogates:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="single_fidelity_kriging_models.html">Single fidelity surrogates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="multi_fidelity_kriging_models.html">Multi fidelity surrogates</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Optimization:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#evolutionary-algorithms">1. Evolutionary algorithms</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#particle-swarm-optimization">1.1 Particle swarm optimization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#differential-evolution">1.2 Differential evolution</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#bayesian-optimization">2. Bayesian optimization</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#acquisition-functions">2.1 acquisition functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#schematics-of-acquisition-function-on-forrester-function">2.2 Schematics of Acquisition function on Forrester function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#implemented-single-fidelity-acquisition-functions">Implemented single fidelity acquisition functions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#multi-fidelity-bayesian-optimization">3. Multi fidelity Bayesian optimization</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#multi-fidelity-acquisition-functions">3.1 Multi-fidelity acquisition functions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#variable-fidelity-lower-confidence-bound-vf-lcb">3.1.1 variable-fidelity Lower Confidence Bound (VF-LCB)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#variable-fidelity-expected-improvement-vf-ei">3.1.2 variable-fidelity Expected Improvement (VF-EI)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#extended-probability-of-improvement-vf-pi">3.1.3 Extended Probability of Improvement (VF-PI)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#augmented-expected-improvement-aei">3.1.4 Augmented Expected Improvement (AEI)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#implementation">3.2 Implementation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#references">References</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">reliability analysis:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="reliability_analysis.html">reliability analysis</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="mfpml.html">mfpml documentation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">mfpml</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Optimization</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="optimization">
+<h1>Optimization<a class="headerlink" href="#optimization" title="Link to this heading">¶</a></h1>
+<p>optimization is needed also everywhere in the field of machine learning, and also
+in the field of product, structure, and material design. In this packages, we have
+implemented a few optimization algorithms, which can be categorized into two groups:</p>
+<ol class="arabic simple">
+<li><p>Evolutionary algorithms</p></li>
+<li><p>Single fidelity Bayesian optimization</p></li>
+<li><p>Multi fidelity Bayesian optimization</p></li>
+</ol>
+</section>
+<section id="evolutionary-algorithms">
+<h1>1. Evolutionary algorithms<a class="headerlink" href="#evolutionary-algorithms" title="Link to this heading">¶</a></h1>
+<p>Evolutionary is a class of algorithms inspired by the biological evolution, and they
+don’t require the gradient information of the objective function. In this package, we
+have implemented the following evolutionary algorithms:</p>
+<ol class="arabic simple">
+<li><p>particle swarm optimization (PSO)</p></li>
+<li><p>differential evolution (DE)</p></li>
+</ol>
+<section id="particle-swarm-optimization">
+<h2>1.1 Particle swarm optimization<a class="headerlink" href="#particle-swarm-optimization" title="Link to this heading">¶</a></h2>
+<p>Particle swarm optimization (PSO) is a population-based stochastic optimization algorithm.
+The basic idea of PSO is to simulate the social behavior of birds flocking or fish schooling.
+In PSO, each particle has a position and velocity, and the position of each particle is updated
+according to certain rules. More details can be referred to <a class="footnote-reference brackets" href="#id3" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a></p>
+<p><strong>Implementation</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mfpml.problems.singlefidelity_functions</span> <span class="kn">import</span> <span class="n">Forrester</span>
+<span class="kn">from</span> <span class="nn">mfpml.optimization.sf_pso</span> <span class="kn">import</span> <span class="n">PSO</span>
+<span class="c1"># define problem</span>
+<span class="n">problem</span> <span class="o">=</span> <span class="n">Forrester</span><span class="p">()</span>
+
+<span class="c1"># initialize the PSO class</span>
+<span class="n">pso</span> <span class="o">=</span> <span class="n">PSO</span><span class="p">(</span><span class="n">num_gen</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">num_pop</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="c1"># run the optimizer</span>
+<span class="n">best_results</span> <span class="o">=</span> <span class="n">pso</span><span class="o">.</span><span class="n">run_optimizer</span><span class="p">(</span>
+    <span class="n">func</span><span class="o">=</span><span class="n">problem</span><span class="o">.</span><span class="n">f</span><span class="p">,</span>
+    <span class="n">num_dim</span><span class="o">=</span><span class="n">problem</span><span class="o">.</span><span class="n">num_dim</span><span class="p">,</span>
+    <span class="n">design_space</span><span class="o">=</span><span class="n">problem</span><span class="o">.</span><span class="n">_input_domain</span><span class="p">,</span>
+    <span class="n">print_info</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="differential-evolution">
+<h2>1.2 Differential evolution<a class="headerlink" href="#differential-evolution" title="Link to this heading">¶</a></h2>
+<p>Differential evolution (DE) is a population-based stochastic optimization algorithm.
+The basic idea of DE is to generate a new population by adding the weighted difference
+between two randomly selected population members to a third population member. More details
+can be referred to <a class="footnote-reference brackets" href="#id4" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a></p>
+<p><strong>Implementation</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mfpml.problems.singlefidelity_functions</span> <span class="kn">import</span> <span class="n">Forrester</span>
+<span class="kn">from</span> <span class="nn">mfpml.optimization.sf_de</span> <span class="kn">import</span> <span class="n">DE</span>
+<span class="c1"># define problem</span>
+<span class="n">problem</span> <span class="o">=</span> <span class="n">Forrester</span><span class="p">()</span>
+
+<span class="c1"># initialize the DE class</span>
+<span class="n">de</span> <span class="o">=</span> <span class="n">DE</span><span class="p">(</span><span class="n">num_gen</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">num_pop</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="c1"># run the optimizer</span>
+<span class="n">best_results</span> <span class="o">=</span> <span class="n">de</span><span class="o">.</span><span class="n">run_optimizer</span><span class="p">(</span>
+    <span class="n">func</span><span class="o">=</span><span class="n">problem</span><span class="o">.</span><span class="n">f</span><span class="p">,</span>
+    <span class="n">num_dim</span><span class="o">=</span><span class="n">problem</span><span class="o">.</span><span class="n">num_dim</span><span class="p">,</span>
+    <span class="n">design_space</span><span class="o">=</span><span class="n">problem</span><span class="o">.</span><span class="n">_input_domain</span><span class="p">,</span>
+    <span class="n">print_info</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="bayesian-optimization">
+<h1>2. Bayesian optimization<a class="headerlink" href="#bayesian-optimization" title="Link to this heading">¶</a></h1>
+<p>Bayesian optimization is a powerful tool to handling expensive optimization problems.
+The basic idea of Bayesian optimization is to use Gaussian Process model to approximate
+the objective function, and then use the predictive mean and variance to determine the next sampling location.</p>
+<p>The criterion of Bayesian optimization is called acquisition function, which is a function of predictive mean and variance.
+The acquisition function is used to determine the next sampling location. There are several acquisition functions,
+such as Expected Improvement (EI), Probability of Improvement (PI), Lower Confidence Bound (UCB), and so on.</p>
+<section id="acquisition-functions">
+<h2>2.1 acquisition functions<a class="headerlink" href="#acquisition-functions" title="Link to this heading">¶</a></h2>
+<p><strong>Expected Improvement (EI)</strong></p>
+<div class="math notranslate nohighlight">
+\[EI(\mathbf{x}) = \mathbb{E}\left [ \max(0, \hat{f}(\mathbf{x}) - f(\mathbf{x}^+)) \right]\]</div>
+<p>where <span class="math notranslate nohighlight">\(\mathbf{x}^+\)</span> is the best observation so far. The above expression can be simplified as:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}EI(\mathbf{x}) = \left\{
+\begin{aligned}
+&amp;(\hat{f}(\mathbf{x}) - f(\mathbf{x}^+))\Phi(Z) + \hat{s}(\mathbf{x})\phi(Z), \,\, \hat{s}(\mathbf{x}) &gt; 0\\
+&amp;0, \,\, \hat{s}(\mathbf{x}) = 0
+\end{aligned}
+\right.
+\,\,\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\Phi\)</span> and <span class="math notranslate nohighlight">\(\phi\)</span> are the cumulative distribution function and probability density
+function of standard normal distribution, respectively.</p>
+<p><strong>Probability of Improvement (PI)</strong></p>
+<div class="math notranslate nohighlight">
+\[PI(\mathbf{x}) = \mathbb{P}\left [ \hat{f}(\mathbf{x}) \geq f(\mathbf{x}^+) \right]\]</div>
+<div class="math notranslate nohighlight">
+\[\begin{split}PI(\mathbf{x}) = \left\{
+\begin{aligned}
+&amp;\Phi(Z), \,\, \hat{s}(\mathbf{x}) &gt; 0\\
+&amp;0, \,\, \hat{s}(\mathbf{x}) = 0
+\end{aligned}
+\right.
+\,\,
+where \,\, Z = \frac{\hat{f}(\mathbf{x}) - f(\mathbf{x}^+) }{\hat{s}(\mathbf{x})}\end{split}\]</div>
+<p><strong>Lower Confidence Bound (LCB)</strong></p>
+<div class="math notranslate nohighlight">
+\[LCB(\mathbf{x}) = \hat{f}(\mathbf{x}) - \kappa \hat{s}(\mathbf{x})\]</div>
+<p>where <span class="math notranslate nohighlight">\(\kappa\)</span> is a hyper-parameter, which is usually set to be 2.</p>
+</section>
+<section id="schematics-of-acquisition-function-on-forrester-function">
+<h2>2.2 Schematics of Acquisition function on Forrester function<a class="headerlink" href="#schematics-of-acquisition-function-on-forrester-function" title="Link to this heading">¶</a></h2>
+<figure class="align-center" id="id5">
+<a class="reference internal image-reference" href="_images/acquisition_functions.png"><img alt="acquisition function" src="_images/acquisition_functions.png" style="width: 100%;" /></a>
+<figcaption>
+<p><span class="caption-text">Schematics of acquisition function on Forrester function</span><a class="headerlink" href="#id5" title="Link to this image">¶</a></p>
+</figcaption>
+</figure>
+<p>2.3 Bayesian optimization implementation</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mfpml.problems.singlefidelity_functions</span> <span class="kn">import</span> <span class="n">Forrester</span>
+<span class="kn">from</span> <span class="nn">mfpml.optimization.sfbo</span> <span class="kn">import</span> <span class="n">BayesOpt</span>
+<span class="kn">from</span> <span class="nn">mfpml.optimization.sf_acqusitions</span> <span class="kn">import</span> <span class="n">EI</span>
+<span class="c1"># define problem</span>
+<span class="n">problem</span> <span class="o">=</span> <span class="n">Forrester</span><span class="p">()</span>
+<span class="c1"># initialize the samples</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">]])</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+<span class="c1"># initialize the BayesOpt class</span>
+<span class="n">bo</span> <span class="o">=</span> <span class="n">BayesOpt</span><span class="p">(</span><span class="n">problem</span><span class="o">=</span><span class="n">problem</span><span class="p">)</span>
+<span class="c1"># note by changing acquistion, to lcb and ei, we can get different results</span>
+<span class="n">bo</span><span class="o">.</span><span class="n">run_optimizer</span><span class="p">(</span><span class="n">init_x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span>
+                <span class="n">init_y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span>
+                <span class="n">max_iter</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+                <span class="n">surrogate</span><span class="o">=</span><span class="n">kriging</span><span class="p">,</span>
+                <span class="n">acquisition</span><span class="o">=</span><span class="n">EI</span><span class="p">(),</span>
+                <span class="n">print_info</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+<figure class="align-center" id="id6">
+<a class="reference internal image-reference" href="_images/bo_forrester.png"><img alt="bo_forrester" src="_images/bo_forrester.png" style="width: 50%;" /></a>
+<figcaption>
+<p><span class="caption-text">Bayesian optimization on Forrester function</span><a class="headerlink" href="#id6" title="Link to this image">¶</a></p>
+</figcaption>
+</figure>
+</section>
+<section id="implemented-single-fidelity-acquisition-functions">
+<h2>Implemented single fidelity acquisition functions<a class="headerlink" href="#implemented-single-fidelity-acquisition-functions" title="Link to this heading">¶</a></h2>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Methods</p></th>
+<th class="head"><p>API of sampling methods</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Expected Improvement</p></td>
+<td><p><code class="xref py py-attr docutils literal notranslate"><span class="pre">EI</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Probability Improvement</p></td>
+<td><p><code class="xref py py-attr docutils literal notranslate"><span class="pre">PI</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Low Confidence Bound</p></td>
+<td><p><code class="xref py py-attr docutils literal notranslate"><span class="pre">LCB</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="multi-fidelity-bayesian-optimization">
+<h1>3. Multi fidelity Bayesian optimization<a class="headerlink" href="#multi-fidelity-bayesian-optimization" title="Link to this heading">¶</a></h1>
+<p>Multi fidelity Bayesian optimization is getting more popular nowadays, because it can
+integrate multi-fidelity data to improve the optimization performance. However, the research
+of Multi-fidelity Bayesian optimization is still in its infancy.</p>
+<p>We have published several papers on the topic of multi-fidelity Bayesian optimization, and
+basically the methods introduced about multi-fidelity Bayesian optimization are implemented
+based on our published papers and the methods that been compared in our research.</p>
+<p>In this repo, we make the implementation of multi-fidelity Bayesian optimization as general as possible,
+meaning one only needs to define a multi-fidelity kriging model <code class="xref py py-attr docutils literal notranslate"><span class="pre">mf_gprs</span></code>  and getting
+a multi-fidelity acquisition function <code class="xref py py-attr docutils literal notranslate"><span class="pre">mf_acqusitions</span></code>  to run the multi-fidelity
+Bayesian optimization.</p>
+<section id="multi-fidelity-acquisition-functions">
+<h2>3.1 Multi-fidelity acquisition functions<a class="headerlink" href="#multi-fidelity-acquisition-functions" title="Link to this heading">¶</a></h2>
+<section id="variable-fidelity-lower-confidence-bound-vf-lcb">
+<h3>3.1.1 variable-fidelity Lower Confidence Bound (VF-LCB)<a class="headerlink" href="#variable-fidelity-lower-confidence-bound-vf-lcb" title="Link to this heading">¶</a></h3>
+</section>
+<section id="variable-fidelity-expected-improvement-vf-ei">
+<h3>3.1.2 variable-fidelity Expected Improvement (VF-EI)<a class="headerlink" href="#variable-fidelity-expected-improvement-vf-ei" title="Link to this heading">¶</a></h3>
+</section>
+<section id="extended-probability-of-improvement-vf-pi">
+<h3>3.1.3 Extended Probability of Improvement (VF-PI)<a class="headerlink" href="#extended-probability-of-improvement-vf-pi" title="Link to this heading">¶</a></h3>
+</section>
+<section id="augmented-expected-improvement-aei">
+<h3>3.1.4 Augmented Expected Improvement (AEI)<a class="headerlink" href="#augmented-expected-improvement-aei" title="Link to this heading">¶</a></h3>
+</section>
+</section>
+<section id="implementation">
+<h2>3.2 Implementation<a class="headerlink" href="#implementation" title="Link to this heading">¶</a></h2>
+<p>Here gives an example on how to use the multi-fidelity Bayesian optimization.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mfpml.problems.multifidelity_functions</span> <span class="kn">import</span> <span class="n">Forrester_1a</span>
+<span class="kn">from</span> <span class="nn">mfpml.optimization.mfbo</span> <span class="kn">import</span> <span class="n">mfBayesOpt</span>
+<span class="kn">from</span> <span class="nn">mfpml.models.co_kriging</span> <span class="kn">import</span> <span class="n">CoKriging</span>
+<span class="kn">from</span> <span class="nn">mfpml.optimization.mf_acqusitions</span> <span class="kn">import</span> <span class="n">augmentedEI</span>
+<span class="kn">from</span> <span class="nn">mfpml.design_of_experiment.multifidelity_samplers</span> <span class="kn">import</span> <span class="n">MFLatinHyperCube</span>
+
+
+<span class="c1"># define problem</span>
+<span class="n">problem</span> <span class="o">=</span> <span class="n">Forrester_1a</span><span class="p">()</span>
+<span class="c1"># initialize the samples</span>
+<span class="n">sampler</span> <span class="o">=</span> <span class="n">MFLatinHyperCube</span><span class="p">(</span><span class="n">design_space</span><span class="o">=</span><span class="n">func</span><span class="o">.</span><span class="n">_design_space</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">7</span><span class="p">)</span>
+
+<span class="c1"># get initial samples</span>
+<span class="n">sample_x</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">get_samples</span><span class="p">(</span>
+    <span class="n">num_hf_samples</span><span class="o">=</span><span class="mi">3</span> <span class="o">*</span> <span class="n">func</span><span class="o">.</span><span class="n">num_dim</span><span class="p">,</span> <span class="n">num_lf_samples</span><span class="o">=</span><span class="mi">6</span> <span class="o">*</span> <span class="n">func</span><span class="o">.</span><span class="n">num_dim</span>
+<span class="p">)</span>
+<span class="n">sample_y</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">sample_x</span><span class="p">)</span>
+
+<span class="c1"># initialize the model</span>
+<span class="n">mf_model</span> <span class="o">=</span> <span class="n">ScaledKriging</span><span class="p">(</span><span class="n">design_space</span><span class="o">=</span><span class="n">func</span><span class="o">.</span><span class="n">_input_domain</span><span class="p">)</span>
+
+<span class="c1"># initialize the mfBayesOpt class</span>
+<span class="n">mgbo</span> <span class="o">=</span> <span class="n">mfBayesOpt</span><span class="p">(</span><span class="n">problem</span><span class="o">=</span><span class="n">problem</span><span class="p">)</span>
+<span class="c1"># note by changing acquistion, to lcb and ei, we can get different results</span>
+<span class="n">mgbo</span><span class="o">.</span><span class="n">run_optimizer</span><span class="p">(</span><span class="n">init_x</span><span class="o">=</span><span class="n">sample_x</span><span class="p">,</span>
+                   <span class="n">init_y</span><span class="o">=</span><span class="n">sample_y</span><span class="p">,</span>
+                   <span class="n">max_iter</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+                   <span class="n">surrogate</span><span class="o">=</span><span class="n">mf_model</span><span class="p">,</span>
+                   <span class="n">acquisition</span><span class="o">=</span><span class="n">augmentedEI</span><span class="p">(),</span>
+                   <span class="n">print_info</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="references">
+<h2>References<a class="headerlink" href="#references" title="Link to this heading">¶</a></h2>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="id3" role="note">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
+<p>Kennedy, J., &amp; Eberhart, R. (1995, November). Particle swarm optimization.
+In Proceedings of ICNN’95-International Conference on Neural Networks (Vol. 4, pp. 1942-1948). IEEE.</p>
+</aside>
+<aside class="footnote brackets" id="id4" role="note">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">2</a><span class="fn-bracket">]</span></span>
+<p>Storn, R., &amp; Price, K. (1997). Differential evolution: a simple and efficient heuristic for
+global optimization over continuous spaces.</p>
+</aside>
+</aside>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="multi_fidelity_kriging_models.html" class="btn btn-neutral float-left" title="Multi fidelity surrogates" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="reliability_analysis.html" class="btn btn-neutral float-right" title="reliability analysis" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Jiaxiang Yi.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
