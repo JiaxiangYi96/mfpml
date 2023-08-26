@@ -1,4 +1,17 @@
-# mfpml
+
+<p align="center">
+    <img src="docs/source/figures/logo.png" width="70%" align="center">
+</p>
+
+---
+
+[**Documentation**](https://jiaxiangyi96.github.io/mfpml/)
+| [**Installation**](https://jiaxiangyi96.github.io/mfpml/get_started.html)
+| [**GitHub**](https://github.com/JiaxiangYi96/mfpml)
+| [**Tutorials**](https://github.com/JiaxiangYi96/mfpml/tree/main/tutorials)
+
+
+## Summary
 
 This repository aims to provide a package for multi-fidelity probabilistic machine learning. The package is developed by Jiaxiang Yi and Ji Cheng based on their learning curve on multi-fidelity probabilistic macgin learning, and multi-fidelity Bayesian optimization, and multi-fidelity reliability analysis.
 
@@ -10,15 +23,14 @@ Overall, this mfpml package has two main goals, the first one is to provide basi
 
 **Models**
 
-- Kriging model `mfpml.models.sf_gpr`
-- Multi-fidelity Kriging model `mfpml.models.mf_gprs`
+- Kriging model 
+- Multi-fidelity Kriging model
 
 **Optimizations**
 
-- Evolutionary algorithms `mfpml.optimization.evolutionary_algorithms`
-
-- Single fidelity Bayesian optimization `mfpml.optimization.sfbo`
-- Multi-fidelity Bayesian optimization `mfpml.optimization.mfbo`
+- Evolutionary algorithms 
+- Single fidelity Bayesian optimization
+- Multi-fidelity Bayesian optimization 
 
 **Reliability analysis**
 

@@ -40,7 +40,7 @@ We recommend using a `Linux distribution system <https://releases.ubuntu.com/foc
   .. code-block:: console
 
      $ python -c "import mfpml"
-     >>> 2023-07-05 14:56:40,015 - Imported mfpml (version: 1.x.x)
+     >>> 2023-07-05 14:56:40,015 - Imported mfpml (version: 0.0.1)
 
 
 5. Install the development requirements:
