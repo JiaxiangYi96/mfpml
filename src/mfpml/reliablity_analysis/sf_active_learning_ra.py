@@ -80,7 +80,8 @@ class SFActiveLearningRA(ProbEval):
                 # update the next point
                 update_x, lf_value = learning_function.query(
                     surrogate=self.surrogate,
-                    search_x=self.search_x)
+                    search_x=self.search_x,
+                    sample_x=self.surrogate.sample_x)
                 # update x
                 update_x = np.atleast_2d(update_x)
                 # get update y

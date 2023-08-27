@@ -10,6 +10,16 @@ class ProbEval:
     def prob_eval(self,
                   num_mcs: int = 10**6,
                   seed: int = 123) -> tuple[Any, Any, float, float]:
+        """
+        evaluate the probability of failure
+
+        Parameters
+        ----------
+        num_mcs : int, optional
+            number of Monte Carlo samples, by default 10**6
+        seed : int, optional
+            random seed, by default 123
+        """
 
         # get the search_x
         self.search_x = \
@@ -24,6 +34,8 @@ class ProbEval:
         return pf, pf_var, pf_hat, pf_hat_var
 
     def _prob_eval_sur(self) -> tuple[float, float]:
+        """evaluate the probability of failure using surrogate model
+        """
         # get pf
         pred_y = self.surrogate.predict(self.search_x, return_std=False)
         # calculate the probability of failure

@@ -148,6 +148,8 @@ class FourBranches(SFRFunctions):
     mu = np.array([0.0, 0.0])
     sigma = np.array([1.0, 1.0])
     input_domain = np.array([mu-5*sigma, mu+5*sigma]).T
+    design_space = {"x1": [mu[0]-5*sigma[0], mu[0]+5*sigma[0]],
+                    "x2": [mu[1]-5*sigma[1], mu[1]+5*sigma[1]]}
 
     def f(self, x) -> np.ndarray:
         # Extract input variables x1 and x2
