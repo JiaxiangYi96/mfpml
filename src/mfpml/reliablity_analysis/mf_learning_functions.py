@@ -64,7 +64,7 @@ class AugmentedEFF(mfLearningFunction):
         # return the augmented expected improvement
         obj = EF * alpha1 * alpha3
 
-        return (-obj).ravel()
+        return -obj
 
     def query(self, mf_surrogate: Any,
               search_x: np.ndarray,
@@ -84,7 +84,7 @@ class AugmentedEFF(mfLearningFunction):
 
         #  best point for high-fidelity and corresponding objective value
         opt_ef_hf = np.min(ef_hf)
-        x_hf = search_x[np.argmin(opt_ef_hf), :]
+        x_hf = search_x[np.argmin(ef_hf), :]
 
         # getting points for low-fidelity
         ef_lf = self.eval(x=search_x,
@@ -95,17 +95,15 @@ class AugmentedEFF(mfLearningFunction):
                           **kwargs)
         #  best point for high-fidelity and corresponding objective value
         opt_ef_lf = np.min(ef_lf)
-        x_lf = search_x[np.argmin(opt_ef_lf), :]
+        x_lf = search_x[np.argmin(ef_lf), :]
         print(opt_ef_hf, opt_ef_lf, cost_ratio)
         # choose fidelity
         if opt_ef_hf <= opt_ef_lf:
             update_x['hf'] = np.atleast_2d(x_hf)
-            best_ef = opt_ef_hf
         else:
             update_x['lf'] = np.atleast_2d(x_lf)
-            best_ef = opt_ef_lf
 
-        return update_x, best_ef
+        return update_x
 
     @staticmethod
     def corr(x: np.ndarray, mf_surrogate: Any, fidelity: str) -> np.ndarray:

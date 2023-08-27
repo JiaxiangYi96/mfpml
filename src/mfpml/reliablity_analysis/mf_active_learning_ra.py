@@ -4,6 +4,7 @@ from typing import Any
 import numpy as np
 from matplotlib import pyplot as plt
 
+from ..models.mf_scale_kriging import ScaledKriging
 from .prob_evaluation import ProbEval
 
 
@@ -38,7 +39,7 @@ class MFActiveLearningRA(ProbEval):
         self.params['cr'] = self.problem.cr
 
     def run_analysis(self,
-                     surrogate: Any,
+                     surrogate: ScaledKriging,
                      init_x: dict,
                      init_y: dict,
                      learning_function: Any,
@@ -67,7 +68,7 @@ class MFActiveLearningRA(ProbEval):
                         seed=self.seed,
                         num_mcs=self.num_mcs)
         # main loop
-        while self.pf_cov_hat > 0.05 or iter < 2:
+        while self.pf_cov_hat > 0.05 or iter < 1:
             # update search space
             self.num_mcs = self.num_mcs*self.gen
             self.search_x = self.problem.generate_multivariate_samples(
@@ -79,16 +80,18 @@ class MFActiveLearningRA(ProbEval):
                 iter=0)
             while self.stopping_value >= self.stopping_threshold:
                 # update the next point
-                update_x, lf_value = learning_function.query(
+                update_x = learning_function.query(
                     mf_surrogate=self.surrogate,
                     search_x=self.search_x,
                     cost_ratio=self.problem.cr,
                     sample_x=self.surrogate.sample_xh)
+
                 # get update y
                 update_y = self.problem(update_x, factor=self.factor)
                 # update surrogate
                 self.surrogate.update_model(Xnew=update_x,
                                             Ynew=update_y)
+
                 # update paras
                 self._update_paras(update_x=update_x, update_y=update_y)
                 # update iter
@@ -97,8 +100,7 @@ class MFActiveLearningRA(ProbEval):
                 self.stopping_value = self.stopping_criterion.stopping_value(
                     surrogate=self.surrogate,
                     search_x=self.search_x,
-                    iter=iter,
-                    lf_value=lf_value)
+                    iter=iter)
                 # print info
                 if print_info:
                     self.__print_info(iter=iter)
@@ -109,6 +111,7 @@ class MFActiveLearningRA(ProbEval):
             self.pf_hat = pf_hat
             self.pf_cov_hat = float(pf_hat_cov)
             self.gen = self.gen + 1
+            self.__print_info(iter=iter)
 
     def _first_run(self,
                    init_x: dict,
@@ -228,11 +231,11 @@ class MFActiveLearningRA(ProbEval):
                     self.surrogate.sample_xl[:num_init_l, 1],
                     'b+', label='init lf samples')
             # plot added samples
-            ax.plot(self.surrogate.sample_xh[num_init_h:, 0],
-                    self.surrogate.sample_xh[num_init_h:, 1],
+            ax.plot(self.surrogate.sample_xh[num_init_h:-1, 0],
+                    self.surrogate.sample_xh[num_init_h:-1, 1],
                     'r*', label='added hf samples')
-            ax.plot(self.surrogate.sample_xl[num_init_l:, 0],
-                    self.surrogate.sample_xl[num_init_l:, 1],
+            ax.plot(self.surrogate.sample_xl[num_init_l:-1, 0],
+                    self.surrogate.sample_xl[num_init_l:-1, 1],
                     'r+', label='added lf samples')
             cs1 = ax.contour(
                 X1, X2, Y, levels=[-10**6, 0, 10**6],
