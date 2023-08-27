@@ -211,7 +211,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">sample_yh</span> <span class="o">=</span> <span class="n">sample_yh</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rho_optimize</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_rho_optimize</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">disc_model</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_yh</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getDisc</span><span class="p">())</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">disc_model</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_xh</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getDisc</span><span class="p">())</span></div>
 
 
 <div class="viewcode-block" id="ScaledKriging.predict">
