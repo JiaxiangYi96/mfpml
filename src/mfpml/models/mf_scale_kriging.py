@@ -95,7 +95,7 @@ class ScaledKriging(mf_model):
         self.sample_yh = sample_yh.reshape(-1, 1)
         if self.rho_optimize:
             self._rho_optimize()
-        self.disc_model.train(self.sample_yh, self._getDisc())
+        self.disc_model.train(self.sample_xh, self._getDisc())
 
     def predict(
         self, test_x: np.ndarray, return_std: bool = False
