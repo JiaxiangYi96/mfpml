@@ -8,6 +8,7 @@ For single fidelity, we implement the following surrogates:
 
 Kriging model
 -------------
+
 Kriging model is a Gaussian process regression model with a constant mean function and a squared exponential kernel.
 The Kriging model is implemented in :attr:`~mfpml.surrogates.sf_gpr.Kriging` class.
 

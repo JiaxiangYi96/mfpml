@@ -1,13 +1,3 @@
-.. image:: https://user-images.githubusercontent.com/25851824/200928507-a65327f9-bc70-4c12-beaa-bc6ba74d968e.svg
-   :alt: logo
-   :width: 60%
-   :align: center
-
-
-`Docs <https://bessagroup.github.io/bessa-pypi-template/>`__ | `GitHub <https://github.com/JiaxiangYi96/mfpml.git>`__
-
-
-**First publication:** July 23, 2023
 
 Installation
 ---------------
@@ -50,7 +40,7 @@ We recommend using a `Linux distribution system <https://releases.ubuntu.com/foc
   .. code-block:: console
 
      $ python -c "import mfpml"
-     >>> 2023-07-05 14:56:40,015 - Imported mfpml (version: 1.x.x)
+     >>> 2023-07-05 14:56:40,015 - Imported mfpml (version: 0.0.1)
 
 
 5. Install the development requirements:

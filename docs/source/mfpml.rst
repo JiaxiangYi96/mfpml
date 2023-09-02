@@ -1,14 +1,28 @@
-mfpml documentation
-===================
+API Documentation
+=================
 
 Modules
------------
+-------
 
 .. toctree::
    :maxdepth: 4
 
    mfpml.design_of_experiment
-   mfpml.models
-   mfpml.optimization
+
+.. toctree::
+   :maxdepth: 4
+
    mfpml.problems
+
+.. toctree::
+   :maxdepth: 4
+
+   mfpml.models
+
+.. toctree::
+   :maxdepth: 4
+
+   mfpml.optimization
+
+
 

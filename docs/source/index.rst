@@ -5,6 +5,16 @@
 
 Welcome to mfpml's documentation!
 =================================
+.. image:: figures/logo.svg
+   :alt: logo
+   :width: 100%
+   :align: center
+
+
+`Docs <https://jiaxiangyi96.github.io/mfpml/>`__ | `GitHub <https://github.com/JiaxiangYi96/mfpml.git>`__
+
+
+**First publication:** August 23, 2023
 
 .. toctree::
    :maxdepth: 3
@@ -36,6 +46,19 @@ Welcome to mfpml's documentation!
    
    single_fidelity_kriging_models.rst
    multi_fidelity_kriging_models.rst
+
+.. toctree::
+   :maxdepth: 3
+   :caption: Optimization:  
+   
+   optimization.rst
+
+.. toctree::
+   :maxdepth: 3
+   :caption: reliability analysis:  
+   
+   reliability_analysis.rst
+
 
 .. toctree::
    :maxdepth: 3
