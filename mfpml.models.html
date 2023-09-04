@@ -397,6 +397,111 @@
 </dd></dl>
 
 <dl class="py class">
+<dt class="sig sig-object py" id="mfpml.models.sf_gpr.GPKnownNoise">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">GPKnownNoise</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">design_space</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel_bound</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[-4.0,</span> <span class="pre">3.0]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">known_noise</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/models/sf_gpr.html#GPKnownNoise"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.models.sf_gpr.GPKnownNoise" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mfpml.models.sf_gpr.GP" title="mfpml.models.sf_gpr.GP"><code class="xref py py-class docutils literal notranslate"><span class="pre">GP</span></code></a></p>
+<p>Gaussian Process Regressor with noise, and the noise is already known,
+in this case, the noise is not optimized</p>
+<p>Initialize the Gaussian Process Regressor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>design_space</strong> (<em>np.ndarray</em>) – array of shape=((num_dim,2)) where each row describes
+the bound for the variable on specific dimension</p></li>
+<li><p><strong>optimizer</strong> (<em>any</em><em>, </em><em>optional</em>) – instance of the optimizer used to optimize the hyper parameters
+with the use style optimizer.run_optimizer(objective function,
+number of dimension, design space of variables), if not assigned,
+the ‘L-BFGS-B’ method in scipy is used</p></li>
+<li><p><strong>kernel_bound</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.11)"><em>list</em></a><em>, </em><em>optional</em>) – log bound for the Kriging kernel, by default [-4, 3]</p></li>
+<li><p><strong>known_noise</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a><em>, </em><em>optional</em>) – , by default 0</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.models.sf_gpr.GPKnownNoise.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">design_space</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel_bound</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[-4.0,</span> <span class="pre">3.0]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">known_noise</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/models/sf_gpr.html#GPKnownNoise.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.models.sf_gpr.GPKnownNoise.__init__" title="Link to this definition">¶</a></dt>
+<dd><p>Initialize the Gaussian Process Regressor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>design_space</strong> (<em>np.ndarray</em>) – array of shape=((num_dim,2)) where each row describes
+the bound for the variable on specific dimension</p></li>
+<li><p><strong>optimizer</strong> (<em>any</em><em>, </em><em>optional</em>) – instance of the optimizer used to optimize the hyper parameters
+with the use style optimizer.run_optimizer(objective function,
+number of dimension, design space of variables), if not assigned,
+the ‘L-BFGS-B’ method in scipy is used</p></li>
+<li><p><strong>kernel_bound</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.11)"><em>list</em></a><em>, </em><em>optional</em>) – log bound for the Kriging kernel, by default [-4, 3]</p></li>
+<li><p><strong>known_noise</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a><em>, </em><em>optional</em>) – , by default 0</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.models.sf_gpr.GPKnownNoise._hyper_paras_optimization">
+<span class="sig-name descname"><span class="pre">_hyper_paras_optimization</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grads</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/models/sf_gpr.html#GPKnownNoise._hyper_paras_optimization"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.models.sf_gpr.GPKnownNoise._hyper_paras_optimization" title="Link to this definition">¶</a></dt>
+<dd><p>Optimize the hyper_parameters</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>grads</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a><em>, </em><em>optional</em>) – whether to use gradients, by default None</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.models.sf_gpr.GPKnownNoise._logLikelihood">
+<span class="sig-name descname"><span class="pre">_logLikelihood</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/models/sf_gpr.html#GPKnownNoise._logLikelihood"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.models.sf_gpr.GPKnownNoise._logLikelihood" title="Link to this definition">¶</a></dt>
+<dd><p>Compute the concentrated ln-likelihood</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>params</strong> (<em>np.ndarray</em>) – parameters of the kernel</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>log likelihood</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.models.sf_gpr.GPKnownNoise._update_kernel_matrix">
+<span class="sig-name descname"><span class="pre">_update_kernel_matrix</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/models/sf_gpr.html#GPKnownNoise._update_kernel_matrix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.models.sf_gpr.GPKnownNoise._update_kernel_matrix" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.models.sf_gpr.GPKnownNoise.predict">
+<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x_predict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_std</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/models/sf_gpr.html#GPKnownNoise.predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.models.sf_gpr.GPKnownNoise.predict" title="Link to this definition">¶</a></dt>
+<dd><p>Predict responses through the Gaussian Process Regressor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x_predict</strong> (<em>np.ndarray</em>) – new sample need to predict</p></li>
+<li><p><strong>return_std</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a><em>, </em><em>optional</em>) – whether return the standard deviation
+, by default False</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>return the prediction with shape (#Xinput, 1)</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="mfpml.models.sf_gpr.GaussianProcessRegressor">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">GaussianProcessRegressor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">design_space</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel_bound</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[-4.0,</span> <span class="pre">3.0]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noise_prior</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/models/sf_gpr.html#GaussianProcessRegressor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.models.sf_gpr.GaussianProcessRegressor" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#mfpml.models.sf_gpr.GP" title="mfpml.models.sf_gpr.GP"><code class="xref py py-class docutils literal notranslate"><span class="pre">GP</span></code></a></p>

@@ -721,6 +721,233 @@
             <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">L</span><span class="p">)))</span> <span class="o">-</span> <span class="mf">0.5</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">num_samples</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span></div>
 </div>
 
+
+
+<div class="viewcode-block" id="GPKnownNoise">
+<a class="viewcode-back" href="../../../mfpml.models.html#mfpml.models.sf_gpr.GPKnownNoise">[docs]</a>
+<span class="k">class</span> <span class="nc">GPKnownNoise</span><span class="p">(</span><span class="n">GP</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Gaussian Process Regressor with noise, and the noise is already known,</span>
+<span class="sd">    in this case, the noise is not optimized</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="GPKnownNoise.__init__">
+<a class="viewcode-back" href="../../../mfpml.models.html#mfpml.models.sf_gpr.GPKnownNoise.__init__">[docs]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">design_space</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">optimizer</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">kernel_bound</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">],</span>
+        <span class="n">known_noise</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the Gaussian Process Regressor</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        design_space : np.ndarray</span>
+<span class="sd">            array of shape=((num_dim,2)) where each row describes</span>
+<span class="sd">            the bound for the variable on specific dimension</span>
+<span class="sd">        optimizer : any, optional</span>
+<span class="sd">            instance of the optimizer used to optimize the hyper parameters</span>
+<span class="sd">            with the use style optimizer.run_optimizer(objective function,</span>
+<span class="sd">            number of dimension, design space of variables), if not assigned,</span>
+<span class="sd">            the &#39;L-BFGS-B&#39; method in scipy is used</span>
+<span class="sd">        kernel_bound : list, optional</span>
+<span class="sd">            log bound for the Kriging kernel, by default [-4, 3]</span>
+<span class="sd">        known_noise : float, optional</span>
+<span class="sd">            , by default 0</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># dimension of the modeling problem</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_dim</span> <span class="o">=</span> <span class="n">design_space</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="c1"># bounds of the design space</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bounds</span> <span class="o">=</span> <span class="n">design_space</span>
+        <span class="c1"># optimizer</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span> <span class="o">=</span> <span class="n">optimizer</span>
+        <span class="c1"># noise</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">noise</span> <span class="o">=</span> <span class="n">known_noise</span>
+        <span class="c1"># kernel</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kernel</span> <span class="o">=</span> <span class="n">RBF</span><span class="p">(</span><span class="n">theta</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_dim</span><span class="p">),</span> <span class="n">bounds</span><span class="o">=</span><span class="n">kernel_bound</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="GPKnownNoise.predict">
+<a class="viewcode-back" href="../../../mfpml.models.html#mfpml.models.sf_gpr.GPKnownNoise.predict">[docs]</a>
+    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                <span class="n">x_predict</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+                <span class="n">return_std</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Predict responses through the Gaussian Process Regressor</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        x_predict : np.ndarray</span>
+<span class="sd">            new sample need to predict</span>
+<span class="sd">        return_std : bool, optional</span>
+<span class="sd">            whether return the standard deviation</span>
+<span class="sd">            , by default False</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        np.ndarray</span>
+<span class="sd">            return the prediction with shape (#Xinput, 1)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># normalize the input</span>
+        <span class="n">sample_new</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalize_input</span><span class="p">(</span><span class="n">x_predict</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bounds</span><span class="p">)</span>
+        <span class="n">sample_new</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">sample_new</span><span class="p">)</span>
+        <span class="c1"># calculate the kernel matrix for predicted samples</span>
+        <span class="n">knew</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel</span><span class="o">.</span><span class="n">get_kernel_matrix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_scaled_x</span><span class="p">,</span> <span class="n">sample_new</span><span class="p">)</span>
+        <span class="c1"># get the predicted mean</span>
+        <span class="n">fmean</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mu</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">knew</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span><span class="p">)</span>
+        <span class="n">fmean</span> <span class="o">=</span> <span class="n">fmean</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="c1"># calculate the standard deviation</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">return_std</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">fmean</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">one</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">num_samples</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+            <span class="n">delta</span> <span class="o">=</span> <span class="n">solve</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">L</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">solve</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">L</span><span class="p">,</span> <span class="n">knew</span><span class="p">))</span>
+            <span class="c1"># epistemic uncertainty</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">mse</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma2</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">knew</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">delta</span><span class="p">))</span> <span class="o">+</span>
+                                     <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">((</span><span class="mi">1</span> <span class="o">-</span> <span class="n">knew</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">delta</span><span class="p">))</span> <span class="o">**</span> <span class="mi">2</span>
+                                             <span class="o">/</span> <span class="n">one</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">beta</span><span class="p">)))</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The matrix is too big, use for loop to calculate&quot;</span><span class="p">)</span>
+                <span class="n">mse</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">knew</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">1</span><span class="p">))</span>
+                <span class="n">batch</span> <span class="o">=</span> <span class="mi">100</span>
+                <span class="nb">iter</span> <span class="o">=</span> <span class="n">knew</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="n">batch</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">iter</span><span class="p">)):</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">knew_i</span> <span class="o">=</span> <span class="n">knew</span><span class="p">[:,</span> <span class="n">i</span> <span class="o">*</span> <span class="n">batch</span><span class="p">:</span> <span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">batch</span><span class="p">]</span>
+                        <span class="n">delta_i</span> <span class="o">=</span> <span class="n">solve</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">L</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">solve</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">L</span><span class="p">,</span> <span class="n">knew_i</span><span class="p">))</span>
+                        <span class="n">mse</span><span class="p">[</span><span class="n">i</span> <span class="o">*</span> <span class="n">batch</span><span class="p">:</span> <span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">batch</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma2</span> <span class="o">*</span> \
+                            <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">knew_i</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">delta_i</span><span class="p">))</span> <span class="o">+</span>
+                                <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">((</span><span class="mi">1</span> <span class="o">-</span> <span class="n">knew_i</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">delta_i</span><span class="p">))</span> <span class="o">**</span> <span class="mi">2</span>
+                                        <span class="o">/</span> <span class="n">one</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">beta</span><span class="p">)))</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+                    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                        <span class="c1"># remain part of the matrix</span>
+                        <span class="n">knew_i</span> <span class="o">=</span> <span class="n">knew</span><span class="p">[:,</span> <span class="n">i</span> <span class="o">*</span> <span class="n">batch</span><span class="p">:]</span>
+                        <span class="n">delta_i</span> <span class="o">=</span> <span class="n">solve</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">L</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">solve</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">L</span><span class="p">,</span> <span class="n">knew_i</span><span class="p">))</span>
+                        <span class="n">mse</span><span class="p">[</span><span class="n">i</span> <span class="o">*</span> <span class="n">batch</span><span class="p">:]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma2</span> <span class="o">*</span> \
+                            <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">knew_i</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">delta_i</span><span class="p">))</span> <span class="o">+</span>
+                                <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">((</span><span class="mi">1</span> <span class="o">-</span> <span class="n">knew_i</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">delta_i</span><span class="p">))</span> <span class="o">**</span> <span class="mi">2</span>
+                                        <span class="o">/</span> <span class="n">one</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">beta</span><span class="p">)))</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="c1"># aleatoric uncertainty</span>
+            <span class="n">data_noise</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise</span><span class="o">**</span><span class="mi">2</span>
+
+            <span class="c1"># total uncertainty</span>
+            <span class="n">std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">mse</span><span class="o">+</span><span class="n">data_noise</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">fmean</span><span class="p">,</span> <span class="n">std</span></div>
+
+
+<div class="viewcode-block" id="GPKnownNoise._hyper_paras_optimization">
+<a class="viewcode-back" href="../../../mfpml.models.html#mfpml.models.sf_gpr.GPKnownNoise._hyper_paras_optimization">[docs]</a>
+    <span class="k">def</span> <span class="nf">_hyper_paras_optimization</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grads</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Optimize the hyper_parameters</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        grads : bool, optional</span>
+<span class="sd">            whether to use gradients, by default None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># set up the optimization problems</span>
+        <span class="n">lower_bound</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel</span><span class="o">.</span><span class="n">_get_low_bound</span>
+        <span class="n">upper_bound</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel</span><span class="o">.</span><span class="n">_get_high_bound</span>
+        <span class="c1"># bounds for the hyper-parameters</span>
+        <span class="n">hyper_bounds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">lower_bound</span><span class="p">,</span> <span class="n">upper_bound</span><span class="p">))</span><span class="o">.</span><span class="n">T</span>
+        <span class="c1"># number of hyper-parameters</span>
+        <span class="n">num_hyper</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel</span><span class="o">.</span><span class="n">_get_num_para</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">n_trials</span> <span class="o">=</span> <span class="mi">10</span>
+            <span class="n">opt_fs</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_trials</span><span class="p">):</span>
+                <span class="n">x0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span>
+                    <span class="n">low</span><span class="o">=</span><span class="n">lower_bound</span><span class="p">,</span>
+                    <span class="n">high</span><span class="o">=</span><span class="n">upper_bound</span><span class="p">,</span>
+                    <span class="n">size</span><span class="o">=</span><span class="n">num_hyper</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">optRes</span> <span class="o">=</span> <span class="n">minimize</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_logLikelihood</span><span class="p">,</span>
+                    <span class="n">x0</span><span class="o">=</span><span class="n">x0</span><span class="p">,</span>
+                    <span class="n">method</span><span class="o">=</span><span class="s2">&quot;L-BFGS-B&quot;</span><span class="p">,</span>
+                    <span class="n">bounds</span><span class="o">=</span><span class="n">hyper_bounds</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="k">if</span> <span class="n">optRes</span><span class="o">.</span><span class="n">fun</span> <span class="o">&lt;</span> <span class="n">opt_fs</span><span class="p">:</span>
+                    <span class="n">opt_param</span> <span class="o">=</span> <span class="n">optRes</span><span class="o">.</span><span class="n">x</span>
+                    <span class="n">opt_fs</span> <span class="o">=</span> <span class="n">optRes</span><span class="o">.</span><span class="n">fun</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">optRes</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">run_optimizer</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_logLikelihood</span><span class="p">,</span>
+                <span class="n">num_dim</span><span class="o">=</span><span class="n">num_hyper</span><span class="p">,</span>
+                <span class="n">design_space</span><span class="o">=</span><span class="n">hyper_bounds</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="n">opt_param</span> <span class="o">=</span> <span class="n">optRes</span><span class="p">[</span><span class="s2">&quot;best_x&quot;</span><span class="p">]</span>
+        <span class="c1"># best hyper-parameters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">opt_param</span> <span class="o">=</span> <span class="n">opt_param</span></div>
+
+
+<div class="viewcode-block" id="GPKnownNoise._logLikelihood">
+<a class="viewcode-back" href="../../../mfpml.models.html#mfpml.models.sf_gpr.GPKnownNoise._logLikelihood">[docs]</a>
+    <span class="k">def</span> <span class="nf">_logLikelihood</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the concentrated ln-likelihood</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        params : np.ndarray</span>
+<span class="sd">            parameters of the kernel</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        np.ndarray</span>
+<span class="sd">            log likelihood</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+        <span class="n">num_params</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+            <span class="c1"># for optimization every row is a parameter set</span>
+            <span class="n">param</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span> <span class="n">num_params</span><span class="p">]</span>
+
+            <span class="c1"># correlation matrix R</span>
+            <span class="c1"># calculate the covariance matrix</span>
+            <span class="n">K</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_scaled_x</span><span class="p">,</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">sample_scaled_x</span><span class="p">,</span>
+                            <span class="n">param</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_samples</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise</span><span class="o">**</span><span class="mi">2</span>
+            <span class="c1">#</span>
+            <span class="n">L</span> <span class="o">=</span> <span class="n">cholesky</span><span class="p">(</span><span class="n">K</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="c1"># R^(-1)Y</span>
+            <span class="n">alpha</span> <span class="o">=</span> <span class="n">solve</span><span class="p">(</span><span class="n">L</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">solve</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample_y</span><span class="p">))</span>
+
+            <span class="n">logp</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_y</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">alpha</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">L</span><span class="p">)))</span> <span class="o">-</span> <span class="mf">0.5</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">num_samples</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+
+            <span class="n">out</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">logp</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="o">-</span><span class="n">out</span></div>
+
+
+<div class="viewcode-block" id="GPKnownNoise._update_kernel_matrix">
+<a class="viewcode-back" href="../../../mfpml.models.html#mfpml.models.sf_gpr.GPKnownNoise._update_kernel_matrix">[docs]</a>
+    <span class="k">def</span> <span class="nf">_update_kernel_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># assign the best hyper-parameter to the kernel</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kernel</span><span class="o">.</span><span class="n">set_params</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">opt_param</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">opt_param</span><span class="p">)])</span>
+        <span class="c1"># update parameters with optimized hyper-parameters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">K</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel</span><span class="o">.</span><span class="n">get_kernel_matrix</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sample_scaled_x</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sample_scaled_x</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_samples</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">noise</span><span class="o">**</span><span class="mi">2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">L</span> <span class="o">=</span> <span class="n">cholesky</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">K</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="n">solve</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">L</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">solve</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">L</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample_y</span><span class="p">))</span>
+        <span class="n">one</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">num_samples</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">beta</span> <span class="o">=</span> <span class="n">solve</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">L</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">solve</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">L</span><span class="p">,</span> <span class="n">one</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mu</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">one</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">one</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta</span><span class="p">))</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span> <span class="o">=</span> <span class="n">solve</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">L</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">solve</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">L</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_y</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">mu</span><span class="p">)))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sigma2</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_y</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">mu</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_samples</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logp</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_y</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">L</span><span class="p">)))</span> <span class="o">-</span> <span class="mf">0.5</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">num_samples</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span></div>
+</div>
+
 </pre></div>
 
            </div>
