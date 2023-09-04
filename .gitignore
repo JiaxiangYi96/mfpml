@@ -79,6 +79,7 @@ __pycache__/
 
 # folders
 examples/
+studies/
 examples/_legacy/
 examples/test_gaussian_process_model/
 coverage_html_report/
