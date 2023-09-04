@@ -159,7 +159,8 @@ class mfMultiModal(mfRFunctions):
         A = factor
 
         y = -((((x1 - 4 * A) ** 2 + 4) * ((x2 - A) - 1)) / 20 -
-              np.sin((5 * x1 - 2 * A) / 2) - 2) - np.sin(5/22 * (x1 + x2 / 2) + 1.25)
+              np.sin((5 * x1 - 2 * A) / 2) - 2) - \
+            np.sin(5/22 * (x1 + x2 / 2) + 1.25)
 
         y = np.reshape(y, (len(y), 1))
         return y

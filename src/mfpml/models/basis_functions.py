@@ -1,4 +1,4 @@
-from typing import Any
+
 
 import numpy as np
 
@@ -8,6 +8,19 @@ class Ordinary:
     """
 
     def __call__(self, x: np.ndarray) -> np.ndarray:
+        """ ordinary basis function
+
+        Parameters
+        ----------
+        x : np.ndarray
+            scaled design variables
+
+        Returns
+        -------
+        np.ndarray
+            a np array with shape (num_samples, 1), that contains the
+            ordinary basis function values
+        """
 
         num_samples = x.shape[0]
 
@@ -18,6 +31,19 @@ class Linear:
     """Linear basis function of Guassian process regression."""
 
     def __call__(self, x: np.ndarray) -> np.ndarray:
+        """ linear basis function
+
+        Parameters
+        ----------
+        x : np.ndarray
+            scaled design variables
+
+        Returns
+        -------
+        np.ndarray
+            a np array with shape (num_samples, num_dim + 1), that contains the
+            linear basis function values
+        """
 
         num_samples = x.shape[0]
 
@@ -29,6 +55,19 @@ class Quadratic:
     """
 
     def __call__(self, x: np.ndarray) -> np.ndarray:
+        """ quadratic basis function
+
+        Parameters
+        ----------
+        x : np.ndarray
+            scaled design variables
+
+        Returns
+        -------
+        np.ndarray
+            a np array with shape (num_samples, num_col), that contains the
+            quadratic basis function values
+        """
 
         num_samples, num_dim = x.shape[0], x.shape[1]
         # number of columns of f

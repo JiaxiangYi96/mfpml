@@ -1,11 +1,7 @@
 from typing import Any
 
 import numpy as np
-from pyparsing import alphanums
-from scipy.spatial import distance_matrix
 from scipy.stats import norm
-
-from .sf_learning_functions import EFF
 
 
 class mfLearningFunction:

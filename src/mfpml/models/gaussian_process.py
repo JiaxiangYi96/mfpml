@@ -142,7 +142,7 @@ class GaussianProcess(GP):
 
         if self.optimizer is None:
             # use L-BFGS-B method in scipy
-            n_trials = 10
+            n_trials = 20
             optimum_value = float("inf")
             for _ in range(n_trials):
                 # initial point
@@ -225,7 +225,7 @@ class GaussianProcess(GP):
 
             # step 3: calculate the log likelihood
             logp = -0.5 * self.num_samples * \
-                np.log(sigma2) - np.sum(np.log(np.diag(L)))
+                np.log(sigma2) - np.sum(np.log(np.diag(K)))
             nll[i] = -logp.ravel()
 
         return nll
@@ -265,4 +265,4 @@ class GaussianProcess(GP):
 
         # step 3: get the optimal log likelihood
         self.logp = (-0.5 * self.num_samples * np.log(self.sigma2) -
-                     np.sum(np.log(np.diag(self.L)))).item()
+                     np.sum(np.log(np.diag(self.K)))).item()

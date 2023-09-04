@@ -4,7 +4,7 @@ import numpy as np
 from scipy.linalg import cholesky, solve
 from scipy.optimize import minimize
 
-from .basis_functions import Linear, Ordinary, Quadratic
+from .basis_functions import Ordinary
 from .gpr_base import GP
 from .kernels import RBF
 
