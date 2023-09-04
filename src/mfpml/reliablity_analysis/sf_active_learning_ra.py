@@ -4,7 +4,7 @@ from typing import Any
 import numpy as np
 from matplotlib import pyplot as plt
 
-from ..models.sf_gpr import Kriging
+from ..models.gpr_base import Kriging
 from ..reliablity_analysis.prob_evaluation import ProbEval
 
 

@@ -4,9 +4,9 @@ import numpy as np
 from scipy.linalg import cholesky, solve
 from scipy.optimize import minimize
 
+from .gpr_base import mf_model
 from .kernels import RBF
-from .mf_gprs import mf_model
-from .sf_gpr import Kriging
+from .kriging import Kriging
 
 
 class HierarchicalKriging(mf_model):

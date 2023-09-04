@@ -4,7 +4,7 @@ from typing import Any
 import numpy as np
 from matplotlib import pyplot as plt
 
-from ..models.sf_gpr import Kriging
+from ..models.kriging import Kriging
 
 
 class BayesOpt(object):

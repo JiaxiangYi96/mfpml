@@ -4,7 +4,7 @@ import numpy as np
 from scipy.optimize import differential_evolution
 from scipy.stats import norm
 
-from mfpml.models.sf_gpr import Kriging
+from mfpml.models.kriging import Kriging
 
 
 class sfSingleObjAcf:

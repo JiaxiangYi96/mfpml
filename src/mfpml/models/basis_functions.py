@@ -4,8 +4,10 @@ import numpy as np
 
 
 class Ordinary:
+    """Ordinary basis function of Guassian process regression.
+    """
 
-    def __call__(self, x) -> np.ndarray:
+    def __call__(self, x: np.ndarray) -> np.ndarray:
 
         num_samples = x.shape[0]
 
@@ -13,8 +15,9 @@ class Ordinary:
 
 
 class Linear:
+    """Linear basis function of Guassian process regression."""
 
-    def __call__(self, x) -> np.ndarray:
+    def __call__(self, x: np.ndarray) -> np.ndarray:
 
         num_samples = x.shape[0]
 
@@ -22,20 +25,24 @@ class Linear:
 
 
 class Quadratic:
+    """Quadratic basis function of Guassian process regression.
+    """
 
-    def __call__(self, x) -> np.ndarray:
+    def __call__(self, x: np.ndarray) -> np.ndarray:
 
-        num_dim = x.shape[1]
+        num_samples, num_dim = x.shape[0], x.shape[1]
+        # number of columns of f
+        num_col = int((num_dim + 1) * (num_dim + 2) / 2)
 
         # compute f
-        f = np.zeros_like(x)
+        f = np.zeros((num_samples, num_col))
         f[:, 0] = 1
         f[:, 1:(num_dim + 1)] = x
         j = num_dim + 1
         q = num_dim
 
         for k in range(num_dim):
-            f[:, j:(j + q)] = np.tile(x[:, k], (1, q)) * x[:, k:num_dim]
+            f[:, j:(j + q)] = np.tile(x[:, k], (q, 1)).T*x[:, k:num_dim]
             j = j + q
             q = q - 1
 

@@ -63,7 +63,7 @@ class SingleFidelityFunctions(Functions):
             ax.set(ylabel=r"$x_2$")
             if save_figure is True:
                 fig.savefig(self.__class__.__name__, dpi=300)
-            plt.show(block=True)
+            plt.show()
         else:
             raise ValueError("Unexpected value of 'num_dimension'!", num_dim)
 

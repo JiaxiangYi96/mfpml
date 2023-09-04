@@ -1,8 +1,158 @@
-
-
 from typing import Any
 
 import numpy as np
+from matplotlib import pyplot as plt
+
+
+class GP:
+    """base class for Gaussian Process models"""
+
+    def train(self, sample_x: np.ndarray, sample_y: np.ndarray) -> None:
+        """traning procedure of gpr models
+
+        Parameters
+        ----------
+        sample_x : np.ndarray
+            sample array of sample
+        sample_y : np.ndarray
+            responses of the sample
+        """
+        # normalize the input
+        # the original sample_x
+        self.sample_x = sample_x
+        self.sample_scaled_x = self.normalize_input(sample_x, self.bounds)
+        # get the response
+        self.sample_y = sample_y.reshape(-1, 1)
+
+        # get number samples
+        self.num_samples = self.sample_x.shape[0]
+
+        # optimizer hyper-parameters
+        self._hyper_paras_optimization()
+
+        # update kernel matrix info with optimized hyper-parameters
+        self._update_kernel_matrix()
+
+    def update_optimizer(self, optimizer: Any) -> None:
+        """Change the optimizer for optimizing hyper parameters
+
+        Parameters
+        ----------
+        optimizer : any
+            instance of optimizer
+        """
+        self.optimizer = optimizer
+
+    def update_model(self, update_x: np.ndarray, update_y: np.ndarray) -> None:
+
+        sample_x = np.concatenate((self.sample_x, update_x))
+        sample_y = np.concatenate((self.sample_y, update_y))
+        # update the model
+        self.train(sample_x, sample_y)
+
+    def plot_prediction(self, fig_name: str = "gpr_pred",
+                        save_fig: bool = False, **kwargs,
+                        ) -> None:
+        """plot model prediction
+
+        Parameters
+        ----------
+        fig_name : str, optional
+            figure name, by default "gpr_pred"
+        save_fig : bool, optional
+            save figure otr not, by default False
+        """
+
+        if self.num_dim == 1:
+            x_plot = np.linspace(
+                start=self.bounds[0, 0], stop=self.bounds[0, 1], num=1000
+            )
+            x_plot = x_plot.reshape((-1, 1))
+            y_pred, y_sigma = self.predict(x_plot, return_std=True)
+            # with plt.style.context(["ieee", "science"]):
+            fig, ax = plt.subplots(**kwargs)
+            ax.plot(self.sample_x, self.sample_y, "ro", label="samples",)
+            ax.plot(x_plot, y_pred, "--", color='b', label="pred mean")
+            ax.fill_between(
+                x_plot.ravel(),
+                (y_pred + 2 * y_sigma).ravel(),
+                (y_pred - 2 * y_sigma).ravel(),
+                color="g",
+                alpha=0.3,
+                label=r"95% confidence interval",
+            )
+            ax.tick_params(axis="both", which="major", labelsize=12)
+            plt.legend(loc='best')
+            plt.xlabel(r"$x$", fontsize=12)
+            plt.ylabel(r"$y$", fontsize=12)
+            plt.grid()
+            if save_fig is True:
+                fig.savefig(fig_name, dpi=300, bbox_inches="tight")
+            plt.show()
+        elif self.num_dim == 2:
+            # 2d visualization
+            num_plot = 200
+            x1_plot = np.linspace(
+                start=self.bounds[0, 0],
+                stop=self.bounds[0, 1],
+                num=num_plot,
+            )
+            x2_plot = np.linspace(
+                start=self.bounds[1, 0],
+                stop=self.bounds[1, 1],
+                num=num_plot,
+            )
+            X1, X2 = np.meshgrid(x1_plot, x2_plot)
+            pred = np.zeros([len(X1), len(X2)])
+            # get the values of Y at each mesh grid
+            for i in range(len(X1)):
+                for j in range(len(X1)):
+                    xy = np.array([X1[i, j], X2[i, j]])
+                    xy = np.reshape(xy, (1, 2))
+                    pred[i, j] = self.predict(xy)
+            fig, ax = plt.subplots()
+            ax.plot(self.sample_x[:, 0],
+                    self.sample_x[:, 1], "ro", label="samples")
+            cs = ax.contour(X1, X2, pred, 15)
+            plt.colorbar(cs)
+            ax.set(xlabel=r"$x_1$")
+            ax.set(ylabel=r"$x_2$")
+            ax.legend(loc="best")
+            if save_fig:
+                fig.savefig(self.__class__.__name__, dpi=300)
+            plt.show()
+        else:
+            raise ValueError("Only support 1d and 2d visualization")
+
+    @staticmethod
+    def normalize_input(sample_x: np.ndarray,
+                        bounds: np.ndarray) -> np.ndarray:
+        """Normalize samples to range [0, 1]
+
+        Parameters
+        ----------
+        sample_x : np.ndarray
+            samples to scale
+        bounds : np.ndarray
+            bounds with shape=((num_dim, 2))
+
+        Returns
+        -------
+        np.ndarray
+            normalized samples
+        """
+        return (sample_x - bounds[:, 0]) / (bounds[:, 1] - bounds[:, 0])
+
+    @property
+    def _num_samples(self) -> int:
+        """Return the number of samples
+
+        Returns
+        -------
+        num_samples : int
+            num samples
+        """
+        return self.sample_x.shape[0]
 
 
 class mf_model:

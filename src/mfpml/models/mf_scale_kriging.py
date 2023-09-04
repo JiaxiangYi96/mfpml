@@ -3,9 +3,9 @@ from typing import Any
 import numpy as np
 from scipy.optimize import minimize
 
+from .gpr_base import mf_model
 from .kernels import RBF
-from .mf_gprs import mf_model
-from .sf_gpr import Kriging
+from .kriging import Kriging
 
 
 class ScaledKriging(mf_model):
