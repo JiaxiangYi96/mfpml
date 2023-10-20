@@ -1,3 +1,4 @@
+import time
 from typing import Any
 
 import numpy as np
@@ -171,9 +172,15 @@ class mf_model:
             responses and 'lf' contains low-fidelity ones
         """
         # train the low-fidelity model
+        start_time = time.time()
         self._train_lf(samples["lf"], responses["lf"])
+        end_time = time.time()
+        print('training lf time: ', end_time - start_time)
         # train high-fidelity model, it will be trained at child-class
+        start_time = time.time()
         self._train_hf(samples["hf"], responses["hf"])
+        end_time = time.time()
+        print('training hf time: ', end_time - start_time)
 
     def update_model(self, Xnew: dict, Ynew: dict) -> None:
         """Update the multi-fidelity model with new samples
@@ -234,7 +241,7 @@ class mf_model:
         # update the optimizer for low-fidelity model
         self.lf_model.update_optimizer(optimizer)
 
-    @property
+    @ property
     def _get_lf_model(self) -> Any:
         """Get the low-fidelity model
 
@@ -246,7 +253,7 @@ class mf_model:
 
         return self.lf_model
 
-    @property
+    @ property
     def _num_xh(self) -> int:
         """Return the number of high-fidelity samples
 
@@ -257,7 +264,7 @@ class mf_model:
         """
         return self.sample_xh.shape[0]
 
-    @property
+    @ property
     def _num_xl(self) -> int:
         """Return the number of low-fidelity samples
 
@@ -268,7 +275,7 @@ class mf_model:
         """
         return self.lf_model._num_samples
 
-    @property
+    @ property
     def _get_sample_hf(self) -> np.ndarray:
         """Return samples of high-fidelity
 
@@ -279,7 +286,7 @@ class mf_model:
         """
         return self.sample_xh
 
-    @property
+    @ property
     def _get_sample_lf(self) -> np.ndarray:
         """Return samples of high-fidelity
 

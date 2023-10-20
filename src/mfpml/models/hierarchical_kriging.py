@@ -1,3 +1,4 @@
+import time
 from typing import Any
 
 import numpy as np
@@ -55,7 +56,10 @@ class HierarchicalKriging(mf_model):
         # prediction of low-fidelity at high-fidelity locations
         self.F = self.predict_lf(self.sample_xh)
         # optimize the hyper parameters
+        start_time = time.time()
         self._optHyp()
+        end_time = time.time()
+        print("Optimizing time: ", end_time - start_time)
         self.kernel.set_params(self.opt_param)
         self._update_parameters()
 
@@ -108,7 +112,7 @@ class HierarchicalKriging(mf_model):
             whether to use gradients, by default None
         """
         if self.optimizer is None:
-            n_trials = 6
+            n_trials = 5
             opt_fs = float("inf")
             for _ in range(n_trials):
                 x0 = np.random.uniform(
