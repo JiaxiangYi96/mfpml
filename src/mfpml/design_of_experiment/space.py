@@ -84,7 +84,7 @@ class DesignSpace:
         -------
 
         """
-        assert sum(np.array(high_bound) - np.array(low_bound)) == len(
+        assert len(np.array(high_bound) - np.array(low_bound)) == len(
             low_bound
         ), "Length of variables should be same"
 
