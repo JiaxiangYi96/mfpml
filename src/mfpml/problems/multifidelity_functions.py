@@ -425,12 +425,13 @@ class mf_Hartman6(MultiFidelityFunctions):
 
 
 class mf_Discontinuous(MultiFidelityFunctions):
-    """multi-fidelity discontinuous function
+    """multi-fidelity discontinuous function,
 
     Parameters
     ----------
     MultiFidelityFunctions : class
         multifidelity function class
+
     """
     num_dim: int = 1
     num_obj: int = 1
@@ -559,3 +560,650 @@ class PhaseShiftedOscillations(MultiFidelityFunctions):
         y = x**2 + (np.sin(8*np.pi*x+np.pi/10))**2
 
         return y.reshape((-1, 1))
+
+
+class mf_Bohachevsky(MultiFidelityFunctions):
+    """multi-fidelity Bohachevsky function
+
+    Parameters
+    ----------
+    MultiFidelityFunctions : class
+        base class
+
+    Citation
+    --------
+    .. [1] https://www.sfu.ca/~ssurjano/boha.html
+    .. [2] https://github.com/sjvrijn/mf2
+    .. [3] Dong, H., Song, B., Wang, P. et al. Multi-fidelity information
+           fusion based on prediction of kriging. Struct Multidisc Optim
+           51, 1267-1280 (2015) doi:10.1007/s00158-014-1213-9
+
+    Formula
+    -------
+    .. math::
+        f_h(x) = x_1^2 + 2x_2^2 - 0.3cos(3\pi x_1) - 0.4cos(4\pi x_2) + 0.7
+
+    .. math::
+
+        f_l(x_1, x_2) = f_h(0.7x_1, x_2) + x_1x_2 - 12
+    """
+    num_dim: int = 2
+    num_obj: int = 1
+    num_cons: int = 0
+    input_domain = np.array(
+        [
+            [-5.0, 5.0],
+            [-5.0, 5.0],
+        ]
+    )
+    design_space: dict = {
+        "x1": [-5.0, 5.0],
+        "x2": [-5.0, 5.0],
+    }
+    optimum: float = 0.0
+    optimum_scheme: list = [0.0, 0.0]
+    low_fidelity: bool = True
+
+    def __init__(self, num_dim: int = 2) -> None:
+        super().__init__()
+
+        # check dimension
+        self.is_dim_compatible(num_dim=num_dim)
+
+    @staticmethod
+    def lf(x: np.ndarray) -> np.ndarray:
+
+        x = np.atleast_2d(x)
+
+        # get the values of x1 and x2
+        x11 = 0.7*x[:, 0]
+        x1 = x[:, 0]
+        x2 = x[:, 1]
+
+        # calculate the terms (term 1-3 is same as hf by replacing x1 with x11)
+        # the fourth term is different from hf, which is x1*x2 - 12
+        term1 = x11**2 + 2*x2**2
+        term2 = 0.3*np.cos(3*np.pi*x11)
+        term3 = 0.4*np.cos(4*np.pi*x2)
+        term4 = x1*x2 - 12
+
+        # calculate the objective function
+        obj = (term1 - term2 - term3 + 0.7 + term4).reshape((-1, 1))
+
+        return obj.reshape((-1, 1))
+
+    @staticmethod
+    def hf(x: np.ndarray) -> np.ndarray:
+        x = np.atleast_2d(x)
+
+        # get the values of x1 and x2
+        x1 = x[:, 0]
+        x2 = x[:, 1]
+
+        # calculate the terms
+        term1 = x1**2 + 2*x2**2
+        term2 = 0.3*np.cos(3*np.pi*x1)
+        term3 = 0.4*np.cos(4*np.pi*x2)
+
+        # calculate the objective function
+        obj = (term1 - term2 - term3 + 0.7).reshape((-1, 1))
+        return obj
+
+
+class mf_Booth(MultiFidelityFunctions):
+    """multi-fidelity Booth function, 
+
+    Parameters
+    ----------
+    MultiFidelityFunctions : class
+        base class
+
+    Citation
+    --------
+    .. [1] https://www.sfu.ca/~ssurjano/boha.html
+    .. [2] https://github.com/sjvrijn/mf2
+    .. [3] Dong, H., Song, B., Wang, P. et al. Multi-fidelity information fusion
+           based on prediction of kriging. Struct Multidisc Optim 51, 1267-1280
+           (2015) doi:10.1007/s00158-014-1213-9
+
+    Formula
+    -------
+    .. math::
+        f_h(x) = (x_1 + 2x_2 - 7)^2 + (2x_1 + x_2 - 5)^2
+
+    .. math::
+        f_l(x_1, x_2) = f_h(0.4x_1, x_2) + 1.7x_1x_2 - x_1 + 2x_2
+    """
+
+    num_dim: int = 2
+    num_obj: int = 1
+    num_cons: int = 0
+    input_domain = np.array(
+        [
+            [-10.0, 10.0],
+            [-10.0, 10.0],
+        ]
+    )
+    design_space: dict = {
+        "x1": [-10.0, 10.0],
+        "x2": [-10.0, 10.0],
+    }
+    optimum: float = 0.0
+    optimum_scheme: list = [1.0, 3.0]
+    low_fidelity: bool = True
+
+    def __init__(self, num_dim: int = 2) -> None:
+        super().__init__()
+
+        # check dimension
+        self.is_dim_compatible(num_dim=num_dim)
+
+    @staticmethod
+    def lf(x: np.ndarray) -> np.ndarray:
+
+        x = np.atleast_2d(x)
+
+        # get the values of x1 and x2
+        x11 = 0.4*x[:, 0]
+        x1 = x[:, 0]
+        x2 = x[:, 1]
+
+        # calculate the terms (term 1-3 is same as hf by replacing x1 with x11)
+        # the fourth term is different from hf, which is x1*x2 - 12
+        term1 = (x11 + 2*x2 - 7)**2
+        term2 = (2*x11 + x2 - 5)**2
+        term3 = 1.7*x1*x2 - x1 + 2*x2
+
+        # calculate the objective function
+        obj = (term1 + term2 + term3).reshape((-1, 1))
+
+        return obj.reshape((-1, 1))
+
+    @staticmethod
+    def hf(x: np.ndarray) -> np.ndarray:
+        x = np.atleast_2d(x)
+
+        # get the values of x1 and x2
+        x1 = x[:, 0]
+        x2 = x[:, 1]
+
+        # calculate the terms
+        term1 = (x1 + 2*x2 - 7)**2
+        term2 = (2*x1 + x2 - 5)**2
+
+        # calculate the objective function
+        obj = (term1 + term2).reshape((-1, 1))
+        return obj
+
+
+class mf_Borehole(MultiFidelityFunctions):
+    """multi-fidelity Borehole function, 
+
+    Parameters
+    ----------
+    MultiFidelityFunctions : class
+        base class
+
+    Citation
+    --------
+    .. [1] https://www.sfu.ca/~ssurjano/boha.html
+    .. [2] https://github.com/sjvrijn/mf2
+    .. [3] Shifeng Xiong, Peter Z. G. Qian & C. F. Jeff Wu (2013) Sequential
+           Design and Analysis of High-Accuracy and Low-Accuracy Computer Codes,
+           Technometrics, 55:1, 37-46, DOI: 10.1080/00401706.2012.72357
+
+    Formula
+    -------
+    .. math::
+
+        f_b(x, A, B) =
+        \dfrac{A*T_u*(H_u - H_l)}{\Bigg(\log(\frac{r}{r_w}) *
+        (B + \dfrac{2L*T_u}{\log(\frac{r}{r_w}) * r_w^2 * K_w} +
+        \dfrac{T_u}{T_l}\Bigg)}
+
+    .. math::
+
+        f_h(x) = f_b(x, 2\pi, 1)
+
+    .. math::
+
+        f_l(x) = f_b(x, 5, 1.5)
+
+    """
+
+    num_dim: int = 8
+    num_obj: int = 1
+    num_cons: int = 0
+    input_domain = np.array(
+        [
+            [0.05, 0.15],
+            [100, 50000],
+            [63070, 115600],
+            [990, 1110],
+            [63.1, 116],
+            [700, 820],
+            [1120, 1680],
+            [9855, 12045],
+        ]
+    )
+    design_space: dict = {
+        "rw": [0.05, 0.15],
+        "r": [100, 50000],
+        "Tu": [63070, 115600],
+        "Hu": [990, 1110],
+        "Tl": [63.1, 116],
+        "Hl": [700, 820],
+        "L": [1120, 1680],
+        "Kw": [9855, 12045],
+    }
+    optimum: float = None
+    optimum_scheme: list = None
+    low_fidelity: bool = True
+
+    def __init__(self, num_dim: int = 8) -> None:
+        super().__init__()
+
+        # check dimension
+        self.is_dim_compatible(num_dim=num_dim)
+
+    @staticmethod
+    def base(x: np.ndarray, a: float, b: float) -> np.ndarray:
+
+        # get design variables
+        x = np.atleast_2d(x)
+
+        # get the values
+        rw = x[:, 0]
+        r = x[:, 1]
+        Tu = x[:, 2]
+        Hu = x[:, 3]
+        Tl = x[:, 4]
+        Hl = x[:, 5]
+        L = x[:, 6]
+        Kw = x[:, 7]
+
+        # calculate the terms
+        term1 = a*Tu*(Hu - Hl)
+        term2 = np.log(r/rw)
+        term3 = b + 2*L*Tu/(term2 * rw**2 * Kw) + Tu/Tl
+
+        # calculate the objective function
+        obj = (term1 / (term2 * term3)).reshape((-1, 1))
+
+        return obj.reshape((-1, 1))
+
+    @staticmethod
+    def lf(x: np.ndarray) -> np.ndarray:
+
+        obj = mf_Borehole().base(x=x, a=5, b=1.5)
+
+        return obj.reshape((-1, 1))
+
+    @staticmethod
+    def hf(x: np.ndarray) -> np.ndarray:
+
+        obj = mf_Borehole().base(x=x, a=2*np.pi, b=1)
+
+        return obj
+
+
+class mf_CurrinExp(MultiFidelityFunctions):
+    """multi-fidelity CurrinExp function, 
+
+    Parameters
+    ----------
+    MultiFidelityFunctions : class
+        base class
+
+    Citation
+    --------
+    .. [1] https://www.sfu.ca/~ssurjano/currinexp.html
+
+
+    """
+
+    num_dim: int = 2
+    num_obj: int = 1
+    num_cons: int = 0
+    input_domain = np.array(
+        [
+            [0, 1],
+            [0, 1],
+        ]
+    )
+    design_space: dict = {
+        "x1": [0, 1],
+        "x2": [0, 1],
+    }
+    optimum: float = None
+    optimum_scheme: list = None
+    low_fidelity: bool = True
+
+    def __init__(self, num_dim: int = 2) -> None:
+        super().__init__()
+
+        # check dimension
+        self.is_dim_compatible(num_dim=num_dim)
+
+    @staticmethod
+    def lf(x: np.ndarray) -> np.ndarray:
+
+        # reshape the input
+        x = np.atleast_2d(x)
+
+        # calculate the terms
+        xx = x.copy()
+        xx = xx + 0.05
+        term1 = mf_CurrinExp().hf(x=xx)
+
+        # calculate term2
+        xx = x.copy()
+        xx[:, 0] = xx[:, 0] + 0.05
+        xx[:, 1] = xx[:, 1] - 0.05
+        term2 = mf_CurrinExp().hf(x=xx)
+
+        # calculate term3
+        xx = x.copy()
+        xx[:, 0] = xx[:, 0] - 0.05
+        xx[:, 1] = xx[:, 1] + 0.05
+        term3 = mf_CurrinExp().hf(x=xx)
+
+        # calculate term4
+        xx = x.copy()
+        xx = xx - 0.05
+        term4 = mf_CurrinExp().hf(x=xx)
+
+        # calculate the objective function
+        obj = ((term1 + term2 + term3 + term4)/4.0).reshape((-1, 1))
+
+        return obj.reshape((-1, 1))
+
+    @staticmethod
+    def hf(x: np.ndarray) -> np.ndarray:
+
+        # reshape the input
+        x = np.atleast_2d(x)
+
+        # get the values of x1 and x2
+        x1 = x[:, 0]
+        x2 = x[:, 1]
+
+        # calculate the terms
+        are_zero = x2 <= 1e-8  # Assumes x2 approaches 0 from positive
+        term1 = np.ones(x2.shape)
+
+        term1[~are_zero] -= np.exp(-1 / (2*x2[~are_zero]))
+        # term1 = np.exp(-1/2*x2)
+        term2 = 2300*x1**3 + 1900*x1**2 + 2092*x1 + 60
+        term3 = 100*x1**3 + 500*x1**2 + 4*x1 + 20
+
+        # calculate the objective function
+        obj = (term1*term2 / term3).reshape((-1, 1))
+
+        return obj
+
+
+class mf_Himmelblau(MultiFidelityFunctions):
+    """multi-fidelity Himmelblau function, 
+
+    Parameters
+    ----------
+    MultiFidelityFunctions : class
+        base class
+
+    Citation
+    --------
+    .. [1] https://www.sfu.ca/~ssurjano/himmel.html
+
+    Formula
+    -------
+    .. math::
+        f_h(x) = (x_1^2 + x_2 - 11)^2 + (x_1 + x_2^2 - 7)^2
+
+    .. math::
+        f_l(x_1, x_2) = f_h(0.5x_1, 0.8x_2) + x2^3 -(x1+1)^2
+    """
+
+    num_dim: int = 2
+    num_obj: int = 1
+    num_cons: int = 0
+    input_domain = np.array(
+        [
+            [-4.0, 4.0],
+            [-4.0, 4.0],
+        ]
+    )
+    design_space: dict = {
+        "x1": [-4.0, 4.0],
+        "x2": [-4.0, 4.0],
+    }
+    optimum: float = None
+    optimum_scheme: list = None
+    low_fidelity: bool = True
+
+    def __init__(self, num_dim: int = 2) -> None:
+        super().__init__()
+
+        # check dimension
+        self.is_dim_compatible(num_dim=num_dim)
+
+    @staticmethod
+    def lf(x: np.ndarray) -> np.ndarray:
+
+        x = np.atleast_2d(x)
+
+        # get the values of x1 and x2
+        x11 = 0.5*x[:, 0]
+        x22 = 0.8*x[:, 1]
+        x1 = x[:, 0]
+        x2 = x[:, 1]
+
+        # calculate the terms (term 1-3 is same as hf by replacing x1 with x11)
+        # the fourth term is different from hf, which is x1*x2 - 12
+        term1 = (x11**2 + x22 - 11)**2
+        term2 = (x11 + x22**2 - 7)**2
+        term3 = x2**3 - (x1 + 1)**2
+
+        # calculate the objective function
+        obj = (term1 + term2 + term3).reshape((-1, 1))
+
+        return obj.reshape((-1, 1))
+
+    @staticmethod
+    def hf(x: np.ndarray) -> np.ndarray:
+        x = np.atleast_2d(x)
+
+        # get the values of x1 and x2
+        x1 = x[:, 0]
+        x2 = x[:, 1]
+
+        # calculate the terms
+        term1 = (x1**2 + x2 - 11)**2
+        term2 = (x1 + x2**2 - 7)**2
+
+        # calculate the objective function
+        obj = (term1 + term2).reshape((-1, 1))
+        return obj
+
+
+class mf_Park91A(MultiFidelityFunctions):
+    """multi-fidelity Park91A function, 
+
+    Parameters
+    ----------
+    MultiFidelityFunctions : class
+        base class
+
+    Citation
+    --------
+    .. [1] https://www.sfu.ca/~ssurjano/park91a.html
+
+    Formula
+    -------
+
+    .. math::
+
+        f_h(x_1, x_2, x_3, x_4) = \dfrac{x_1}{2} \Bigg(\sqrt{1 + (x_2 + x_3^2) *
+                                \dfrac{x_4}{x_1^2}} - 1\Bigg) +
+                                (x_1 + 3x_4)\exp(1 + \sin(x_3))
+
+    .. math::
+
+        f_l(x_1, x_2, x_3, x_4) = (1+\sin(x_1) / 10)f_h(x_1, x_2, x_3, x_4) +
+                                -2x_1 + x_2^2 + x_3^2 + 0.5
+
+    """
+
+    num_dim: int = 4
+    num_obj: int = 1
+    num_cons: int = 0
+    input_domain = np.array(
+        [
+            [0.0, 1.0],
+            [0.0, 1.0],
+            [0.0, 1.0],
+            [0.0, 1.0],
+        ]
+    )
+    design_space: dict = {
+        "x1": [0.0, 1.0],
+        "x2": [0.0, 1.0],
+        "x3": [0.0, 1.0],
+        "x4": [0.0, 1.0],
+    }
+    optimum: float = None
+    optimum_scheme: list = None
+    low_fidelity: bool = True
+
+    def __init__(self, num_dim: int = 4) -> None:
+        super().__init__()
+
+        # check dimension
+        self.is_dim_compatible(num_dim=num_dim)
+
+    @staticmethod
+    def lf(x: np.ndarray) -> np.ndarray:
+
+        x = np.atleast_2d(x)
+
+        # get the values of x1, x2, x3, x4
+        x1 = x[:, 0]
+        x2 = x[:, 1]
+        x3 = x[:, 2]
+        x4 = x[:, 3]
+
+        # calculate the terms
+        term1 = (1 + np.sin(x1) / 10).reshape((-1, 1))
+        term1 = term1 * mf_Park91A().hf(x=x)
+
+        term2 = -2*x1 + x2**2 + x3**2 + 0.5
+
+        # calculate the objective function
+        obj = (term1).reshape((-1, 1)) + term2.reshape((-1, 1))
+
+        return obj.reshape((-1, 1))
+
+    @staticmethod
+    def hf(x: np.ndarray) -> np.ndarray:
+
+        x = np.atleast_2d(x)
+
+        # get the values of x1, x2, x3, x4
+        x1 = x[:, 0]
+        x2 = x[:, 1]
+        x3 = x[:, 2]
+        x4 = x[:, 3]
+
+        # calculate the terms
+        term1 = x1/2 * (np.sqrt(1 + (x2 + x3**2) * x4/x1**2) - 1)
+        term2 = (x1 + 3*x4)*np.exp(1 + np.sin(x3))
+
+        # calculate the objective function
+        obj = (term1 + term2).reshape((-1, 1))
+
+        return obj
+
+
+class mf_Park91B(MultiFidelityFunctions):
+    """multi-fidelity Park91B function, 
+
+    Parameters
+    ----------
+    MultiFidelityFunctions : class
+        base class
+
+    Citation
+    --------
+    .. [1] https://www.sfu.ca/~ssurjano/park91b.html
+
+    Formula
+    -------
+
+    .. math::
+
+        f_h(x_1, x_2, x_3, x_4) = \dfrac{2}{3}\exp(x_1 + x_2) - x_4\sin(x_3) + x_3
+
+    .. math::
+
+        f_l(x_1, x_2, x_3, x_4) = 1.2f_h(x_1, x_2, x_3, x_4) - 1
+
+    """
+
+    num_dim: int = 4
+    num_obj: int = 1
+    num_cons: int = 0
+    input_domain = np.array(
+        [
+            [0.0, 1.0],
+            [0.0, 1.0],
+            [0.0, 1.0],
+            [0.0, 1.0],
+        ]
+    )
+    design_space: dict = {
+        "x1": [0.0, 1.0],
+        "x2": [0.0, 1.0],
+        "x3": [0.0, 1.0],
+        "x4": [0.0, 1.0],
+    }
+    optimum: float = None
+    optimum_scheme: list = None
+    low_fidelity: bool = True
+
+    def __init__(self, num_dim: int = 4) -> None:
+        super().__init__()
+
+        # check dimension
+        self.is_dim_compatible(num_dim=num_dim)
+
+    @staticmethod
+    def lf(x: np.ndarray) -> np.ndarray:
+
+        x = np.atleast_2d(x)
+
+        # calculate the terms
+        term1 = 1.2 * mf_Park91B().hf(x=x) - 1
+
+        # calculate the objective function
+        obj = (term1).reshape((-1, 1))
+
+        return obj
+
+    @staticmethod
+    def hf(x: np.ndarray) -> np.ndarray:
+
+        x = np.atleast_2d(x)
+
+        # get the values of x1, x2, x3, x4
+        x1 = x[:, 0]
+        x2 = x[:, 1]
+        x3 = x[:, 2]
+        x4 = x[:, 3]
+
+        # calculate the terms
+        term1 = 2/3 * np.exp(x1 + x2) - x4*np.sin(x3) + x3
+
+        # calculate the objective function
+        obj = (term1).reshape((-1, 1))
+
+        return obj
