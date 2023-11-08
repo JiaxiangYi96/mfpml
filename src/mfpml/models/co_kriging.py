@@ -73,13 +73,13 @@ class CoKriging(mf_model):
         self._update_parameters()
 
     def predict(
-        self, Xnew: np.ndarray, return_std: bool = False
+        self, x_predict: np.ndarray, return_std: bool = False
     ) -> np.ndarray:
         """Predict high-fidelity responses
 
         Parameters
         ----------
-        Xnew : np.ndarray
+        x_predict : np.ndarray
             array of high-fidelity to be predicted
         return_std : bool, optional
             whether to return std values, by default False
@@ -90,7 +90,7 @@ class CoKriging(mf_model):
             prediction of high-fidelity
         """
         # transfer to 2d array
-        Xnew = np.atleast_2d(self.normalize_input(Xnew))
+        Xnew = np.atleast_2d(self.normalize_input(x_predict))
         #
         oneC = np.ones((self.C.shape[0], 1))
         # calculate the covariance matrix

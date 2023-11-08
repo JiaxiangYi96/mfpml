@@ -98,13 +98,13 @@ class ScaledKriging(mf_model):
         self.disc_model.train(self.sample_xh, self._getDisc())
 
     def predict(
-        self, test_x: np.ndarray, return_std: bool = False
+        self, x_predict: np.ndarray, return_std: bool = False
     ) -> Any:
         """Predict high-fidelity responses
 
         Parameters
         ----------
-        test_x : np.ndarray
+        x_predict : np.ndarray
             array of high-fidelity to be predicted
         return_std : bool, optional
             whether to return std values, by default False
@@ -115,11 +115,11 @@ class ScaledKriging(mf_model):
             prediction of high-fidelity
         """
         if not return_std:
-            return self.disc_model.predict(test_x) * self.rho \
-                + self.lf_model.predict(test_x)
+            return self.disc_model.predict(x_predict) * self.rho \
+                + self.lf_model.predict(x_predict)
         else:
-            pre_lf, std_lf = self.lf_model.predict(test_x, return_std)
-            pre_disc, std_disc = self.disc_model.predict(test_x, return_std)
+            pre_lf, std_lf = self.lf_model.predict(x_predict, return_std)
+            pre_disc, std_disc = self.disc_model.predict(x_predict, return_std)
             mse = self.rho**2 * std_lf**2 + std_disc**2
             return self.rho * pre_lf + pre_disc, np.sqrt(mse)
 

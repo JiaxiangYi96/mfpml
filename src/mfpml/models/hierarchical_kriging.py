@@ -64,13 +64,13 @@ class HierarchicalKriging(mf_model):
         self._update_parameters()
 
     def predict(
-        self, test_x: np.ndarray, return_std: bool = False
+        self, x_predict: np.ndarray, return_std: bool = False
     ) -> np.ndarray:
         """Predict high-fidelity responses
 
         Parameters
         ----------
-        test_x : np.ndarray
+        x_predict : np.ndarray
             array of high-fidelity to be predicted
         return_std : bool, optional
             whether to return std values, by default False
@@ -80,8 +80,8 @@ class HierarchicalKriging(mf_model):
         np.ndarray
             prediction of high-fidelity
         """
-        pre_lf = self.predict_lf(test_x)
-        XHnew = np.atleast_2d(self.normalize_input(test_x))
+        pre_lf = self.predict_lf(x_predict)
+        XHnew = np.atleast_2d(self.normalize_input(x_predict))
         knew = self.kernel.get_kernel_matrix(XHnew, self.sample_xh_scaled)
         fmean = self.mu * pre_lf + np.dot(knew, self.gamma)
         if not return_std:
