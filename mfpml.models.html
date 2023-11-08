@@ -406,12 +406,12 @@ default [-2, 3].</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="mfpml.models.hierarchical_kriging.HierarchicalKriging.predict">
-<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_std</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/models/hierarchical_kriging.html#HierarchicalKriging.predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.models.hierarchical_kriging.HierarchicalKriging.predict" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x_predict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_std</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/models/hierarchical_kriging.html#HierarchicalKriging.predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.models.hierarchical_kriging.HierarchicalKriging.predict" title="Link to this definition">¶</a></dt>
 <dd><p>Predict high-fidelity responses</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>test_x</strong> (<em>np.ndarray</em>) – array of high-fidelity to be predicted</p></li>
+<li><p><strong>x_predict</strong> (<em>np.ndarray</em>) – array of high-fidelity to be predicted</p></li>
 <li><p><strong>return_std</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a><em>, </em><em>optional</em>) – whether to return std values, by default False</p></li>
 </ul>
 </dd>
@@ -528,12 +528,12 @@ by default [-4, 3]</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="mfpml.models.co_kriging.CoKriging.predict">
-<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Xnew</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_std</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/models/co_kriging.html#CoKriging.predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.models.co_kriging.CoKriging.predict" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x_predict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_std</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/models/co_kriging.html#CoKriging.predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.models.co_kriging.CoKriging.predict" title="Link to this definition">¶</a></dt>
 <dd><p>Predict high-fidelity responses</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>Xnew</strong> (<em>np.ndarray</em>) – array of high-fidelity to be predicted</p></li>
+<li><p><strong>x_predict</strong> (<em>np.ndarray</em>) – array of high-fidelity to be predicted</p></li>
 <li><p><strong>return_std</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a><em>, </em><em>optional</em>) – whether to return std values, by default False</p></li>
 </ul>
 </dd>
@@ -708,12 +708,12 @@ at high-fidelity samples and high-fidelity responses</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="mfpml.models.mf_scale_kriging.ScaledKriging.predict">
-<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_std</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/models/mf_scale_kriging.html#ScaledKriging.predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.models.mf_scale_kriging.ScaledKriging.predict" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x_predict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_std</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/models/mf_scale_kriging.html#ScaledKriging.predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.models.mf_scale_kriging.ScaledKriging.predict" title="Link to this definition">¶</a></dt>
 <dd><p>Predict high-fidelity responses</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>test_x</strong> (<em>np.ndarray</em>) – array of high-fidelity to be predicted</p></li>
+<li><p><strong>x_predict</strong> (<em>np.ndarray</em>) – array of high-fidelity to be predicted</p></li>
 <li><p><strong>return_std</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a><em>, </em><em>optional</em>) – whether to return std values, by default False</p></li>
 </ul>
 </dd>
