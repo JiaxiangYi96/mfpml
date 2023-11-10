@@ -225,7 +225,7 @@ class GaussianProcess(GP):
 
             # step 3: calculate the log likelihood
             logp = -0.5 * self.num_samples * \
-                np.log(sigma2) - np.sum(np.log(np.diag(L)))
+                sigma2 - np.sum(np.log(np.diag(L)))
             nll[i] = -logp.ravel()
 
         return nll
@@ -264,5 +264,5 @@ class GaussianProcess(GP):
                              self.gamma) / self.num_samples
 
         # step 3: get the optimal log likelihood
-        self.logp = (-0.5 * self.num_samples * np.log(self.sigma2) -
+        self.logp = (-0.5 * self.num_samples * self.sigma2 -
                      np.sum(np.log(np.diag(self.L)))).item()
