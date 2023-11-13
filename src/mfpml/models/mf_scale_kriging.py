@@ -15,6 +15,7 @@ class ScaledKriging(mf_model):
         lf_model: Any = None,
         disc_model: Any = None,
         optimizer: Any = None,
+        optimizer_restart: int = 0,
         kernel_bound: list = [-4.0, 3.0],
         rho_optimize: bool = False,
         rho_method: str = "error",
@@ -57,6 +58,7 @@ class ScaledKriging(mf_model):
         self.bounds = design_space
         self.lf_model = lf_model
         self.optimizer = optimizer
+        self.optimizer_restart = optimizer_restart
         self.rho_optimize = rho_optimize
         self.rho = 1.0
         self.rho_bound = rho_bound
@@ -67,13 +69,17 @@ class ScaledKriging(mf_model):
         self.kernel = RBF(theta=np.zeros(self.num_dim), bounds=kernel_bound)
         if lf_model is None:
             self.lf_model = Kriging(
-                design_space=design_space, optimizer=optimizer
+                design_space=design_space,
+                optimizer=optimizer,
+                optimizer_restart=optimizer_restart
             )
         else:
             self.lf_model = lf_model
         if disc_model is None:
             self.disc_model = Kriging(
-                design_space=design_space, optimizer=optimizer
+                design_space=design_space,
+                optimizer=optimizer,
+                optimizer_restart=optimizer_restart,
             )
         else:
             self.disc_model = disc_model

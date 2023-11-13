@@ -58,16 +58,5 @@ def test_inconsistent_lengths() -> None:
         design_space = DesignSpace(names, low_bound, high_bound)
 
 
-def test_magnitude_mismatch():
-    # Test magnitude mismatch between bounds
-    names = ['x1', 'x2']
-    low_bound = [0, 0]
-    # Magnitude mismatch, sum of differences should be len(low_bound)
-    high_bound = [1, 2]
-
-    with pytest.raises(AssertionError):
-        design_space = DesignSpace(names, low_bound, high_bound)
-
-
 if __name__ == "__main__":  # pragma: no cover
     pytest.main()

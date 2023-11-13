@@ -1,7 +1,7 @@
 from typing import Any
 
 import numpy as np
-from scipy.linalg import cholesky, solve
+from numpy.linalg import cholesky, solve
 from scipy.optimize import minimize
 
 from .gpr_base import mf_model
@@ -14,6 +14,7 @@ class CoKriging(mf_model):
         self,
         design_space: np.ndarray,
         optimizer: Any = None,
+        optimizer_restart: int = 0,
         kernel_bound: list = [-4.0, 3.0],
         rho_bound: list = [1e-2, 1e2],
     ) -> None:
@@ -39,12 +40,15 @@ class CoKriging(mf_model):
         # get information of the modeling problem
         self.bounds = design_space
         self.optimizer = optimizer
+        self.optimizer_restart = optimizer_restart
         self.num_dim = design_space.shape[0]
         self.rho_bound = rho_bound
         # initialize kernel and low-fidelity model
         self.kernel = RBF(theta=np.zeros(self.num_dim), bounds=kernel_bound)
         # lf model is a Kriging model with RBF kernel
-        self.lf_model = Kriging(design_space=design_space, optimizer=optimizer)
+        self.lf_model = Kriging(design_space=design_space,
+                                optimizer=optimizer,
+                                optimizer_restart=optimizer_restart)
 
     def _train_hf(self, sample_xh: np.ndarray, sample_yh: np.ndarray) -> None:
         """Train the high-fidelity model
@@ -133,7 +137,7 @@ class CoKriging(mf_model):
         )
         if self.optimizer is None:
             # define the number of trials of L-BFGS-B optimizations
-            n_trials = 20
+            n_trials = self.optimizer_restart + 1
             opt_fs = float("inf")
             for _ in range(n_trials):
                 x0 = np.random.uniform(
@@ -180,7 +184,7 @@ class CoKriging(mf_model):
             K = self.kernel(self.sample_xh_scaled,
                             self.sample_xh_scaled,
                             theta)
-            L = cholesky(K, lower=True)
+            L = cholesky(K)
             # responses for difference
             diff_y = self.sample_yh - rho * self.pred_ylh
             # R^(-1)(Y - rho * YL)
@@ -203,7 +207,7 @@ class CoKriging(mf_model):
         # correlation matrix R
         self.K = self.kernel.get_kernel_matrix(self.sample_xh_scaled,
                                                self.sample_xh_scaled)
-        L = cholesky(self.K, lower=True)
+        L = cholesky(self.K)
         # R^(-1)Y
         self.diff_y = self.sample_yh - self.rho * self.pred_ylh
         alpha = solve(L.T, solve(L, self.diff_y))
@@ -249,8 +253,7 @@ class CoKriging(mf_model):
         # all y values
         self.y = np.concatenate((self.sample_yl, self.sample_yh), axis=0)
         self.LC = cholesky(
-            self.C + np.eye(self.C.shape[1]) * 10**-10, lower=True
-        )
+            self.C + np.eye(self.C.shape[1]) * 10**-10)
         oneC = np.ones((self.C.shape[0], 1))
         self.mu = oneC.T.dot(
             solve(self.LC.T, solve(self.LC, self.y))

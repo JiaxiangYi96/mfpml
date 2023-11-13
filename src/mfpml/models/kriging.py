@@ -1,7 +1,8 @@
 from typing import Any
 
 import numpy as np
-from scipy.linalg import cholesky, solve
+from numba import jit
+from numpy.linalg import cholesky, solve
 from scipy.optimize import minimize
 
 from .basis_functions import Ordinary
@@ -16,7 +17,8 @@ class Kriging(GP):
                  design_space: np.ndarray,
                  kernel: Any = None,
                  regr: Any = Ordinary(),
-                 optimizer: Any = None) -> None:
+                 optimizer: Any = None,
+                 optimizer_restart: int = 0) -> None:
 
         # initialize parameters
         self.num_dim = design_space.shape[0]
@@ -32,6 +34,7 @@ class Kriging(GP):
 
         # get optimizer for optimizing parameters
         self.optimizer = optimizer
+        self.optimizer_restart = optimizer_restart
         # get basis function
         self.regr = regr
 
@@ -39,7 +42,7 @@ class Kriging(GP):
 
         if self.optimizer is None:
             # use the L-BFGS-B method in scipy
-            n_trials = 10
+            n_trials = self.optimizer_restart + 1
             optimum_value = float("inf")
             for _ in range(n_trials):
                 # initial point
@@ -52,8 +55,10 @@ class Kriging(GP):
                 optimum_info = minimize(
                     self._logLikelihood,
                     x0=x0,
-                    method="L-BFGS-B",
+                    method="l-bfgs-b",
                     bounds=self.kernel._get_bounds_list,
+                    options={"maxfun": 200},
+
                 )
                 # greedy search for the optimum value
                 if optimum_info.fun < optimum_value:
@@ -93,7 +98,7 @@ class Kriging(GP):
             K = self.kernel(self.sample_scaled_x,
                             self.sample_scaled_x,
                             param)
-            L = cholesky(K, lower=True)
+            L = cholesky(K)
             # Step 1: estimate beta, which is the coefficient of basis function
             # f, basis function
             f = self.regr(self.sample_scaled_x)
@@ -101,8 +106,8 @@ class Kriging(GP):
             alpha = solve(L.T, solve(L, self.sample_y))
             # K^(-1)f
             KF = solve(L.T, solve(L, f))
-            # cholesky decomposition for (F^T *K^(-1)* F)
-            ld = cholesky(np.dot(f.T, KF), lower=True)
+            # KF = cholesky_solve(K, f)
+            ld = cholesky(np.dot(f.T, KF))
             # beta = (F^T *K^(-1)* F)^(-1) * F^T *R^(-1) * Y
             beta = solve(ld.T, solve(ld, np.dot(f.T, alpha)))
 
@@ -126,7 +131,7 @@ class Kriging(GP):
         # update parameters with optimized hyper-parameters
         self.K = self.kernel.get_kernel_matrix(self.sample_scaled_x,
                                                self.sample_scaled_x)
-        self.L = cholesky(self.K, lower=True)
+        self.L = cholesky(self.K)
 
         # step 1: get the optimal beta
         # f, basis function
@@ -135,7 +140,7 @@ class Kriging(GP):
         self.alpha = solve(self.L.T, solve(self.L, self.sample_y))
         # K^(-1)f
         KF = solve(self.L.T, solve(self.L, self.f))
-        self.ld = cholesky(np.dot(self.f.T, KF), lower=True)
+        self.ld = cholesky(np.dot(self.f.T, KF))
         # beta = (F^T *K^(-1)* F)^(-1) * F^T *R^(-1) * Y
         self.beta = solve(self.ld.T, solve(
             self.ld, np.dot(self.f.T, self.alpha)))

@@ -1,7 +1,7 @@
 from typing import Any
 
 import numpy as np
-from scipy.linalg import cholesky, solve
+from numpy.linalg import cholesky, solve
 
 from .kernels import RBF
 
@@ -35,7 +35,7 @@ class RBFSurrogate:
         self.K = self.kernel.get_kernel_matrix(self.sample_scaled_x,
                                                self.sample_scaled_x)
         # LU decomposition
-        self.L = cholesky(self.K, lower=True)
+        self.L = cholesky(self.K)
 
         # get weights
         self.W = solve(self.L.T, solve(self.L, self.sample_y))
@@ -103,7 +103,7 @@ class NoiseRBFSurrogate:
                                                self.sample_scaled_x) + \
             self.noise_std**2 * np.eye(self.sample_x.shape[0])
         # LU decomposition
-        self.L = cholesky(self.K, lower=True)
+        self.L = cholesky(self.K)
 
         # get weights
         self.W = solve(self.L.T, solve(self.L, self.sample_y))

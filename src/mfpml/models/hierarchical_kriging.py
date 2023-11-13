@@ -2,7 +2,7 @@ import time
 from typing import Any
 
 import numpy as np
-from scipy.linalg import cholesky, solve
+from numpy.linalg import cholesky, solve
 from scipy.optimize import minimize
 
 from .gpr_base import mf_model
@@ -15,6 +15,7 @@ class HierarchicalKriging(mf_model):
         self,
         design_space: np.ndarray,
         optimizer: Any = None,
+        optimizer_restart: int = 0,
         kernel_bound: list = [-4.0, 2.0],
     ) -> None:
         """Initialize hierarchical Kriging model
@@ -35,10 +36,13 @@ class HierarchicalKriging(mf_model):
         """
         self.bounds = design_space
         self.optimizer = optimizer
+        self.optimizer_restart = optimizer_restart
         self.num_dim = design_space.shape[0]
         self.kernel = RBF(theta=np.zeros(self.num_dim), bounds=kernel_bound)
 
-        self.lf_model = Kriging(design_space=design_space, optimizer=optimizer)
+        self.lf_model = Kriging(design_space=design_space,
+                                optimizer=optimizer,
+                                optimizer_restart=optimizer_restart)
 
     def _train_hf(self, sample_xh: np.ndarray, sample_yh: np.ndarray) -> None:
         """Train the high-fidelity model
@@ -112,7 +116,7 @@ class HierarchicalKriging(mf_model):
             whether to use gradients, by default None
         """
         if self.optimizer is None:
-            n_trials = 5
+            n_trials = self.optimizer_restart + 1
             opt_fs = float("inf")
             for _ in range(n_trials):
                 x0 = np.random.uniform(
@@ -157,7 +161,7 @@ class HierarchicalKriging(mf_model):
             param = params[i, :]
             K = self.kernel(self.sample_xh_scaled,
                             self.sample_xh_scaled, param)
-            L = cholesky(K, lower=True)
+            L = cholesky(K)
             alpha = solve(L.T, solve(L, self.sample_yh))
             beta = solve(L.T, solve(L, self.F))
             mu = (np.dot(self.F.T, alpha) / np.dot(self.F.T, beta)).squeeze()
@@ -176,7 +180,7 @@ class HierarchicalKriging(mf_model):
         """Update parameters of the model"""
         self.K = self.kernel.get_kernel_matrix(
             self.sample_xh_scaled, self.sample_xh_scaled)
-        self.L = cholesky(self.K, lower=True)
+        self.L = cholesky(self.K)
         self.alpha = solve(self.L.T, solve(self.L, self.sample_yh))
         self.beta = solve(self.L.T, solve(self.L, self.F))
         self.mu = (

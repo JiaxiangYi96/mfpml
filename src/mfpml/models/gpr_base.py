@@ -172,15 +172,9 @@ class mf_model:
             responses and 'lf' contains low-fidelity ones
         """
         # train the low-fidelity model
-        start_time = time.time()
         self._train_lf(samples["lf"], responses["lf"])
-        end_time = time.time()
-        print('training lf time: ', end_time - start_time)
         # train high-fidelity model, it will be trained at child-class
-        start_time = time.time()
         self._train_hf(samples["hf"], responses["hf"])
-        end_time = time.time()
-        print('training hf time: ', end_time - start_time)
 
     def update_model(self, Xnew: dict, Ynew: dict) -> None:
         """Update the multi-fidelity model with new samples

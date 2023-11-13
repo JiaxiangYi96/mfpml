@@ -1,7 +1,7 @@
 from typing import Any
 
 import numpy as np
-from scipy.linalg import cholesky, solve
+from numpy.linalg import cholesky, solve
 from scipy.optimize import minimize
 
 from .basis_functions import Ordinary
@@ -205,7 +205,7 @@ class GaussianProcess(GP):
             K = self.kernel(self.sample_scaled_x,
                             self.sample_scaled_x,
                             param) + np.eye(self.num_samples) * noise_sigma**2
-            L = cholesky(K, lower=True)
+            L = cholesky(K)
             # step 1: estimate beta, which is the coefficient of basis function
             # f, basis function
             f = self.regr(self.sample_scaled_x)
@@ -214,7 +214,7 @@ class GaussianProcess(GP):
             # K^(-1)f
             KF = solve(L.T, solve(L, f))
             # cholesky decomposition for (F^T *K^(-1)* F)
-            ld = cholesky(np.dot(f.T, KF), lower=True)
+            ld = cholesky(np.dot(f.T, KF))
             beta = solve(ld.T, solve(ld, np.dot(f.T, alpha)))
 
             # step 2: estimate sigma2
@@ -252,7 +252,7 @@ class GaussianProcess(GP):
         self.alpha = solve(self.L.T, solve(self.L, self.sample_y))
         # K^(-1)f
         KF = solve(self.L.T, solve(self.L, self.f))
-        self.ld = cholesky(np.dot(self.f.T, KF), lower=True)
+        self.ld = cholesky(np.dot(self.f.T, KF))
         # beta = (F^T *K^(-1)* F)^(-1) * F^T *R^(-1) * Y
         self.beta = solve(self.ld.T, solve(
             self.ld, np.dot(self.f.T, self.alpha)))

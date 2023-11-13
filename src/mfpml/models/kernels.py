@@ -1,4 +1,5 @@
 import numpy as np
+from numba import float32, int32  # import the types
 from scipy.spatial.distance import cdist
 
 
@@ -112,24 +113,35 @@ class RBF(KernelCore):
         self.bounds = np.array(self.bounds)
 
     def get_kernel_matrix(self, X, Y) -> np.ndarray:
+        """
+        Return the kernel matrix k(x, y).
+
+        Parameters
+        ----------
+        X : np.ndarray
+            array of the first samples shape=((n1, num_dims))
+        Y : np.ndarray
+            array of the second samples shape=((n2, num_dims))
+
+        Returns
+        -------
+        np.ndarray
+            kernel matrix with shape ((n1, n2))
+        """
         # deal with parameters
         X = np.atleast_2d(X)
         Y = np.atleast_2d(Y)
-        # compute the kernel matrix
-        dist = (np.sum(X**2 * self.param, 1).reshape((-1, 1)) +
-                np.sum(Y**2 * self.param, 1) - 2 *
-                np.dot(np.sqrt(self.param) * X, (np.sqrt(self.param) * Y).T))
+        X_sq = np.sum(X**2 * self.param, axis=1, keepdims=True)
+        Y_sq = np.sum(Y**2 * self.param, axis=1)
+        XY = XY = np.dot(np.sqrt(self.param) * X, (np.sqrt(self.param) * Y).T)
+        dist = X_sq + Y_sq - 2 * XY
 
-        # add a bit noise to the kernel matrix
-        dist = np.exp(-dist) + np.eye(X.shape[0], Y.shape[0]) * 10 ** -10
-
-        return dist
+        return np.exp(-dist) + np.eye(X.shape[0], Y.shape[0]) * 10 ** -10
 
     def __call__(self,
                  X: np.ndarray,
                  Y: np.ndarray,
                  param: np.ndarray,
-                 eval_grad=False
                  ) -> np.ndarray:
         """
         Return the kernel k(x, y) and optionally its gradient.
@@ -142,34 +154,26 @@ class RBF(KernelCore):
             array of the second samples shape=((n2, num_dims))
         param : np.array
             parameters in the specific kernel, shape=((1, num_params))
-        eval_grad : bool, optional
-            whether the gradient with respect to the log of the kernel
-            hyperparameter is computed, by default False
-            Only supported when Y is None
-
         Returns
         -------
         np.array
             kernel values with respect to parameters param
         """
-        if eval_grad:
-            pass
-        else:
-            X = np.atleast_2d(X)
-            Y = np.atleast_2d(Y)
-            # deal with parameters
-            param = 10**param
-            # compute the distance
-            dist = (np.sum(X**2 * param, 1).reshape((-1, 1)) +
-                    np.sum(Y**2 * param, 1) -
-                    2 * np.dot(np.sqrt(param) * X, (np.sqrt(param) * Y).T))
 
-            # numerical stability
-            dist = np.exp(-dist) + np.eye(X.shape[0], Y.shape[0]) * 10 ** -10
+        # deal with parameters
+        X = np.atleast_2d(X)
+        Y = np.atleast_2d(Y)
+        # deal with parameters
+        param = 10**param
+        # compute the distance
+        X_sq = np.sum(X**2 * param, axis=1, keepdims=True)
+        Y_sq = np.sum(Y**2 * param, axis=1)
+        XY = np.dot(np.sqrt(param) * X, (np.sqrt(param) * Y).T)
+        dist = X_sq + Y_sq - 2 * XY
 
-            return dist
+        return np.exp(-dist) + np.eye(X.shape[0], Y.shape[0]) * 10 ** -10
 
-    def set_params(self, params):
+    def set_params(self, params) -> None:
         """
         Set the parameters of the kernel.
         """
