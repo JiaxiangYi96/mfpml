@@ -60,10 +60,7 @@ class HierarchicalKriging(mf_model):
         # prediction of low-fidelity at high-fidelity locations
         self.F = self.predict_lf(self.sample_xh)
         # optimize the hyper parameters
-        start_time = time.time()
         self._optHyp()
-        end_time = time.time()
-        print("Optimizing time: ", end_time - start_time)
         self.kernel.set_params(self.opt_param)
         self._update_parameters()
 
