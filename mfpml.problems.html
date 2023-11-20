@@ -15,7 +15,6 @@
         <script src="_static/documentation_options.js?v=d45e8c67"></script>
         <script src="_static/doctools.js?v=888ff710"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
-        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -421,16 +420,10 @@
 <dt class="sig sig-object py" id="mfpml.problems.multifidelity_functions.ContinuousNonlinearCorrelation1D">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ContinuousNonlinearCorrelation1D</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/problems/multifidelity_functions.html#ContinuousNonlinearCorrelation1D"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.problems.multifidelity_functions.ContinuousNonlinearCorrelation1D" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#mfpml.problems.multifidelity_functions.MultiFidelityFunctions" title="mfpml.problems.multifidelity_functions.MultiFidelityFunctions"><code class="xref py py-class docutils literal notranslate"><span class="pre">MultiFidelityFunctions</span></code></a></p>
-<p>_summary_</p>
+<p>Continuous Nonlinear Correlation 1D</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>MultiFidelityFunctions</strong> (<em>_type_</em>) – _description_</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>_description_</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>_type_</p>
+<dd class="field-odd"><p><strong>MultiFidelityFunctions</strong> (<em>class</em>) – base class</p>
 </dd>
 </dl>
 <dl class="py attribute">
@@ -855,16 +848,10 @@
 <dt class="sig sig-object py" id="mfpml.problems.multifidelity_functions.PhaseShiftedOscillations">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">PhaseShiftedOscillations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/problems/multifidelity_functions.html#PhaseShiftedOscillations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.problems.multifidelity_functions.PhaseShiftedOscillations" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#mfpml.problems.multifidelity_functions.MultiFidelityFunctions" title="mfpml.problems.multifidelity_functions.MultiFidelityFunctions"><code class="xref py py-class docutils literal notranslate"><span class="pre">MultiFidelityFunctions</span></code></a></p>
-<p>_summary_</p>
+<p>Phase shifted oscillations</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>MultiFidelityFunctions</strong> (<em>_type_</em>) – _description_</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>_description_</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>_type_</p>
+<dd class="field-odd"><p><strong>MultiFidelityFunctions</strong> (<em>class</em>) – based class</p>
 </dd>
 </dl>
 <dl class="py attribute">
@@ -963,29 +950,7 @@
 <p>multi-fidelity Bohachevsky function</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>MultiFidelityFunctions</strong> (<em>class</em>) – base class</p></li>
-<li><p><strong>Citation</strong> – </p></li>
-<li><p><strong>--------</strong> – </p></li>
-<li><p><strong>https</strong> (<em>..</em><em> [</em><em>2</em><em>]</em>) – </p></li>
-<li><p><strong>https</strong> – </p></li>
-<li><p><strong>Dong</strong> (<em>..</em><em> [</em><em>3</em><em>]</em>) – fusion based on prediction of kriging. Struct Multidisc Optim
-51, 1267-1280 (2015) doi:10.1007/s00158-014-1213-9</p></li>
-<li><p><strong>H.</strong> – fusion based on prediction of kriging. Struct Multidisc Optim
-51, 1267-1280 (2015) doi:10.1007/s00158-014-1213-9</p></li>
-<li><p><strong>Song</strong> – fusion based on prediction of kriging. Struct Multidisc Optim
-51, 1267-1280 (2015) doi:10.1007/s00158-014-1213-9</p></li>
-<li><p><strong>B.</strong> – fusion based on prediction of kriging. Struct Multidisc Optim
-51, 1267-1280 (2015) doi:10.1007/s00158-014-1213-9</p></li>
-<li><p><strong>Wang</strong> – fusion based on prediction of kriging. Struct Multidisc Optim
-51, 1267-1280 (2015) doi:10.1007/s00158-014-1213-9</p></li>
-<li><p><strong>information</strong> (<em>P. et al. Multi-fidelity</em>) – fusion based on prediction of kriging. Struct Multidisc Optim
-51, 1267-1280 (2015) doi:10.1007/s00158-014-1213-9</p></li>
-<li><p><strong>Formula</strong> – </p></li>
-<li><p><strong>-------</strong> – </p></li>
-<li><p><strong>math::</strong> (<em>..</em>) – f_h(x) = x_1^2 + 2x_2^2 - 0.3cos(3pi x_1) - 0.4cos(4pi x_2) + 0.7</p></li>
-<li><p><strong>math::</strong> – f_l(x_1, x_2) = f_h(0.7x_1, x_2) + x_1x_2 - 12</p></li>
-</ul>
+<dd class="field-odd"><p><strong>MultiFidelityFunctions</strong> (<em>class</em>) – base class</p>
 </dd>
 </dl>
 <dl class="py attribute">
@@ -1084,29 +1049,7 @@
 <p>multi-fidelity Booth function,</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>MultiFidelityFunctions</strong> (<em>class</em>) – base class</p></li>
-<li><p><strong>Citation</strong> – </p></li>
-<li><p><strong>--------</strong> – </p></li>
-<li><p><strong>https</strong> (<em>..</em><em> [</em><em>2</em><em>]</em>) – </p></li>
-<li><p><strong>https</strong> – </p></li>
-<li><p><strong>Dong</strong> (<em>..</em><em> [</em><em>3</em><em>]</em>) – based on prediction of kriging. Struct Multidisc Optim 51, 1267-1280
-(2015) doi:10.1007/s00158-014-1213-9</p></li>
-<li><p><strong>H.</strong> – based on prediction of kriging. Struct Multidisc Optim 51, 1267-1280
-(2015) doi:10.1007/s00158-014-1213-9</p></li>
-<li><p><strong>Song</strong> – based on prediction of kriging. Struct Multidisc Optim 51, 1267-1280
-(2015) doi:10.1007/s00158-014-1213-9</p></li>
-<li><p><strong>B.</strong> – based on prediction of kriging. Struct Multidisc Optim 51, 1267-1280
-(2015) doi:10.1007/s00158-014-1213-9</p></li>
-<li><p><strong>Wang</strong> – based on prediction of kriging. Struct Multidisc Optim 51, 1267-1280
-(2015) doi:10.1007/s00158-014-1213-9</p></li>
-<li><p><strong>fusion</strong> (<em>P. et al. Multi-fidelity information</em>) – based on prediction of kriging. Struct Multidisc Optim 51, 1267-1280
-(2015) doi:10.1007/s00158-014-1213-9</p></li>
-<li><p><strong>Formula</strong> – </p></li>
-<li><p><strong>-------</strong> – </p></li>
-<li><p><strong>math::</strong> (<em>..</em>) – f_h(x) = (x_1 + 2x_2 - 7)^2 + (2x_1 + x_2 - 5)^2</p></li>
-<li><p><strong>math::</strong> – f_l(x_1, x_2) = f_h(0.4x_1, x_2) + 1.7x_1x_2 - x_1 + 2x_2</p></li>
-</ul>
+<dd class="field-odd"><p><strong>MultiFidelityFunctions</strong> (<em>class</em>) – base class</p>
 </dd>
 </dl>
 <dl class="py attribute">
@@ -1203,41 +1146,9 @@
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mf_Borehole</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/problems/multifidelity_functions.html#mf_Borehole"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.problems.multifidelity_functions.mf_Borehole" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#mfpml.problems.multifidelity_functions.MultiFidelityFunctions" title="mfpml.problems.multifidelity_functions.MultiFidelityFunctions"><code class="xref py py-class docutils literal notranslate"><span class="pre">MultiFidelityFunctions</span></code></a></p>
 <p>multi-fidelity Borehole function,</p>
-<blockquote>
-<div><dl class="simple">
-<dt>MultiFidelityFunctions<span class="classifier">class</span></dt><dd><p>base class</p>
-</dd>
-</dl>
-<aside class="footnote-list brackets">
-<aside class="footnote brackets" id="id1" role="note">
-<span class="label"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></span>
-<p><a class="reference external" href="https://www.sfu.ca/~ssurjano/boha.html">https://www.sfu.ca/~ssurjano/boha.html</a></p>
-</aside>
-<aside class="footnote brackets" id="id2" role="note">
-<span class="label"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></span>
-<p><a class="reference external" href="https://github.com/sjvrijn/mf2">https://github.com/sjvrijn/mf2</a></p>
-</aside>
-<aside class="footnote brackets" id="id3" role="note">
-<span class="label"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></span>
-<p>Shifeng Xiong, Peter Z. G. Qian &amp; C. F. Jeff Wu (2013) Sequential
-Design and Analysis of High-Accuracy and Low-Accuracy Computer Codes,
-Technometrics, 55:1, 37-46, DOI: 10.1080/00401706.2012.72357</p>
-</aside>
-</aside>
-<div class="math notranslate nohighlight">
-\[f_b(x, A, B) =
-\dfrac{A*T_u*(H_u - H_l)}{\Bigg(\log(\]</div>
-</div></blockquote>
-<dl>
-<dt>rac{r}{r_w}) *</dt><dd><p>(B + dfrac{2L*T_u}{log(</p>
-</dd>
-<dt>rac{r}{r_w}) * r_w^2 * K_w} +</dt><dd><blockquote>
-<div><p>dfrac{T_u}{T_l}Bigg)}</p>
-</div></blockquote>
-<div class="math notranslate nohighlight">
-\[f_h(x) = f_b(x, 2\pi, 1)\]</div>
-<div class="math notranslate nohighlight">
-\[f_l(x) = f_b(x, 5, 1.5)\]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>MultiFidelityFunctions</strong> (<em>class</em>) – base class</p>
 </dd>
 </dl>
 <dl class="py attribute">
@@ -1346,12 +1257,7 @@ Technometrics, 55:1, 37-46, DOI: 10.1080/00401706.2012.72357</p>
 <p>multi-fidelity CurrinExp function,</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>MultiFidelityFunctions</strong> (<em>class</em>) – base class</p></li>
-<li><p><strong>Citation</strong> – </p></li>
-<li><p><strong>--------</strong> – </p></li>
-<li><p><strong>https</strong> (<em>..</em><em> [</em><em>1</em><em>]</em>) – </p></li>
-</ul>
+<dd class="field-odd"><p><strong>MultiFidelityFunctions</strong> (<em>class</em>) – base class</p>
 </dd>
 </dl>
 <dl class="py attribute">
@@ -1745,16 +1651,7 @@ Technometrics, 55:1, 37-46, DOI: 10.1080/00401706.2012.72357</p>
 <p>multi-fidelity Himmelblau function,</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>MultiFidelityFunctions</strong> (<em>class</em>) – base class</p></li>
-<li><p><strong>Citation</strong> – </p></li>
-<li><p><strong>--------</strong> – </p></li>
-<li><p><strong>https</strong> (<em>..</em><em> [</em><em>1</em><em>]</em>) – </p></li>
-<li><p><strong>Formula</strong> – </p></li>
-<li><p><strong>-------</strong> – </p></li>
-<li><p><strong>math::</strong> (<em>..</em>) – f_h(x) = (x_1^2 + x_2 - 11)^2 + (x_1 + x_2^2 - 7)^2</p></li>
-<li><p><strong>math::</strong> – f_l(x_1, x_2) = f_h(0.5x_1, 0.8x_2) + x2^3 -(x1+1)^2</p></li>
-</ul>
+<dd class="field-odd"><p><strong>MultiFidelityFunctions</strong> (<em>class</em>) – base class</p>
 </dd>
 </dl>
 <dl class="py attribute">
@@ -1853,25 +1750,7 @@ Technometrics, 55:1, 37-46, DOI: 10.1080/00401706.2012.72357</p>
 <p>multi-fidelity Park91A function,</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>MultiFidelityFunctions</strong> (<em>class</em>) – base class</p></li>
-<li><p><strong>Citation</strong> – </p></li>
-<li><p><strong>--------</strong> – </p></li>
-<li><p><strong>https</strong> (<em>..</em><em> [</em><em>1</em><em>]</em>) – </p></li>
-<li><p><strong>Formula</strong> – </p></li>
-<li><p><strong>-------</strong> – </p></li>
-<li><p><strong>math::</strong> (<em>..</em>) – <dl class="simple">
-<dt>f_h(x_1, x_2, x_3, x_4) = dfrac{x_1}{2} Bigg(sqrt{1 + (x_2 + x_3^2) *</dt><dd><p>dfrac{x_4}{x_1^2}} - 1Bigg) +
-(x_1 + 3x_4)exp(1 + sin(x_3))</p>
-</dd>
-</dl>
-</p></li>
-<li><p><strong>math::</strong> – <dl class="simple">
-<dt>f_l(x_1, x_2, x_3, x_4) = (1+sin(x_1) / 10)f_h(x_1, x_2, x_3, x_4) +</dt><dd><p>-2x_1 + x_2^2 + x_3^2 + 0.5</p>
-</dd>
-</dl>
-</p></li>
-</ul>
+<dd class="field-odd"><p><strong>MultiFidelityFunctions</strong> (<em>class</em>) – base class</p>
 </dd>
 </dl>
 <dl class="py attribute">
@@ -1970,16 +1849,7 @@ Technometrics, 55:1, 37-46, DOI: 10.1080/00401706.2012.72357</p>
 <p>multi-fidelity Park91B function,</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>MultiFidelityFunctions</strong> (<em>class</em>) – base class</p></li>
-<li><p><strong>Citation</strong> – </p></li>
-<li><p><strong>--------</strong> – </p></li>
-<li><p><strong>https</strong> (<em>..</em><em> [</em><em>1</em><em>]</em>) – </p></li>
-<li><p><strong>Formula</strong> – </p></li>
-<li><p><strong>-------</strong> – </p></li>
-<li><p><strong>math::</strong> (<em>..</em>) – f_h(x_1, x_2, x_3, x_4) = dfrac{2}{3}exp(x_1 + x_2) - x_4sin(x_3) + x_3</p></li>
-<li><p><strong>math::</strong> – f_l(x_1, x_2, x_3, x_4) = 1.2f_h(x_1, x_2, x_3, x_4) - 1</p></li>
-</ul>
+<dd class="field-odd"><p><strong>MultiFidelityFunctions</strong> (<em>class</em>) – base class</p>
 </dd>
 </dl>
 <dl class="py attribute">
