@@ -21,6 +21,7 @@
 		tutorials/
 		examples/
 		tests/
+		studies/
 		src/mfpml/_legacy/
 	# <<< UPDATE ACCORDING WITH YOUR PYTHON PROJECT
 	

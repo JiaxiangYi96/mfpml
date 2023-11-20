@@ -43,7 +43,3 @@ def test_forrester_1b() -> None:
 
     assert results["lf"] == pytest.approx(sample_y["lf"])
     assert results["hf"] == pytest.approx(sample_y["hf"])
-
-
-if __name__ == "__main__":  # pragma: no cover
-    pytest.main()

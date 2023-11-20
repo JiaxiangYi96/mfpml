@@ -30,7 +30,3 @@ def test_brainin_function_values() -> None:
     results = np.array([[21.59234798], [10.03613571], [154.75696146]])
 
     assert results == pytest.approx(sample_y)
-
-
-if __name__ == "__main__":  # pragma: no cover
-    pytest.main()

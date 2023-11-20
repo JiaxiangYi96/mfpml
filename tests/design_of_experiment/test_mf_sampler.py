@@ -74,3 +74,43 @@ def test_lhs_unnested() -> None:
     )
     assert results_hf == pytest.approx(samples["hf"])
     assert results_lf == pytest.approx(samples["lf"])
+
+
+def test_1d_plot() -> None:
+    space = DesignSpace(
+        names=["x1"], low_bound=[0.0], high_bound=[1.0]
+    )
+    design_space = space.design_space
+    mf_sampler = MFLatinHyperCube(
+        design_space=design_space, seed=12, nested=False
+    )
+    mf_sampler.get_samples(num_lf_samples=4, num_hf_samples=2)
+    mf_sampler.plot_samples()
+    assert True
+
+
+def test_2d_plot() -> None:
+    space = DesignSpace(
+        names=["x1", "x2"], low_bound=[0.0, 0.0], high_bound=[1.0, 1.0]
+    )
+    design_space = space.design_space
+    mf_sampler = MFLatinHyperCube(
+        design_space=design_space, seed=12, nested=False
+    )
+    mf_sampler.get_samples(num_lf_samples=4, num_hf_samples=2)
+    mf_sampler.plot_samples()
+    assert True
+
+
+def test_3d_plot() -> None:
+    space = DesignSpace(
+        names=["x1", "x2", "x3"], low_bound=[0.0, 0.0, 0.0], high_bound=[1.0, 1.0, 1.0]
+    )
+    design_space = space.design_space
+    mf_sampler = MFLatinHyperCube(
+        design_space=design_space, seed=12, nested=False
+    )
+    mf_sampler.get_samples(num_lf_samples=4, num_hf_samples=2)
+
+    with pytest.raises(Exception):
+        mf_sampler.plot_samples()

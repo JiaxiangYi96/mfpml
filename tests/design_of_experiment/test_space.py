@@ -56,7 +56,3 @@ def test_inconsistent_lengths() -> None:
 
     with pytest.raises(AssertionError):
         design_space = DesignSpace(names, low_bound, high_bound)
-
-
-if __name__ == "__main__":  # pragma: no cover
-    pytest.main()

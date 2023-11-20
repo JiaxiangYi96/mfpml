@@ -481,17 +481,13 @@ class mf_Discontinuous(MultiFidelityFunctions):
 
 
 class ContinuousNonlinearCorrelation1D(MultiFidelityFunctions):
-    """_summary_
+    """Continuous Nonlinear Correlation 1D
 
     Parameters
     ----------
-    MultiFidelityFunctions : _type_
-        _description_
+    MultiFidelityFunctions : class
+        base class
 
-    Returns
-    -------
-    _type_
-        _description_
     """
     num_dim: int = 1
     num_obj: int = 1
@@ -522,17 +518,13 @@ class ContinuousNonlinearCorrelation1D(MultiFidelityFunctions):
 
 
 class PhaseShiftedOscillations(MultiFidelityFunctions):
-    """_summary_
+    """Phase shifted oscillations
 
     Parameters
     ----------
-    MultiFidelityFunctions : _type_
-        _description_
+    MultiFidelityFunctions : class
+        based class
 
-    Returns
-    -------
-    _type_
-        _description_
     """
     num_dim: int = 1
     num_obj: int = 1
@@ -570,22 +562,6 @@ class mf_Bohachevsky(MultiFidelityFunctions):
     MultiFidelityFunctions : class
         base class
 
-    Citation
-    --------
-    .. [1] https://www.sfu.ca/~ssurjano/boha.html
-    .. [2] https://github.com/sjvrijn/mf2
-    .. [3] Dong, H., Song, B., Wang, P. et al. Multi-fidelity information
-           fusion based on prediction of kriging. Struct Multidisc Optim
-           51, 1267-1280 (2015) doi:10.1007/s00158-014-1213-9
-
-    Formula
-    -------
-    .. math::
-        f_h(x) = x_1^2 + 2x_2^2 - 0.3cos(3\pi x_1) - 0.4cos(4\pi x_2) + 0.7
-
-    .. math::
-
-        f_l(x_1, x_2) = f_h(0.7x_1, x_2) + x_1x_2 - 12
     """
     num_dim: int = 2
     num_obj: int = 1
@@ -651,28 +627,13 @@ class mf_Bohachevsky(MultiFidelityFunctions):
 
 
 class mf_Booth(MultiFidelityFunctions):
-    """multi-fidelity Booth function, 
+    """multi-fidelity Booth function,
 
     Parameters
     ----------
     MultiFidelityFunctions : class
         base class
 
-    Citation
-    --------
-    .. [1] https://www.sfu.ca/~ssurjano/boha.html
-    .. [2] https://github.com/sjvrijn/mf2
-    .. [3] Dong, H., Song, B., Wang, P. et al. Multi-fidelity information fusion
-           based on prediction of kriging. Struct Multidisc Optim 51, 1267-1280
-           (2015) doi:10.1007/s00158-014-1213-9
-
-    Formula
-    -------
-    .. math::
-        f_h(x) = (x_1 + 2x_2 - 7)^2 + (2x_1 + x_2 - 5)^2
-
-    .. math::
-        f_l(x_1, x_2) = f_h(0.4x_1, x_2) + 1.7x_1x_2 - x_1 + 2x_2
     """
 
     num_dim: int = 2
@@ -737,37 +698,12 @@ class mf_Booth(MultiFidelityFunctions):
 
 
 class mf_Borehole(MultiFidelityFunctions):
-    """multi-fidelity Borehole function, 
+    """multi-fidelity Borehole function,
 
     Parameters
     ----------
     MultiFidelityFunctions : class
         base class
-
-    Citation
-    --------
-    .. [1] https://www.sfu.ca/~ssurjano/boha.html
-    .. [2] https://github.com/sjvrijn/mf2
-    .. [3] Shifeng Xiong, Peter Z. G. Qian & C. F. Jeff Wu (2013) Sequential
-           Design and Analysis of High-Accuracy and Low-Accuracy Computer Codes,
-           Technometrics, 55:1, 37-46, DOI: 10.1080/00401706.2012.72357
-
-    Formula
-    -------
-    .. math::
-
-        f_b(x, A, B) =
-        \dfrac{A*T_u*(H_u - H_l)}{\Bigg(\log(\frac{r}{r_w}) *
-        (B + \dfrac{2L*T_u}{\log(\frac{r}{r_w}) * r_w^2 * K_w} +
-        \dfrac{T_u}{T_l}\Bigg)}
-
-    .. math::
-
-        f_h(x) = f_b(x, 2\pi, 1)
-
-    .. math::
-
-        f_l(x) = f_b(x, 5, 1.5)
 
     """
 
@@ -848,17 +784,12 @@ class mf_Borehole(MultiFidelityFunctions):
 
 
 class mf_CurrinExp(MultiFidelityFunctions):
-    """multi-fidelity CurrinExp function, 
+    """multi-fidelity CurrinExp function,
 
     Parameters
     ----------
     MultiFidelityFunctions : class
         base class
-
-    Citation
-    --------
-    .. [1] https://www.sfu.ca/~ssurjano/currinexp.html
-
 
     """
 
@@ -944,24 +875,12 @@ class mf_CurrinExp(MultiFidelityFunctions):
 
 
 class mf_Himmelblau(MultiFidelityFunctions):
-    """multi-fidelity Himmelblau function, 
+    """multi-fidelity Himmelblau function,
 
     Parameters
     ----------
     MultiFidelityFunctions : class
         base class
-
-    Citation
-    --------
-    .. [1] https://www.sfu.ca/~ssurjano/himmel.html
-
-    Formula
-    -------
-    .. math::
-        f_h(x) = (x_1^2 + x_2 - 11)^2 + (x_1 + x_2^2 - 7)^2
-
-    .. math::
-        f_l(x_1, x_2) = f_h(0.5x_1, 0.8x_2) + x2^3 -(x1+1)^2
     """
 
     num_dim: int = 2
@@ -1027,30 +946,12 @@ class mf_Himmelblau(MultiFidelityFunctions):
 
 
 class mf_Park91A(MultiFidelityFunctions):
-    """multi-fidelity Park91A function, 
+    """multi-fidelity Park91A function,
 
     Parameters
     ----------
     MultiFidelityFunctions : class
         base class
-
-    Citation
-    --------
-    .. [1] https://www.sfu.ca/~ssurjano/park91a.html
-
-    Formula
-    -------
-
-    .. math::
-
-        f_h(x_1, x_2, x_3, x_4) = \dfrac{x_1}{2} \Bigg(\sqrt{1 + (x_2 + x_3^2) *
-                                \dfrac{x_4}{x_1^2}} - 1\Bigg) +
-                                (x_1 + 3x_4)\exp(1 + \sin(x_3))
-
-    .. math::
-
-        f_l(x_1, x_2, x_3, x_4) = (1+\sin(x_1) / 10)f_h(x_1, x_2, x_3, x_4) +
-                                -2x_1 + x_2^2 + x_3^2 + 0.5
 
     """
 
@@ -1090,7 +991,7 @@ class mf_Park91A(MultiFidelityFunctions):
         x1 = x[:, 0]
         x2 = x[:, 1]
         x3 = x[:, 2]
-        x4 = x[:, 3]
+        # x4 = x[:, 3]
 
         # calculate the terms
         term1 = (1 + np.sin(x1) / 10).reshape((-1, 1))
@@ -1125,28 +1026,12 @@ class mf_Park91A(MultiFidelityFunctions):
 
 
 class mf_Park91B(MultiFidelityFunctions):
-    """multi-fidelity Park91B function, 
+    """ multi-fidelity Park91B function,
 
     Parameters
     ----------
     MultiFidelityFunctions : class
         base class
-
-    Citation
-    --------
-    .. [1] https://www.sfu.ca/~ssurjano/park91b.html
-
-    Formula
-    -------
-
-    .. math::
-
-        f_h(x_1, x_2, x_3, x_4) = \dfrac{2}{3}\exp(x_1 + x_2) - x_4\sin(x_3) + x_3
-
-    .. math::
-
-        f_l(x_1, x_2, x_3, x_4) = 1.2f_h(x_1, x_2, x_3, x_4) - 1
-
     """
 
     num_dim: int = 4
@@ -1166,8 +1051,8 @@ class mf_Park91B(MultiFidelityFunctions):
         "x3": [0.0, 1.0],
         "x4": [0.0, 1.0],
     }
-    optimum: float = None
-    optimum_scheme: list = None
+    optimum: float = None  # type: ignore
+    optimum_scheme: list = None  # type : ignore
     low_fidelity: bool = True
 
     def __init__(self, num_dim: int = 4) -> None:

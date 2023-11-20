@@ -95,3 +95,31 @@ def test_plot_samples_not_implemented():
 
     with pytest.raises(NotImplementedError):
         sampler.plot_samples()
+
+
+def test_plotting_2d():
+    # Test plotting
+    design_space = OrderedDict({"x1": [0, 1], "x2": [0, 1]})
+    sampler = LatinHyperCube(design_space=design_space, seed=12)
+    sampler.get_samples(num_samples=10)
+    sampler.plot_samples()
+    assert True
+
+
+def test_plotting_1d():
+    # Test plotting
+    design_space = OrderedDict({"x1": [0, 1]})
+    sampler = LatinHyperCube(design_space=design_space, seed=12)
+    sampler.get_samples(num_samples=10)
+    sampler.plot_samples()
+    assert True
+
+
+def test_plotting_3d():
+    # Test plotting
+    design_space = OrderedDict({"x1": [0, 1], "x2": [0, 1], "x3": [0, 1]})
+    sampler = LatinHyperCube(design_space=design_space, seed=12)
+    sampler.get_samples(num_samples=10)
+
+    with pytest.raises(Exception):
+        sampler.plot_samples()
