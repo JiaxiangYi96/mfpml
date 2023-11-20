@@ -1,5 +1,4 @@
 import numpy as np
-from numba import float32, int32  # import the types
 from scipy.spatial.distance import cdist
 
 

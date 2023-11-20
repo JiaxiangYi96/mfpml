@@ -21,6 +21,7 @@ class GaussianProcess(GP):
         regr: Any = Ordinary(),
         optimizer: Any = None,
         noise_prior: float = None,
+        optimzer_restart: int = 0,
     ) -> None:
 
         # get the dimension of the problem
@@ -35,6 +36,7 @@ class GaussianProcess(GP):
             self.kernel = kernel
         # optimizer
         self.optimizer = optimizer
+        self.optimizer_restart = optimzer_restart
 
         # basis function
         self.regr = regr
@@ -142,7 +144,7 @@ class GaussianProcess(GP):
 
         if self.optimizer is None:
             # use L-BFGS-B method in scipy
-            n_trials = 20
+            n_trials = self.optimizer_restart + 1
             optimum_value = float("inf")
             for _ in range(n_trials):
                 # initial point
@@ -243,7 +245,7 @@ class GaussianProcess(GP):
         self.K = self.kernel.get_kernel_matrix(
             self.sample_scaled_x,
             self.sample_scaled_x) + np.eye(self.num_samples) * self.noise**2
-        self.L = cholesky(self.K, lower=True)
+        self.L = cholesky(self.K)
 
         #  step 1: get the optimal beta
         #  f, basis function

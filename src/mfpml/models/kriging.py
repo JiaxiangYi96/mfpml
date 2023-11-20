@@ -1,7 +1,6 @@
 from typing import Any
 
 import numpy as np
-from numba import jit
 from numpy.linalg import cholesky, solve
 from scipy.optimize import minimize
 
