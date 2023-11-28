@@ -84,8 +84,7 @@ class NoiseRBFSurrogate:
         # noise level
         self.noise_std = noise_std
         self.kernel = RBF(theta=np.zeros(self.num_dim))
-        self._set_kernel_params(params=np.ones(
-            self.num_dim)/(2*self.noise_std))
+        self._set_kernel_params(params=np.ones(self.num_dim))
 
     def _set_kernel_params(self, params=None):
         self.kernel.set_params(params=params)
