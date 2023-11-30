@@ -21,7 +21,7 @@ class GaussianProcess(GP):
         regr: Any = Ordinary(),
         optimizer: Any = None,
         noise_prior: float = None,
-        optimzer_restart: int = 0,
+        optimizer_restart: int = 0,
     ) -> None:
 
         # get the dimension of the problem
@@ -36,7 +36,7 @@ class GaussianProcess(GP):
             self.kernel = kernel
         # optimizer
         self.optimizer = optimizer
-        self.optimizer_restart = optimzer_restart
+        self.optimizer_restart = optimizer_restart
 
         # basis function
         self.regr = regr
