@@ -1,16 +1,16 @@
 
-from typing import Any
+from typing import Any, Tuple
 
 import numpy as np
 from numpy.linalg import cholesky, solve
 from scipy.optimize import minimize
 
-from .gpr_base import mf_model
+from .gpr_base import MultiFidelityGP
 from .kernels import RBF
 from .kriging import Kriging
 
 
-class HierarchicalKriging(mf_model):
+class HierarchicalKriging(MultiFidelityGP):
     def __init__(
         self,
         design_space: np.ndarray,
@@ -54,11 +54,15 @@ class HierarchicalKriging(mf_model):
         sample_yh : np.ndarray
             array of high-fidelity responses
         """
+        # get samples
         self.sample_xh = sample_xh
+        self.sample_yh = sample_yh
+        # normalization
         self.sample_xh_scaled = self.normalize_input(self.sample_xh)
-        self.sample_yh = sample_yh.reshape(-1, 1)
+        self.sample_yh_scaled = self.normalize_hf_output(self.sample_yh)
         # prediction of low-fidelity at high-fidelity locations
-        self.F = self.predict_lf(self.sample_xh)
+        F = self.predict_lf(self.sample_xh)
+        self.F = (F-self.yh_mean)/self.yh_std
         # optimize the hyper parameters
         self._optHyp()
         self.kernel.set_params(self.opt_param)
@@ -66,7 +70,7 @@ class HierarchicalKriging(mf_model):
 
     def predict(
         self, x_predict: np.ndarray, return_std: bool = False
-    ) -> np.ndarray:
+    ) -> np.ndarray | Tuple[np.ndarray, np.ndarray]:
         """Predict high-fidelity responses
 
         Parameters
@@ -81,10 +85,19 @@ class HierarchicalKriging(mf_model):
         np.ndarray
             prediction of high-fidelity
         """
+        # original prediction of lf
         pre_lf = self.predict_lf(x_predict)
+        # scale it to hf
+        pre_lf = (pre_lf - self.yh_mean) / self.yh_std
+
+        # normalize the input
         XHnew = np.atleast_2d(self.normalize_input(x_predict))
         knew = self.kernel.get_kernel_matrix(XHnew, self.sample_xh_scaled)
+
+        # get the prediction
         fmean = self.mu * pre_lf + np.dot(knew, self.gamma)
+        # scale it back to original scale
+        fmean = fmean * self.yh_std + self.yh_mean
         if not return_std:
             return fmean.reshape(-1, 1)
         else:
@@ -100,18 +113,13 @@ class HierarchicalKriging(mf_model):
                 )
                 / self.F.T.dot(self.beta)
             )
-            return fmean.reshape(-1, 1), np.sqrt(np.maximum(mse, 0)).reshape(
-                -1, 1
-            )
 
-    def _optHyp(self, grads=None):
-        """Optimize the hyperparameters
+            # scale it back to original scale
+            mse = np.sqrt(np.maximum(mse, 0))*self.yh_std
+            return fmean.reshape(-1, 1), mse.reshape(-1, 1)
 
-        Parameters
-        ----------
-        grads : bool, optional
-            whether to use gradients, by default None
-        """
+    def _optHyp(self):
+        """Optimize the hyperparameters"""
         if self.optimizer is None:
             n_trials = self.optimizer_restart + 1
             opt_fs = float("inf")
@@ -159,12 +167,12 @@ class HierarchicalKriging(mf_model):
             K = self.kernel(self.sample_xh_scaled,
                             self.sample_xh_scaled, param)
             L = cholesky(K)
-            alpha = solve(L.T, solve(L, self.sample_yh))
+            alpha = solve(L.T, solve(L, self.sample_yh_scaled))
             beta = solve(L.T, solve(L, self.F))
             mu = (np.dot(self.F.T, alpha) / np.dot(self.F.T, beta)).squeeze()
-            gamma = solve(L.T, solve(L, (self.sample_yh - mu * self.F)))
+            gamma = solve(L.T, solve(L, (self.sample_yh_scaled - mu * self.F)))
             sigma2 = (
-                np.dot((self.sample_yh - mu * self.F).T, gamma).squeeze()
+                np.dot((self.sample_yh_scaled - mu * self.F).T, gamma).squeeze()
                 / self._num_xh
             ).squeeze()
             logp = -self._num_xh * np.log(sigma2) - 2 * np.sum(
@@ -178,16 +186,17 @@ class HierarchicalKriging(mf_model):
         self.K = self.kernel.get_kernel_matrix(
             self.sample_xh_scaled, self.sample_xh_scaled)
         self.L = cholesky(self.K)
-        self.alpha = solve(self.L.T, solve(self.L, self.sample_yh))
+        self.alpha = solve(self.L.T, solve(self.L, self.sample_yh_scaled))
         self.beta = solve(self.L.T, solve(self.L, self.F))
         self.mu = (
             np.dot(self.F.T, self.alpha) / np.dot(self.F.T, self.beta)
         ).item()
         self.gamma = solve(
-            self.L.T, solve(self.L, (self.sample_yh - self.mu * self.F))
+            self.L.T, solve(self.L, (self.sample_yh_scaled - self.mu * self.F))
         )
         self.sigma2 = (
-            np.dot((self.sample_yh - self.mu * self.F).T, self.gamma).squeeze()
+            np.dot((self.sample_yh_scaled - self.mu * self.F).T,
+                   self.gamma).squeeze()
             / self._num_xh
         ).item()
         self.logp = (

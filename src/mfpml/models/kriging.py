@@ -5,11 +5,11 @@ from numpy.linalg import cholesky, solve
 from scipy.optimize import minimize
 
 from .basis_functions import Ordinary
-from .gpr_base import GP
+from .gpr_base import SingleFidelityGP
 from .kernels import RBF
 
 
-class Kriging(GP):
+class Kriging(SingleFidelityGP):
     """Deterministic Gaussian Process Regression (GPR) model."""
 
     def __init__(self,
@@ -102,7 +102,7 @@ class Kriging(GP):
             # f, basis function
             f = self.regr(self.sample_scaled_x)
             # alpha = K^(-1) * Y
-            alpha = solve(L.T, solve(L, self.sample_y))
+            alpha = solve(L.T, solve(L, self.sample_y_scaled))
             # K^(-1)f
             KF = solve(L.T, solve(L, f))
             # KF = cholesky_solve(K, f)
@@ -112,8 +112,9 @@ class Kriging(GP):
 
             # step 2: estimate sigma2
             # gamma = 1/n * (Y - F * beta)^T * K^(-1) * (Y - F * beta)
-            gamma = solve(L.T, solve(L, (self.sample_y - np.dot(f, beta))))
-            sigma2 = np.dot((self.sample_y - np.dot(f, beta)).T,
+            gamma = solve(L.T, solve(
+                L, (self.sample_y_scaled - np.dot(f, beta))))
+            sigma2 = np.dot((self.sample_y_scaled - np.dot(f, beta)).T,
                             gamma) / self.num_samples
 
             # step 3: calculate the log likelihood
@@ -136,7 +137,7 @@ class Kriging(GP):
         # f, basis function
         self.f = self.regr(self.sample_scaled_x)
         # alpha = K^(-1) * Y
-        self.alpha = solve(self.L.T, solve(self.L, self.sample_y))
+        self.alpha = solve(self.L.T, solve(self.L, self.sample_y_scaled))
         # K^(-1)f
         KF = solve(self.L.T, solve(self.L, self.f))
         self.ld = cholesky(np.dot(self.f.T, KF))
@@ -146,8 +147,8 @@ class Kriging(GP):
 
         # step 2: get the optimal sigma2
         self.gamma = solve(self.L.T, solve(
-            self.L, (self.sample_y - np.dot(self.f, self.beta))))
-        self.sigma2 = np.dot((self.sample_y - np.dot(self.f, self.beta)).T,
+            self.L, (self.sample_y_scaled - np.dot(self.f, self.beta))))
+        self.sigma2 = np.dot((self.sample_y_scaled - np.dot(self.f, self.beta)).T,
                              self.gamma) / self.num_samples
 
         # step 3: get the optimal log likelihood
@@ -180,7 +181,7 @@ class Kriging(GP):
         # calculate the predicted mean
         f = self.regr(sample_new)
         fmean = np.dot(f, self.beta) + np.dot(knew.T, self.gamma)
-        fmean = fmean.reshape(-1, 1)
+        fmean = fmean * self.y_std + self.y_mean
         # calculate the standard deviation
         if not return_std:
             return fmean
@@ -222,6 +223,6 @@ class Kriging(GP):
                              ).reshape(-1, 1)
 
             # epistemic uncertainty
-            std = np.sqrt(np.maximum(mse, 0)).reshape(-1, 1)
+            std = self.y_std*np.sqrt(np.maximum(mse, 0)).reshape(-1, 1)
 
             return fmean, std

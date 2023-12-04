@@ -3,12 +3,12 @@ from typing import Any
 import numpy as np
 from scipy.optimize import minimize
 
-from .gpr_base import mf_model
+from .gpr_base import MultiFidelityGP
 from .kernels import RBF
 from .kriging import Kriging
 
 
-class ScaledKriging(mf_model):
+class ScaledKriging(MultiFidelityGP):
     def __init__(
         self,
         design_space: np.ndarray,

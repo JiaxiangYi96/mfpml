@@ -5,7 +5,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 
-class GP:
+class SingleFidelityGP:
     """base class for Gaussian Process models"""
 
     def train(self, sample_x: np.ndarray, sample_y: np.ndarray) -> None:
@@ -18,15 +18,14 @@ class GP:
         sample_y : np.ndarray
             responses of the sample
         """
-        # normalize the input
+        # get number samples
+        self.num_samples = sample_x.shape[0]
         # the original sample_x
         self.sample_x = sample_x
         self.sample_scaled_x = self.normalize_input(sample_x, self.bounds)
         # get the response
         self.sample_y = sample_y.reshape(-1, 1)
-
-        # get number samples
-        self.num_samples = self.sample_x.shape[0]
+        self.sample_y_scaled = self.normalize_output(self.sample_y)
 
         # optimizer hyper-parameters
         self._hyper_paras_optimization()
@@ -45,6 +44,15 @@ class GP:
         self.optimizer = optimizer
 
     def update_model(self, update_x: np.ndarray, update_y: np.ndarray) -> None:
+        """update the model with new samples
+
+        Parameters
+        ----------
+        update_x : np.ndarray
+            update sample array
+        update_y : np.ndarray
+            update responses
+        """
 
         sample_x = np.concatenate((self.sample_x, update_x))
         sample_y = np.concatenate((self.sample_y, update_y))
@@ -125,6 +133,25 @@ class GP:
         else:
             raise ValueError("Only support 1d and 2d visualization")
 
+    def normalize_output(self, sample_y: np.ndarray) -> np.ndarray:
+        """Normalize output to range [0, 1]
+
+        Parameters
+        ----------
+        sample_y : np.ndarray
+            output to scale
+
+        Returns
+        -------
+        np.ndarray
+            normalized output
+        """
+        # normalize the output
+        self.y_mean = np.mean(sample_y)
+        self.y_std = np.std(sample_y)
+
+        return (sample_y - self.y_mean) / self.y_std
+
     @staticmethod
     def normalize_input(sample_x: np.ndarray,
                         bounds: np.ndarray) -> np.ndarray:
@@ -156,7 +183,7 @@ class GP:
         return self.sample_x.shape[0]
 
 
-class mf_model:
+class MultiFidelityGP:
 
     def train(self, samples: dict, responses: dict) -> None:
         """Train the hierarchical Kriging model
@@ -371,3 +398,20 @@ class mf_model:
         return (inputs - self.bounds[:, 0]) / (
             self.bounds[:, 1] - self.bounds[:, 0]
         )
+
+    def normalize_hf_output(self, outputs: np.ndarray) -> np.ndarray:
+        """Normalize output to normal distribution
+
+        Parameters
+        ----------
+        outputs : np.ndarray
+            output to scale
+
+        Returns
+        -------
+        np.ndarray
+            normalized output
+        """
+        self.yh_mean = np.mean(outputs)
+        self.yh_std = np.std(outputs)
+        return (outputs - self.yh_mean) / self.yh_std
