@@ -5,11 +5,11 @@ from numpy.linalg import cholesky, solve
 from scipy.optimize import minimize
 
 from .basis_functions import Ordinary
-from .gpr_base import GP
+from .gpr_base import SingleFidelityGP
 from .kernels import RBF
 
 
-class GaussianProcess(GP):
+class GaussianProcess(SingleFidelityGP):
     """
     Gaussian Process Regressor with noise
     """
@@ -70,7 +70,7 @@ class GaussianProcess(GP):
         # calculate the predicted mean
         f = self.regr(sample_new)
         fmean = np.dot(f, self.beta) + np.dot(knew.T, self.gamma)
-        fmean = fmean.reshape(-1, 1)
+        fmean = fmean*self.y_std + self.y_mean
         # calculate the standard deviation
         if not return_std:
             return fmean
@@ -114,7 +114,8 @@ class GaussianProcess(GP):
             data_noise = self.noise**2
 
             # epistemic uncertainty
-            std = np.sqrt(np.maximum(mse + data_noise, 0)).reshape(-1, 1)
+            std = np.sqrt(np.maximum(mse*self.y_std**2 +
+                          data_noise, 0)).reshape(-1, 1)
 
             return fmean, std
 
@@ -201,7 +202,7 @@ class GaussianProcess(GP):
                 noise_sigma = params[i, -1]
             else:
                 param = params[i, 0: num_params]
-                noise_sigma = self.noise
+                noise_sigma = self.noise/self.y_std
 
             # calculate the covariance matrix with noise term added
             K = self.kernel(self.sample_scaled_x,
@@ -212,7 +213,7 @@ class GaussianProcess(GP):
             # f, basis function
             f = self.regr(self.sample_scaled_x)
             # alpha = K^(-1) * Y
-            alpha = solve(L.T, solve(L, self.sample_y))
+            alpha = solve(L.T, solve(L, self.sample_y_scaled))
             # K^(-1)f
             KF = solve(L.T, solve(L, f))
             # cholesky decomposition for (F^T *K^(-1)* F)
@@ -221,8 +222,9 @@ class GaussianProcess(GP):
 
             # step 2: estimate sigma2
             # gamma = 1/n * (Y - F * beta)^T * K^(-1) * (Y - F * beta)
-            gamma = solve(L.T, solve(L, (self.sample_y - np.dot(f, beta))))
-            sigma2 = np.dot((self.sample_y - np.dot(f, beta)).T,
+            gamma = solve(L.T, solve(
+                L, (self.sample_y_scaled - np.dot(f, beta))))
+            sigma2 = np.dot((self.sample_y_scaled - np.dot(f, beta)).T,
                             gamma) / self.num_samples
 
             # step 3: calculate the log likelihood
@@ -238,20 +240,20 @@ class GaussianProcess(GP):
         # assign the best hyper-parameter to the kernel
         if self.noise is None:
             self.kernel.set_params(self.opt_param[0:(len(self.opt_param)-1)])
-            self.noise = self.opt_param[-1]
+            self.noise = self.opt_param[-1]*self.y_std
         else:
             self.kernel.set_params(self.opt_param)
         # update parameters with optimized hyper-parameters
         self.K = self.kernel.get_kernel_matrix(
             self.sample_scaled_x,
-            self.sample_scaled_x) + np.eye(self.num_samples) * self.noise**2
+            self.sample_scaled_x) + np.eye(self.num_samples) * (self.noise/self.y_std)**2
         self.L = cholesky(self.K)
 
         #  step 1: get the optimal beta
         #  f, basis function
         self.f = self.regr(self.sample_scaled_x)
         # alpha = K^(-1) * Y
-        self.alpha = solve(self.L.T, solve(self.L, self.sample_y))
+        self.alpha = solve(self.L.T, solve(self.L, self.sample_y_scaled))
         # K^(-1)f
         KF = solve(self.L.T, solve(self.L, self.f))
         self.ld = cholesky(np.dot(self.f.T, KF))
@@ -261,8 +263,8 @@ class GaussianProcess(GP):
 
         # step 2: get the optimal sigma2
         self.gamma = solve(self.L.T, solve(
-            self.L, (self.sample_y - np.dot(self.f, self.beta))))
-        self.sigma2 = np.dot((self.sample_y - np.dot(self.f, self.beta)).T,
+            self.L, (self.sample_y_scaled - np.dot(self.f, self.beta))))
+        self.sigma2 = np.dot((self.sample_y_scaled - np.dot(self.f, self.beta)).T,
                              self.gamma) / self.num_samples
 
         # step 3: get the optimal log likelihood

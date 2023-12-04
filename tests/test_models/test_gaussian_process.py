@@ -80,7 +80,7 @@ def test_gpt_none_optimizer():
     gp_model = GaussianProcess(
         design_space=func._input_domain,
         optimizer=None,
-        optimzer_restart=5)
+        optimizer_restart=5)
     # train the model
     gp_model.train(sample_x, sample_y)
     # get the prediction

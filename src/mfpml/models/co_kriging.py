@@ -1,15 +1,15 @@
-from typing import Any
+from typing import Any, Tuple
 
 import numpy as np
 from numpy.linalg import cholesky, solve
 from scipy.optimize import minimize
 
-from .gpr_base import mf_model
+from .gpr_base import MultiFidelityGP
 from .kernels import RBF
 from .kriging import Kriging
 
 
-class CoKriging(mf_model):
+class CoKriging(MultiFidelityGP):
     def __init__(
         self,
         design_space: np.ndarray,
@@ -64,21 +64,25 @@ class CoKriging(mf_model):
         # normalize the input for high-fidelity
         self.sample_xh_scaled = self.normalize_input(self.sample_xh.copy())
         # get the high-fidelity responses
-        self.sample_yh = sample_yh.reshape(-1, 1)
+        self.sample_yh = sample_yh
+        self.sample_yh_scaled = self.normalize_hf_output(sample_yh.copy())
+        self.sample_yl_scaled = (self.sample_yl - self.yh_mean) / self.yh_std
         # prediction of low-fidelity at high-fidelity locations
-        self.pred_ylh = self.predict_lf(self.sample_xh, return_std=False)
+        pred_ylh = self.predict_lf(self.sample_xh, return_std=False)
+        # scale it to the same scale as high-fidelity
+        self.pred_ylh = (pred_ylh - self.yh_mean) / self.yh_std
         # optimize the hyper parameters
         self._optHyp()
         # update rho value
         self.rho = self.opt_param[0]
-        # calculate the covariance matrixs
+        # calculate the covariance matrix
         self.kernel.set_params(self.opt_param[1:])
 
         self._update_parameters()
 
     def predict(
         self, x_predict: np.ndarray, return_std: bool = False
-    ) -> np.ndarray:
+    ) -> np.ndarray | Tuple[np.ndarray, np.ndarray]:
         """Predict high-fidelity responses
 
         Parameters
@@ -117,6 +121,8 @@ class CoKriging(mf_model):
         fmean = self.mu + c.T.dot(
             solve(self.LC.T, solve(self.LC, (self.y - self.mu)))
         )
+        # scale to original scale
+        fmean = fmean * self.yh_std + self.yh_mean
         if not return_std:
             return fmean.reshape(-1, 1)
         else:
@@ -127,7 +133,7 @@ class CoKriging(mf_model):
                 + (1-oneC.T.dot(solve(self.LC.T, solve(self.LC, c)))) /
                 oneC.T.dot(solve(self.LC.T, solve(self.LC, oneC)))
             )
-            std = np.sqrt(np.maximum(np.diag(s2), 0))
+            std = np.sqrt(np.maximum(np.diag(s2), 0))*self.yh_std
             return fmean.reshape(-1, 1), std.reshape(-1, 1)
 
     def _optHyp(self) -> None:
@@ -186,7 +192,7 @@ class CoKriging(mf_model):
                             theta)
             L = cholesky(K)
             # responses for difference
-            diff_y = self.sample_yh - rho * self.pred_ylh
+            diff_y = self.sample_yh_scaled - rho * self.pred_ylh
             # R^(-1)(Y - rho * YL)
             alpha = solve(L.T, solve(L, diff_y))
             one = np.ones((self._num_xh, 1))
@@ -209,7 +215,7 @@ class CoKriging(mf_model):
                                                self.sample_xh_scaled)
         L = cholesky(self.K)
         # R^(-1)Y
-        self.diff_y = self.sample_yh - self.rho * self.pred_ylh
+        self.diff_y = self.sample_yh_scaled - self.rho * self.pred_ylh
         alpha = solve(L.T, solve(L, self.diff_y))
         one = np.ones((self._num_xh, 1))
         # R^(-1)1
@@ -251,7 +257,8 @@ class CoKriging(mf_model):
             axis=0,
         )
         # all y values
-        self.y = np.concatenate((self.sample_yl, self.sample_yh), axis=0)
+        self.y = np.concatenate(
+            (self.sample_yl_scaled, self.sample_yh_scaled), axis=0)
         self.LC = cholesky(
             self.C + np.eye(self.C.shape[1]) * 10**-10)
         oneC = np.ones((self.C.shape[0], 1))
