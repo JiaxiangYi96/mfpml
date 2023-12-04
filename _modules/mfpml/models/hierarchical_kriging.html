@@ -110,20 +110,20 @@
              
   <h1>Source code for mfpml.models.hierarchical_kriging</h1><div class="highlight"><pre>
 <span></span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Tuple</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">numpy.linalg</span> <span class="kn">import</span> <span class="n">cholesky</span><span class="p">,</span> <span class="n">solve</span>
 <span class="kn">from</span> <span class="nn">scipy.optimize</span> <span class="kn">import</span> <span class="n">minimize</span>
 
-<span class="kn">from</span> <span class="nn">.gpr_base</span> <span class="kn">import</span> <span class="n">mf_model</span>
+<span class="kn">from</span> <span class="nn">.gpr_base</span> <span class="kn">import</span> <span class="n">MultiFidelityGP</span>
 <span class="kn">from</span> <span class="nn">.kernels</span> <span class="kn">import</span> <span class="n">RBF</span>
 <span class="kn">from</span> <span class="nn">.kriging</span> <span class="kn">import</span> <span class="n">Kriging</span>
 
 
 <div class="viewcode-block" id="HierarchicalKriging">
 <a class="viewcode-back" href="../../../mfpml.models.html#mfpml.models.hierarchical_kriging.HierarchicalKriging">[docs]</a>
-<span class="k">class</span> <span class="nc">HierarchicalKriging</span><span class="p">(</span><span class="n">mf_model</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">HierarchicalKriging</span><span class="p">(</span><span class="n">MultiFidelityGP</span><span class="p">):</span>
 <div class="viewcode-block" id="HierarchicalKriging.__init__">
 <a class="viewcode-back" href="../../../mfpml.models.html#mfpml.models.hierarchical_kriging.HierarchicalKriging.__init__">[docs]</a>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
@@ -172,11 +172,15 @@
 <span class="sd">        sample_yh : np.ndarray</span>
 <span class="sd">            array of high-fidelity responses</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># get samples</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sample_xh</span> <span class="o">=</span> <span class="n">sample_xh</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sample_yh</span> <span class="o">=</span> <span class="n">sample_yh</span>
+        <span class="c1"># normalization</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sample_xh_scaled</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalize_input</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_xh</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">sample_yh</span> <span class="o">=</span> <span class="n">sample_yh</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sample_yh_scaled</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalize_hf_output</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_yh</span><span class="p">)</span>
         <span class="c1"># prediction of low-fidelity at high-fidelity locations</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">F</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict_lf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_xh</span><span class="p">)</span>
+        <span class="n">F</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict_lf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_xh</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">F</span> <span class="o">=</span> <span class="p">(</span><span class="n">F</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">yh_mean</span><span class="p">)</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">yh_std</span>
         <span class="c1"># optimize the hyper parameters</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_optHyp</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">kernel</span><span class="o">.</span><span class="n">set_params</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">opt_param</span><span class="p">)</span>
@@ -187,7 +191,7 @@
 <a class="viewcode-back" href="../../../mfpml.models.html#mfpml.models.hierarchical_kriging.HierarchicalKriging.predict">[docs]</a>
     <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">x_predict</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">return_std</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Predict high-fidelity responses</span>
 
 <span class="sd">        Parameters</span>
@@ -202,10 +206,19 @@
 <span class="sd">        np.ndarray</span>
 <span class="sd">            prediction of high-fidelity</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># original prediction of lf</span>
         <span class="n">pre_lf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict_lf</span><span class="p">(</span><span class="n">x_predict</span><span class="p">)</span>
+        <span class="c1"># scale it to hf</span>
+        <span class="n">pre_lf</span> <span class="o">=</span> <span class="p">(</span><span class="n">pre_lf</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">yh_mean</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">yh_std</span>
+
+        <span class="c1"># normalize the input</span>
         <span class="n">XHnew</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">normalize_input</span><span class="p">(</span><span class="n">x_predict</span><span class="p">))</span>
         <span class="n">knew</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel</span><span class="o">.</span><span class="n">get_kernel_matrix</span><span class="p">(</span><span class="n">XHnew</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample_xh_scaled</span><span class="p">)</span>
+
+        <span class="c1"># get the prediction</span>
         <span class="n">fmean</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mu</span> <span class="o">*</span> <span class="n">pre_lf</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">knew</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span><span class="p">)</span>
+        <span class="c1"># scale it back to original scale</span>
+        <span class="n">fmean</span> <span class="o">=</span> <span class="n">fmean</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">yh_std</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">yh_mean</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">return_std</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">fmean</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -221,21 +234,16 @@
                 <span class="p">)</span>
                 <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">beta</span><span class="p">)</span>
             <span class="p">)</span>
-            <span class="k">return</span> <span class="n">fmean</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">mse</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
-                <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span>
-            <span class="p">)</span></div>
+
+            <span class="c1"># scale it back to original scale</span>
+            <span class="n">mse</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">mse</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">yh_std</span>
+            <span class="k">return</span> <span class="n">fmean</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">mse</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="HierarchicalKriging._optHyp">
 <a class="viewcode-back" href="../../../mfpml.models.html#mfpml.models.hierarchical_kriging.HierarchicalKriging._optHyp">[docs]</a>
-    <span class="k">def</span> <span class="nf">_optHyp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grads</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Optimize the hyperparameters</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        grads : bool, optional</span>
-<span class="sd">            whether to use gradients, by default None</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">_optHyp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Optimize the hyperparameters&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">n_trials</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">optimizer_restart</span> <span class="o">+</span> <span class="mi">1</span>
             <span class="n">opt_fs</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">)</span>
@@ -286,12 +294,12 @@
             <span class="n">K</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_xh_scaled</span><span class="p">,</span>
                             <span class="bp">self</span><span class="o">.</span><span class="n">sample_xh_scaled</span><span class="p">,</span> <span class="n">param</span><span class="p">)</span>
             <span class="n">L</span> <span class="o">=</span> <span class="n">cholesky</span><span class="p">(</span><span class="n">K</span><span class="p">)</span>
-            <span class="n">alpha</span> <span class="o">=</span> <span class="n">solve</span><span class="p">(</span><span class="n">L</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">solve</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample_yh</span><span class="p">))</span>
+            <span class="n">alpha</span> <span class="o">=</span> <span class="n">solve</span><span class="p">(</span><span class="n">L</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">solve</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample_yh_scaled</span><span class="p">))</span>
             <span class="n">beta</span> <span class="o">=</span> <span class="n">solve</span><span class="p">(</span><span class="n">L</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">solve</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">))</span>
             <span class="n">mu</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">alpha</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">beta</span><span class="p">))</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
-            <span class="n">gamma</span> <span class="o">=</span> <span class="n">solve</span><span class="p">(</span><span class="n">L</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">solve</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_yh</span> <span class="o">-</span> <span class="n">mu</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">)))</span>
+            <span class="n">gamma</span> <span class="o">=</span> <span class="n">solve</span><span class="p">(</span><span class="n">L</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">solve</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_yh_scaled</span> <span class="o">-</span> <span class="n">mu</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">)))</span>
             <span class="n">sigma2</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_yh</span> <span class="o">-</span> <span class="n">mu</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">gamma</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_yh_scaled</span> <span class="o">-</span> <span class="n">mu</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">gamma</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
                 <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_xh</span>
             <span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
             <span class="n">logp</span> <span class="o">=</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_xh</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">sigma2</span><span class="p">)</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span>
@@ -308,16 +316,17 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">K</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel</span><span class="o">.</span><span class="n">get_kernel_matrix</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">sample_xh_scaled</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample_xh_scaled</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">L</span> <span class="o">=</span> <span class="n">cholesky</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">K</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="n">solve</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">L</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">solve</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">L</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample_yh</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="n">solve</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">L</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">solve</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">L</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample_yh_scaled</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">beta</span> <span class="o">=</span> <span class="n">solve</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">L</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">solve</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">L</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mu</span> <span class="o">=</span> <span class="p">(</span>
             <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta</span><span class="p">)</span>
         <span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span> <span class="o">=</span> <span class="n">solve</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">L</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">solve</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">L</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_yh</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">mu</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">L</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">solve</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">L</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_yh_scaled</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">mu</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">))</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sigma2</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_yh</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">mu</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_yh_scaled</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">mu</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">F</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">,</span>
+                   <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
             <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_xh</span>
         <span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">logp</span> <span class="o">=</span> <span class="p">(</span>
