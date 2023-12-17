@@ -1,29 +1,26 @@
-mfpml.problems package
+mfpml.problems
 ======================
 
-Submodules
-----------
+mfpml.problems.functions
+-------------------------------
 
-mfpml.problems.mf\_functions module
------------------------------------
-
-.. automodule:: mfpml.problems.mf_functions
+.. automodule:: mfpml.problems.functions
    :members:
    :undoc-members:
    :show-inheritance:
 
-mfpml.problems.sf\_functions module
------------------------------------
+mfpml.problems.multifidelity\_functions
+----------------------------------------------
 
-.. automodule:: mfpml.problems.sf_functions
+.. automodule:: mfpml.problems.multifidelity_functions
    :members:
    :undoc-members:
    :show-inheritance:
 
-Module contents
----------------
+mfpml.problems.singlefidelity\_functions
+-----------------------------------------------
 
-.. automodule:: mfpml.problems
+.. automodule:: mfpml.problems.singlefidelity_functions
    :members:
    :undoc-members:
    :show-inheritance:

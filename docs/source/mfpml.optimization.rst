@@ -1,29 +1,43 @@
-mfpml.optimization package
+mfpml.optimization
 ==========================
 
-Subpackages
------------
 
-.. toctree::
-   :maxdepth: 4
+mfpml.optimization.evolutionary\_algorithms
+--------------------------------------------------
 
-   mfpml.optimization.aquisitions
-
-Submodules
-----------
-
-mfpml.optimization.SFBayesOpt module
-------------------------------------
-
-.. automodule:: mfpml.optimization.SFBayesOpt
+.. automodule:: mfpml.optimization.evolutionary_algorithms
    :members:
    :undoc-members:
    :show-inheritance:
 
-Module contents
----------------
+mfpml.optimization.mfbo
+------------------------------
 
-.. automodule:: mfpml.optimization
+.. automodule:: mfpml.optimization.mfbo
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+mfpml.optimization.mf\_acqusitions
+-----------------------------------------
+
+.. automodule:: mfpml.optimization.mf_acqusitions
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+mfpml.optimization.sf\_acqusitions
+-----------------------------------------
+
+.. automodule:: mfpml.optimization.sf_acqusitions
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+mfpml.optimization.sfbo
+-----------------------------------------
+
+.. automodule:: mfpml.optimization.sfbo
    :members:
    :undoc-members:
    :show-inheritance:

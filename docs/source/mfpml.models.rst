@@ -1,18 +1,15 @@
-mfpml.models package
+mfpml.models
 ====================
 
-Submodules
-----------
+mfpml.models.kernels
+----------------------------
 
-mfpml.models.bnn module
------------------------
-
-.. automodule:: mfpml.models.bnn
+.. automodule:: mfpml.models.kernels
    :members:
    :undoc-members:
    :show-inheritance:
 
-mfpml.models.sf\_gpr module
+mfpml.models.sf\_gpr
 ---------------------------
 
 .. automodule:: mfpml.models.sf_gpr
@@ -20,10 +17,34 @@ mfpml.models.sf\_gpr module
    :undoc-members:
    :show-inheritance:
 
-Module contents
----------------
+mfpml.models.mf\_gprs
+----------------------------------
 
-.. automodule:: mfpml.models
+.. automodule:: mfpml.models.mf_gprs
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+mfpml.models.hierarchical\_kriging
+----------------------------------
+
+.. automodule:: mfpml.models.hierarchical_kriging
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+mfpml.models.co\_kriging
+----------------------------------
+
+.. automodule:: mfpml.models.co_kriging
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+mfpml.models.mf\_scale\_kriging
+----------------------------------
+
+.. automodule:: mfpml.models.mf_scale_kriging
    :members:
    :undoc-members:
    :show-inheritance:

@@ -1,24 +1,28 @@
-mfpml package
-=============
+API Documentation
+=================
 
-Subpackages
------------
+Modules
+-------
 
 .. toctree::
    :maxdepth: 4
 
-   mfpml.base
    mfpml.design_of_experiment
-   mfpml.models
-   mfpml.optimization
+
+.. toctree::
+   :maxdepth: 4
+
    mfpml.problems
-   mfpml.reliability
-   mfpml.utils
 
-Module contents
----------------
+.. toctree::
+   :maxdepth: 4
 
-.. automodule:: mfpml
-   :members:
-   :undoc-members:
-   :show-inheritance:
+   mfpml.models
+
+.. toctree::
+   :maxdepth: 4
+
+   mfpml.optimization
+
+
+

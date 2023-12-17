@@ -1,29 +1,34 @@
-mfpml.design\_of\_experiment package
+mfpml.design\_of\_experiment
 ====================================
 
-Submodules
-----------
+mfpml.design\_of\_experiment.multifidelity\_samplers
+-----------------------------------------------------------
 
-mfpml.design\_of\_experiment.mf\_samplers module
-------------------------------------------------
-
-.. automodule:: mfpml.design_of_experiment.mf_samplers
+.. automodule:: mfpml.design_of_experiment.multifidelity_samplers
    :members:
    :undoc-members:
    :show-inheritance:
 
-mfpml.design\_of\_experiment.sf\_samplers module
-------------------------------------------------
+mfpml.design\_of\_experiment.sampler
+-------------------------------------------
 
-.. automodule:: mfpml.design_of_experiment.sf_samplers
+.. automodule:: mfpml.design_of_experiment.sampler
    :members:
    :undoc-members:
    :show-inheritance:
 
-Module contents
----------------
+mfpml.design\_of\_experiment.singlefideliy\_samplers
+-----------------------------------------------------------
 
-.. automodule:: mfpml.design_of_experiment
+.. automodule:: mfpml.design_of_experiment.singlefideliy_samplers
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+mfpml.design\_of\_experiment.space
+-----------------------------------------
+
+.. automodule:: mfpml.design_of_experiment.space
    :members:
    :undoc-members:
    :show-inheritance:
