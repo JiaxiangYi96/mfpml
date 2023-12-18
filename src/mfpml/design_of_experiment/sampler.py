@@ -1,5 +1,6 @@
 # third-party
 from abc import ABC
+import numpy as np 
 
 
 class Sampler(ABC):
@@ -8,20 +9,29 @@ class Sampler(ABC):
 
     """
 
-    def __init__(self, design_space: dict, seed: int = 123456):
+    def __init__(self, design_space: np.ndarray, seed: int = 123456):
         """
         Initialization of sampler class
         Parameters
         ----------
-        design_space: dict
+        design_space: np.ndarray
             design space
         seed: int
 
         """
         self.seed = seed
+        design_space = np.atleast_2d(np.asarray(design_space))
         self.design_space = design_space
         self.num_dim = len(design_space)
         self._samples = None
+
+    @property
+    def lb(self): 
+        return self.design_space[:, 0]
+    
+    @property
+    def ub(self): 
+        return self.design_space[:, 1]
 
     def get_samples(self, num_samples: int, **kwargs) -> any:
         """
