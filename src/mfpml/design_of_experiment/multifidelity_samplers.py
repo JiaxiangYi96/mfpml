@@ -4,72 +4,82 @@ from matplotlib import pyplot as plt
 from scipy.stats.qmc import LatinHypercube, Sobol
 
 # local modulus
-from .sampler import Sampler
+from mfpml.design_of_experiment.sampler import Sampler
 
 
 class MultiFidelitySampler(Sampler):
     """
     Base class for multi-fidelity sampling
     """
-
     def __init__(self, design_space: dict, seed: int) -> None:
         """
         Parameters
         ----------
-        design_space: dict
-            design_space
+        design_space: np.ndarray or list
+            design space
         seed: int
             seed s
         """
         super(MultiFidelitySampler, self).__init__(
             design_space=design_space, seed=seed
         )
-
-        self._lf_samples = None
-        self._hf_samples = None
-        self.num_lf_samples = None
-        self.num_hf_samples = None
         self.nested = None
 
-    def _mf_samples_rules(self) -> None:
+    def _mf_samples_rules(self, num_samples: list) -> None:
         """
         number of low fidelity samples should larger than high fidelity samples
         """
-        assert (self.num_lf_samples >= self.num_hf_samples), \
-            "samples of low fidelity should larger than tha of high fidelity"
+        for i in range(len(num_samples)-1):
+            assert (num_samples[i] <= num_samples[i+1]), \
+                "samples of low fidelity should larger than tha of high fidelity"
 
-    def get_samples(self, **kwargs) -> dict:
+    def get_samples(self, num_samples: list, **kwargs) -> dict:
         """
         Get the samples
+        
         Parameters
         ----------
-        num_samples: int
-            number of samples
+        num_samples : list
+            number of samples for each fidelity level
 
         Notes
         ---------
         The function should be completed at the sub-sclass
         """
+        data = []
+        self._mf_samples_rules(num_samples)
+        # get the samples of low fidelity first
+        data.insert(0, self._get_nonested_samples(num_samples.pop()))
+        while len(num_samples) > 0: 
+            if self.nested is True:
+                # TODO
+                data.insert(0, self._get_nested_samples(num_samples.pop(), data[0]))
+            else:
+                data.insert(0, self._get_nonested_samples(num_samples.pop()))
 
-        raise NotImplementedError("Subclasses should implement this method.")
+        # transfer samples into pd.DataFrame
+        # self._create_pandas_frame()
 
-    def _create_pandas_frame(self) -> None:
-        """
-        this function is used to create pandas framework for the doe
-        the output will be added at the end of the pandas dataframe but
-        without giving names
-        """
+        return data
 
-        self._lf_samples = pd.DataFrame(
-            self._lf_samples, columns=list(self.design_space.keys())
-        )
-        self._hf_samples = pd.DataFrame(
-            self._hf_samples, columns=list(self.design_space.keys())
-        )
+    # def _create_pandas_frame(self) -> None:
+    #     """
+    #     this function is used to create pandas framework for the doe
+    #     the output will be added at the end of the pandas dataframe but
+    #     without giving names
+    #     """
+
+    #     self._lf_samples = pd.DataFrame(
+    #         self._lf_samples, columns=list(self.design_space.keys())
+    #     )
+    #     self._hf_samples = pd.DataFrame(
+    #         self._hf_samples, columns=list(self.design_space.keys())
+    #     )
 
     def plot_samples(
         self, fig_name: str = 'mf.png', save_fig: bool = False, **kwargs
     ) -> None:
+        # TODO
         """
         Visualization of mf sampling
         Parameters
@@ -131,39 +141,6 @@ class MultiFidelitySampler(Sampler):
 
         pass
 
-    @property
-    def lf_samples(self) -> pd.DataFrame:
-        """
-        get the low fidelity samples
-        Returns
-        -------
-        lf_samples: pd.DataFrame
-            low fidelity samples
-        """
-        return self._lf_samples
-
-    @property
-    def hf_samples(self) -> pd.DataFrame:
-        """
-        get the high fidelity samples
-        Returns
-        -------
-        hf_samples: pd.DataFrame
-            high fidelity samples
-        """
-        return self._hf_samples
-
-    @property
-    def data(self) -> dict:
-        """
-        samples for multi-fidelity
-        Returns
-        -------
-        data: dict
-            samples includes high fidelity and low fidelity
-        """
-        return {"hf": self._hf_samples, "lf": self._lf_samples}
-
 
 class MFLatinHyperCube(MultiFidelitySampler):
     """
@@ -189,79 +166,30 @@ class MFLatinHyperCube(MultiFidelitySampler):
         )
         self.nested = nested
 
-    def get_samples(self, num_samples: int = None, **kwargs) -> dict:
-        """get samples
-
-        Parameters
-        ----------
-        num_samples : int, optional
-            number of samples, by default None
-
-        Returns
-        -------
-        samples : dict
-            a dict contains low fidelity and high fidelity samples
+    def _get_nonested_samples(self, num_sample) -> np.ndarray:
         """
-        self.num_lf_samples = kwargs["num_lf_samples"]
-        self.num_hf_samples = kwargs["num_hf_samples"]
-        self._mf_samples_rules()
-        # get the samples of low fidelity first
-        lf_sample = self.__get_lf_samples()
-
-        # check the user wants nested samples of high fidelity or not
-        if self.nested is True:
-            hf_sample = self.__get_nested_hf_samples()
-        else:
-            hf_sample = self.__get_non_nested_hf_samples()
-
-        # transfer samples into pd.DataFrame
-        self._create_pandas_frame()
-
-        return {"hf": hf_sample, "lf": lf_sample}
-
-    def __get_lf_samples(self) -> np.ndarray:
-        """get low fidelity samples
+        get low fidelity samples
 
         Returns
         -------
         lf_samples : np.ndarray
             a numpy array contains low fidelity samples
         """
-
-        lhs_sampler = LatinHypercube(d=self.num_dim, seed=self.seed)
-
-        lf_sample = lhs_sampler.random(n=self.num_lf_samples)
-        for i, bounds in enumerate(self.design_space.values()):
-            lf_sample[:, i] = (
-                lf_sample[:, i] * (bounds[1] - bounds[0]) + bounds[0]
-            )
-        self._lf_samples = lf_sample
-
-        return lf_sample
-
-    def __get_non_nested_hf_samples(self) -> np.ndarray:
-        """
-        use  another LHS to generate samples for high fidelity
-        Returns
-        -------
-        hf_samples : np.ndarray
-            a numpy array contains high fidelity samples
-        """
         if self.seed is None:
-            lhs_sampler = LatinHypercube(d=self.num_dim, seed=None)
+            sampler = LatinHypercube(d=self.num_dim, seed=None)
         else:
-            lhs_sampler = LatinHypercube(d=self.num_dim, seed=self.seed + 1)
+            sampler = LatinHypercube(d=self.num_dim, seed=self.seed)
 
-        hf_sample = lhs_sampler.random(n=self.num_hf_samples)
-        for i, bounds in enumerate(self.design_space.values()):
-            hf_sample[:, i] = (
-                hf_sample[:, i] * (bounds[1] - bounds[0]) + bounds[0]
-            )
-        self._hf_samples = hf_sample
+        sample = sampler.random(n=num_sample)
+        sample = sample * (self.ub - self.lb) + self.lb
+        # for i, bounds in enumerate(self.design_space.values()):
+        #     sample[:, i] = (
+        #         sample[:, i] * (bounds[1] - bounds[0]) + bounds[0]
+        #     )
 
-        return hf_sample
+        return sample
 
-    def __get_nested_hf_samples(self) -> None:
+    def _get_nested_samples(self, num_sample, data_higher_fidelity) -> None:
         # TODO nested sampling
         pass
 
@@ -301,37 +229,7 @@ class MFSobolSequence(MultiFidelitySampler):
         else:
             self.num_skip = num_skip
 
-    def get_samples(self, num_samples: int = None, **kwargs) -> dict:
-        """get samples
-
-        Parameters
-        ----------
-        num_samples : int, optional
-            number of samples, by default None
-
-        Returns
-        -------
-        samples : dict
-            a dict contains low fidelity and high fidelity samples
-        """
-        self.num_lf_samples = kwargs["num_lf_samples"]
-        self.num_hf_samples = kwargs["num_hf_samples"]
-        self._mf_samples_rules()
-        # get the samples of low fidelity first
-        lf_sample = self.__get_lf_samples()
-
-        # check the user wants nested samples of high fidelity or not
-        if self.nested is True:
-            hf_sample = self.__get_nested_hf_samples()
-        else:
-            hf_sample = self.__get_non_nested_hf_samples()
-
-        # transfer samples into pd.DataFrame
-        self._create_pandas_frame()
-
-        return {"hf": hf_sample, "lf": lf_sample}
-
-    def __get_lf_samples(self) -> np.ndarray:
+    def _get_nonested_samples(self, num_sample) -> np.ndarray:
         """get low fidelity samples
 
         Returns
@@ -343,16 +241,16 @@ class MFSobolSequence(MultiFidelitySampler):
         _ = sobol_sampler.reset()
         _ = sobol_sampler.fast_forward(n=self.num_skip)
         # get the samples
-        lf_sample = sobol_sampler.random(n=self.num_lf_samples)
-        for i, bounds in enumerate(self.design_space.values()):
-            lf_sample[:, i] = (
-                lf_sample[:, i] * (bounds[1] - bounds[0]) + bounds[0]
-            )
-        self._lf_samples = lf_sample
+        sample = sobol_sampler.random(n=num_sample)
+        sample = sample * (self.ub - self.lb) + self.lb
+        # for i, bounds in enumerate(self.design_space.values()):
+        #     sample[:, i] = (
+        #         sample[:, i] * (bounds[1] - bounds[0]) + bounds[0]
+        #     )
 
-        return lf_sample
+        return sample
 
-    def __get_nested_hf_samples(self) -> np.ndarray:
+    def _get_nested_hf_samples(self, num_sample, data_higher_fidelity) -> np.ndarray:
         """
 
         Returns
@@ -361,28 +259,19 @@ class MFSobolSequence(MultiFidelitySampler):
             a numpy array contains high fidelity samples
 
         """
-        hf_sample = self._lf_samples[0: self.num_hf_samples, :]
-        self._hf_samples = hf_sample
-        return hf_sample
+        return data_higher_fidelity[0: self.num_sample, :]
 
-    def __get_non_nested_hf_samples(self) -> np.ndarray:
-        """
 
-        Returns
-        -------
-        hf_sample : np.ndarray
-            a numpy array contains high fidelity samples
 
-        """
-        sobol_sampler = Sobol(d=self.num_dim, seed=self.seed + 1)
-        _ = sobol_sampler.reset()
-        _ = sobol_sampler.fast_forward(n=self.num_skip)
-        # get the samples
-        hf_sample = sobol_sampler.random(n=self.num_hf_samples)
-        for i, bounds in enumerate(self.design_space.values()):
-            hf_sample[:, i] = (
-                hf_sample[:, i] * (bounds[1] - bounds[0]) + bounds[0]
-            )
-        self._hf_samples = hf_sample
+if __name__ == '__main__':
 
-        return hf_sample
+    # print(LatinHypercube(d=1, seed=None).random(n=1))
+
+    # from mfpml.design_of_experiment.space import DesignSpace
+    # design_space = DesignSpace(low_bound=[5.]*5, high_bound=[10.]*5)
+
+    # method = MFLatinHyperCube(design_space=[[5., 10.]]*5)
+    method = MFSobolSequence(design_space=[[5., 10.]]*5, nested=1)
+    print(method.get_samples([3, 5, 10]))
+
+    print()
