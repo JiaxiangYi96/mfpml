@@ -4,12 +4,290 @@ import numpy as np
 from numpy.linalg import cholesky, solve
 from scipy.optimize import minimize
 
-from .gpr_base import MultiFidelityGP
+from .basis_functions import Ordinary
 from .kernels import RBF
-from .kriging import Kriging
 
 
-class CoKriging(MultiFidelityGP):
+class Kriging_no_normalization:
+    """Deterministic Gaussian Process Regression (GPR) model."""
+
+    def __init__(self,
+                 design_space: np.ndarray,
+                 kernel: Any = None,
+                 regr: Any = Ordinary(),
+                 optimizer: Any = None,
+                 optimizer_restart: int = 0) -> None:
+
+        # initialize parameters
+        self.num_dim = design_space.shape[0]
+        # bounds of design space
+        self.bounds = design_space
+
+        # getting kernel
+        if kernel is None:
+            # if kernel is None, use RBF kernel as default
+            self.kernel = RBF(theta=np.zeros(self.num_dim))
+        else:
+            self.kernel = kernel
+
+        # get optimizer for optimizing parameters
+        self.optimizer = optimizer
+        self.optimizer_restart = optimizer_restart
+        # get basis function
+        self.regr = regr
+
+    def _hyper_paras_optimization(self) -> None:
+
+        if self.optimizer is None:
+            # use the L-BFGS-B method in scipy
+            n_trials = self.optimizer_restart + 1
+            optimum_value = float("inf")
+            for _ in range(n_trials):
+                # initial point
+                x0 = np.random.uniform(
+                    self.kernel._get_low_bound,
+                    self.kernel._get_high_bound,
+                    self.kernel._get_num_para,
+                )
+                # get the optimum value
+                optimum_info = minimize(
+                    self._logLikelihood,
+                    x0=x0,
+                    method="l-bfgs-b",
+                    bounds=self.kernel._get_bounds_list,
+                    options={"maxfun": 200},
+
+                )
+                # greedy search for the optimum value
+                if optimum_info.fun < optimum_value:
+                    opt_param = optimum_info.x
+                    optimum_value = optimum_info.fun
+        else:
+            # use the optimizer in the repo, such as DE and PSO
+            optimum_info, _, _ = self.optimizer.run_optimizer(
+                self._logLikelihood,
+                num_dim=self.kernel._get_num_para,
+                design_space=self.kernel._get_bounds,
+            )
+            opt_param = optimum_info["best_x"]
+        # update the kernel with optimized parameters
+        self.opt_param = opt_param
+
+    def _logLikelihood(self, params: np.ndarray) -> np.ndarray:
+        """Compute the concentrated ln-likelihood
+
+        Parameters
+        ----------
+        params : np.ndarray
+            parameters of the kernel
+
+        Returns
+        -------
+        nll : np.ndarray
+            negative log likelihood
+        """
+        params = np.atleast_2d(params)
+        nll = np.zeros(params.shape[0])
+
+        for i in range(params.shape[0]):
+            # for optimization every row is a parameter set
+            param = params[i, :]
+            # calculate the covariance matrix
+            K = self.kernel(self.sample_scaled_x,
+                            self.sample_scaled_x,
+                            param)
+            L = cholesky(K)
+            # Step 1: estimate beta, which is the coefficient of basis function
+            # f, basis function
+            f = self.regr(self.sample_scaled_x)
+            # alpha = K^(-1) * Y
+            alpha = solve(L.T, solve(L, self.sample_y_scaled))
+            # K^(-1)f
+            KF = solve(L.T, solve(L, f))
+            # KF = cholesky_solve(K, f)
+            ld = cholesky(np.dot(f.T, KF))
+            # beta = (F^T *K^(-1)* F)^(-1) * F^T *R^(-1) * Y
+            beta = solve(ld.T, solve(ld, np.dot(f.T, alpha)))
+
+            # step 2: estimate sigma2
+            # gamma = 1/n * (Y - F * beta)^T * K^(-1) * (Y - F * beta)
+            gamma = solve(L.T, solve(
+                L, (self.sample_y_scaled - np.dot(f, beta))))
+            sigma2 = np.dot((self.sample_y_scaled - np.dot(f, beta)).T,
+                            gamma) / self.num_samples
+
+            # step 3: calculate the log likelihood
+            logp = -0.5 * self.num_samples * \
+                np.log(sigma2) - np.sum(np.log(np.diag(L)))
+            nll[i] = -logp.ravel()
+
+        return nll
+
+    def _update_kernel_matrix(self) -> None:
+        """Update the kernel matrix with optimized parameters."""
+        # assign the best hyper-parameter to the kernel
+        self.kernel.set_params(self.opt_param)
+        # update parameters with optimized hyper-parameters
+        self.K = self.kernel.get_kernel_matrix(self.sample_scaled_x,
+                                               self.sample_scaled_x)
+        self.L = cholesky(self.K)
+
+        # step 1: get the optimal beta
+        # f, basis function
+        self.f = self.regr(self.sample_scaled_x)
+        # alpha = K^(-1) * Y
+        self.alpha = solve(self.L.T, solve(self.L, self.sample_y_scaled))
+        # K^(-1)f
+        KF = solve(self.L.T, solve(self.L, self.f))
+        self.ld = cholesky(np.dot(self.f.T, KF))
+        # beta = (F^T *K^(-1)* F)^(-1) * F^T *R^(-1) * Y
+        self.beta = solve(self.ld.T, solve(
+            self.ld, np.dot(self.f.T, self.alpha)))
+
+        # step 2: get the optimal sigma2
+        self.gamma = solve(self.L.T, solve(
+            self.L, (self.sample_y_scaled - np.dot(self.f, self.beta))))
+        self.sigma2 = np.dot((self.sample_y_scaled - np.dot(self.f, self.beta)).T,
+                             self.gamma) / self.num_samples
+
+        # step 3: get the optimal log likelihood
+        self.logp = (-0.5 * self.num_samples * np.log(self.sigma2) -
+                     np.sum(np.log(np.diag(self.L)))).item()
+
+    def predict(self,
+                x_predict: np.ndarray,
+                return_std: bool = False) -> tuple[np.ndarray, np.ndarray]:
+        """Predict responses through the Kriging model
+
+        Parameters
+        ----------
+        x_predict : np.ndarray
+            new sample need to predict
+        return_std : bool, optional
+            whether return the standard deviation
+            , by default False
+
+        Returns
+        -------
+        np.ndarray
+            return the prediction with shape (#Xinput, 1)
+        """
+        # normalize the input
+        sample_new = np.atleast_2d(x_predict)
+        # get the kernel matrix for predicted samples(scaled samples)
+        knew = self.kernel.get_kernel_matrix(self.sample_scaled_x, sample_new)
+        # calculate the predicted mean
+        f = self.regr(sample_new)
+        fmean = np.dot(f, self.beta) + np.dot(knew.T, self.gamma)
+        # calculate the standard deviation
+        if not return_std:
+            return fmean
+        else:
+            delta = solve(self.L.T, solve(self.L, knew))
+            R = f.T - np.dot(self.f.T, delta)
+            # first use vectorization to calculate the epistemic uncertainty
+            try:
+                mse = self.sigma2 * \
+                    (1 - np.diag(np.dot(knew.T, delta)) +
+                     np.diag(R.T.dot(solve(self.ld.T, solve(self.ld, R))))
+                     )
+            except Exception:
+                print("The matrix is too big, use for loop to calculate")
+                # if the matrix is too big, use for loop to calculate
+                mse = np.zeros((knew.shape[1], 1))
+                batch = 100
+                iter = knew.shape[1] / batch
+                for i in range(int(iter)):
+                    try:
+                        knew_i = knew[:, i * batch: (i+1)*batch]
+                        delta_i = solve(self.L.T, solve(self.L, knew_i))
+                        R_i = R[:, i * batch: (i+1)*batch]
+                        mse[i * batch: (i+1)*batch] = self.sigma2 * \
+                            (1 - np.diag(np.dot(knew_i.T, delta_i)) +
+                                np.diag(R_i.T.dot(solve(self.ld.T,
+                                                        solve(self.ld, R_i))))
+                             ).reshape(-1, 1)
+
+                    except Exception:
+                        # remain part of the matrix
+                        knew_i = knew[:, i * batch:]
+                        delta_i = solve(self.L.T, solve(self.L, knew_i))
+                        R_i = R[:, i * batch:]
+                        mse[i * batch:] = self.sigma2 * \
+                            (1 - np.diag(np.dot(knew_i.T, delta_i)) +
+                                np.diag(R_i.T.dot(solve(self.ld.T,
+                                                        solve(self.ld, R_i))))
+                             ).reshape(-1, 1)
+
+            # epistemic uncertainty
+            std = np.sqrt(np.maximum(mse, 0)).reshape(-1, 1)
+
+            return fmean, std
+
+    def train(self, sample_x: np.ndarray, sample_y: np.ndarray) -> None:
+        """training procedure of gpr models
+
+        Parameters
+        ----------
+        sample_x : np.ndarray
+            sample array of sample
+        sample_y : np.ndarray
+            responses of the sample
+        """
+        # get number samples
+        self.num_samples = sample_x.shape[0]
+        # the original sample_x
+        self.sample_x = sample_x.copy()
+        self.sample_scaled_x = sample_x.copy()
+        # get the response
+        self.sample_y = sample_y.reshape(-1, 1)
+        self.sample_y_scaled = sample_y.reshape(-1, 1)
+
+        # optimizer hyper-parameters
+        self._hyper_paras_optimization()
+
+        # update kernel matrix info with optimized hyper-parameters
+        self._update_kernel_matrix()
+
+    def update_optimizer(self, optimizer: Any) -> None:
+        """Change the optimizer for optimizing hyper parameters
+
+        Parameters
+        ----------
+        optimizer : any
+            instance of optimizer
+        """
+        self.optimizer = optimizer
+
+    def update_model(self, update_x: np.ndarray, update_y: np.ndarray) -> None:
+        """update the model with new samples
+
+        Parameters
+        ----------
+        update_x : np.ndarray
+            update sample array
+        update_y : np.ndarray
+            update responses
+        """
+
+        sample_x = np.concatenate((self.sample_x, update_x))
+        sample_y = np.concatenate((self.sample_y, update_y))
+        # update the model
+        self.train(sample_x, sample_y)
+
+    @property
+    def _num_samples(self) -> int:
+        """Return the number of samples
+
+        Returns
+        -------
+        num_samples : int
+            num samples
+        """
+        return self.sample_x.shape[0]
+
+
+class CoKriging:
     def __init__(
         self,
         design_space: np.ndarray,
@@ -46,38 +324,50 @@ class CoKriging(MultiFidelityGP):
         # initialize kernel and low-fidelity model
         self.kernel = RBF(theta=np.zeros(self.num_dim), bounds=kernel_bound)
         # lf model is a Kriging model with RBF kernel
-        self.lf_model = Kriging(design_space=design_space,
-                                optimizer=optimizer,
-                                optimizer_restart=optimizer_restart)
+        self.lf_model = Kriging_no_normalization(
+            design_space=design_space,
+            optimizer=optimizer,
+            optimizer_restart=optimizer_restart)
 
-    def _train_hf(self, sample_xh: np.ndarray, sample_yh: np.ndarray) -> None:
-        """Train the high-fidelity model
+    def train(self, samples: dict, responses: dict) -> None:
+        """Train the hierarchical Kriging model
 
         Parameters
         ----------
-        sample_xh : np.ndarray
-            array of high-fidelity samples
-        sample_yh : np.ndarray
-            array of high-fidelity responses
+        samples : dict
+            dict with two keys, 'hf' contains np.ndarray of
+            high-fidelity sample points and 'lf' contains
+            low-fidelity
+        responses : dict
+            dict with two keys, 'hf' contains high-fidelity
+            responses and 'lf' contains low-fidelity ones
         """
-        self.sample_xh = sample_xh
-        # normalize the input for high-fidelity
+        # load the samples and responses at the original scale
+        self.sample_xh = samples["hf"]
+        self.sample_yh = responses["hf"]
+        self.sample_xl = samples["lf"]
+        self.sample_yl = responses["lf"]
+
+        # normalize the input and output
         self.sample_xh_scaled = self.normalize_input(self.sample_xh.copy())
-        # get the high-fidelity responses
-        self.sample_yh = sample_yh
-        self.sample_yh_scaled = self.normalize_hf_output(sample_yh.copy())
+        self.sample_xl_scaled = self.normalize_input(self.sample_xl.copy())
+        self.sample_yh_scaled = self.normalize_hf_output(self.sample_yh.copy())
         self.sample_yl_scaled = (self.sample_yl - self.yh_mean) / self.yh_std
+
+        # train the low-fidelity model
+        self.lf_model.train(self.sample_xl_scaled,
+                            self.sample_yl_scaled)
+
+        # train the high-fidelity model
         # prediction of low-fidelity at high-fidelity locations
-        pred_ylh = self.predict_lf(self.sample_xh, return_std=False)
-        # scale it to the same scale as high-fidelity
-        self.pred_ylh = (pred_ylh - self.yh_mean) / self.yh_std
+        self.pred_ylh = self.lf_model.predict(
+            self.sample_xh_scaled, return_std=False)
         # optimize the hyper parameters
         self._optHyp()
         # update rho value
         self.rho = self.opt_param[0]
         # calculate the covariance matrix
         self.kernel.set_params(self.opt_param[1:])
-
         self._update_parameters()
 
     def predict(
@@ -109,10 +399,7 @@ class CoKriging(MultiFidelityGP):
                 * self.lf_model.kernel.get_kernel_matrix(
                     self.sample_xl_scaled, Xnew),
                 self.rho**2
-                * self.lf_model.sigma2 *
-                self.lf_model.kernel.get_kernel_matrix(
-                    self.sample_xh_scaled, Xnew)
-                + self.sigma2 *
+                * self.lf_model.sigma2*self.lf_model.kernel.get_kernel_matrix(self.sample_xh_scaled, Xnew) + self.sigma2 *
                 self.kernel.get_kernel_matrix(self.sample_xh_scaled, Xnew),
             ),
             axis=0,
@@ -130,11 +417,37 @@ class CoKriging(MultiFidelityGP):
                 self.rho**2 * self.lf_model.sigma2
                 + self.sigma2
                 - c.T.dot(solve(self.LC.T, solve(self.LC, c)))
-                + (1-oneC.T.dot(solve(self.LC.T, solve(self.LC, c)))) /
-                oneC.T.dot(solve(self.LC.T, solve(self.LC, oneC)))
+                # + (1-oneC.T.dot(solve(self.LC.T, solve(self.LC, c)))) /
+                # oneC.T.dot(solve(self.LC.T, solve(self.LC, oneC)))
             )
             std = np.sqrt(np.maximum(np.diag(s2), 0))*self.yh_std
             return fmean.reshape(-1, 1), std.reshape(-1, 1)
+
+    def predict_lf(
+        self, x_predict: np.ndarray, return_std: bool = False
+    ) -> np.ndarray | Tuple[np.ndarray, np.ndarray]:
+        """Predict low-fidelity responses
+
+        Parameters
+        ----------
+        x_predict : np.ndarray
+            array of low-fidelity to be predicted
+        return_std : bool, optional
+            whether to return std values, by default False
+
+        Returns
+        -------
+        np.ndarray
+            prediction of low-fidelity
+        """
+        # get the scaled points
+        x_predict = np.atleast_2d(self.normalize_input(x_predict))
+        if not return_std:
+            obj = self.lf_model.predict(x_predict)*self.yh_std + self.yh_mean
+            return obj
+        else:
+            obj, std = self.lf_model.predict(x_predict, return_std=True)
+            return obj*self.yh_std + self.yh_mean, std*self.yh_std
 
     def _optHyp(self) -> None:
         """Optimize the hyperparameters"""
@@ -265,3 +578,151 @@ class CoKriging(MultiFidelityGP):
         self.mu = oneC.T.dot(
             solve(self.LC.T, solve(self.LC, self.y))
         ) / oneC.T.dot(solve(self.LC.T, solve(self.LC, oneC))).item()
+
+    def update_model(self, Xnew: dict, Ynew: dict) -> None:
+        """Update the multi-fidelity model with new samples
+
+        Parameters
+        ----------
+        Xnew : dict
+            dict with two keys, where contains the new samples
+            If value is None then no sample to update
+        Ynew : dict
+            corresponding responses w.r.t. Xnew
+        """
+        XHnew = Xnew["hf"]
+        YHnew = Ynew["hf"]
+        XLnew = Xnew["lf"]
+        YLnew = Ynew["lf"]
+        if XLnew is not None and YLnew is not None:
+            if XHnew is not None and YHnew is not None:
+                X = {}
+                Y = {}
+                X["hf"] = np.concatenate((self.sample_xh, XHnew))
+                Y["hf"] = np.concatenate((self.sample_yh, YHnew))
+                X["lf"] = np.concatenate((self.sample_xl, XLnew))
+                Y["lf"] = np.concatenate((self.sample_yl, YLnew))
+                self.train(X, Y)
+            else:
+                X = {}
+                Y = {}
+                X["hf"] = self.sample_xh
+                Y["hf"] = self.sample_yh
+                X["lf"] = np.concatenate((self.sample_xl, XLnew))
+                Y["lf"] = np.concatenate((self.sample_yl, YLnew))
+                self.train(X, Y)
+        else:
+            if XHnew is not None and YHnew is not None:
+                XH = np.concatenate((self.sample_xh, XHnew))
+                YH = np.concatenate((self.sample_yh, YHnew))
+                self._train_hf(XH, YH)
+
+    def _update_optimizer_hf(self, optimizer: Any) -> None:
+        """Change the optimizer for high-fidelity hyper parameters
+
+        Parameters
+        ----------
+        optimizer : any
+            instance of optimizer
+        """
+        self.optimizer = optimizer
+
+    def _update_optimizer_lf(self, optimizer: Any) -> None:
+        """Change the optimizer for low-fidelity hyper parameters
+
+        Parameters
+        ----------
+        optimizer : Any
+            instance of optimizer
+        """
+        # update the optimizer for low-fidelity model
+        self.lf_model.update_optimizer(optimizer)
+
+    def normalize_input(self, inputs: np.ndarray) -> np.ndarray:
+        """Normalize samples to range [0, 1]
+
+        Parameters
+        ----------
+        inputs : np.ndarray
+            samples to scale
+        Returns
+        -------
+        np.ndarray
+            normalized samples
+        """
+        return (inputs - self.bounds[:, 0]) / (
+            self.bounds[:, 1] - self.bounds[:, 0]
+        )
+
+    def normalize_hf_output(self, outputs: np.ndarray) -> np.ndarray:
+        """Normalize output to normal distribution
+
+        Parameters
+        ----------
+        outputs : np.ndarray
+            output to scale
+
+        Returns
+        -------
+        np.ndarray
+            normalized output
+        """
+        self.yh_mean = np.mean(outputs)
+        self.yh_std = np.std(outputs)
+        return (outputs - self.yh_mean) / self.yh_std
+
+    @property
+    def _get_lf_model(self) -> Any:
+        """Get the low-fidelity model
+
+        Returns
+        -------
+        Any
+            low-fidelity model instance
+        """
+
+        return self.lf_model
+
+    @ property
+    def _num_xh(self) -> int:
+        """Return the number of high-fidelity samples
+
+        Returns
+        -------
+        int
+            #high-fidelity samples
+        """
+        return self.sample_xh.shape[0]
+
+    @ property
+    def _num_xl(self) -> int:
+        """Return the number of low-fidelity samples
+
+        Returns
+        -------
+        int
+            #low-fidelity samples
+        """
+        return self.lf_model._num_samples
+
+    @ property
+    def _get_sample_hf(self) -> np.ndarray:
+        """Return samples of high-fidelity
+
+        Returns
+        -------
+        np.ndarray
+            high-fidelity samples
+        """
+        return self.sample_xh
+
+    @ property
+    def _get_sample_lf(self) -> np.ndarray:
+        """Return samples of high-fidelity
+
+        Returns
+        -------
+        np.ndarray
+            high-fidelity samples
+        """
+        return self.sample_xl

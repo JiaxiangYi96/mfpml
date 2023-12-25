@@ -90,7 +90,7 @@ class RBF(KernelCore):
         self,
         theta: np.ndarray,
         parameters: list = ["theta"],
-        bounds: list = [-4, 3],
+        bounds: list = [-2, 3],
     ) -> None:
         """calculate the rbf kernel
 
