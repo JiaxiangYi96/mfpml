@@ -148,8 +148,9 @@ class Kriging(SingleFidelityGP):
         # step 2: get the optimal sigma2
         self.gamma = solve(self.L.T, solve(
             self.L, (self.sample_y_scaled - np.dot(self.f, self.beta))))
-        self.sigma2 = np.dot((self.sample_y_scaled - np.dot(self.f, self.beta)).T,
-                             self.gamma) / self.num_samples
+        self.sigma2 = np.dot((self.sample_y_scaled -
+                              np.dot(self.f, self.beta)).T, self.gamma) \
+            / self.num_samples
 
         # step 3: get the optimal log likelihood
         self.logp = (-0.5 * self.num_samples * np.log(self.sigma2) -

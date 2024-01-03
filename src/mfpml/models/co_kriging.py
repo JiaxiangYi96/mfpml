@@ -147,8 +147,9 @@ class Kriging_no_normalization:
         # step 2: get the optimal sigma2
         self.gamma = solve(self.L.T, solve(
             self.L, (self.sample_y_scaled - np.dot(self.f, self.beta))))
-        self.sigma2 = np.dot((self.sample_y_scaled - np.dot(self.f, self.beta)).T,
-                             self.gamma) / self.num_samples
+        self.sigma2 = np.dot((self.sample_y_scaled -
+                              np.dot(self.f, self.beta)).T, self.gamma) \
+            / self.num_samples
 
         # step 3: get the optimal log likelihood
         self.logp = (-0.5 * self.num_samples * np.log(self.sigma2) -
@@ -390,7 +391,7 @@ class CoKriging:
         # transfer to 2d array
         Xnew = np.atleast_2d(self.normalize_input(x_predict))
         #
-        oneC = np.ones((self.C.shape[0], 1))
+        # oneC = np.ones((self.C.shape[0], 1))
         # calculate the covariance matrix
         c = np.concatenate(
             (
@@ -399,7 +400,8 @@ class CoKriging:
                 * self.lf_model.kernel.get_kernel_matrix(
                     self.sample_xl_scaled, Xnew),
                 self.rho**2
-                * self.lf_model.sigma2*self.lf_model.kernel.get_kernel_matrix(self.sample_xh_scaled, Xnew) + self.sigma2 *
+                * self.lf_model.sigma2*self.lf_model.kernel.get_kernel_matrix(
+                    self.sample_xh_scaled, Xnew) + self.sigma2 *
                 self.kernel.get_kernel_matrix(self.sample_xh_scaled, Xnew),
             ),
             axis=0,

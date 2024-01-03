@@ -1,4 +1,3 @@
-
 <p align="center">
     <img src="docs/source/figures/logo.png" width="70%" align="center">
 </p>
@@ -10,12 +9,11 @@
 | [**GitHub**](https://github.com/JiaxiangYi96/mfpml)
 | [**Tutorials**](https://github.com/JiaxiangYi96/mfpml/tree/main/tutorials)
 
-
 ## Summary
 
-This repository aims to provide a package for multi-fidelity probabilistic machine learning. The package is developed by Jiaxiang Yi and Ji Cheng based on their learning curve on multi-fidelity probabilistic macgin learning, and multi-fidelity Bayesian optimization, and multi-fidelity reliability analysis.
+This repository aims to provide a package for multi-fidelity probabilistic machine learning. The package is developed by Jiaxiang Yi and Ji Cheng based on their learning curve on multi-fidelity probabilistic machine learning, and multi-fidelity Bayesian optimization, and multi-fidelity reliability analysis.
 
-Overall, this mfpml package has two main goals, the first one is to provide basic code on implement typical methods in modeling, optimization, and reliability analysis field. Then, based on the basic code, we also provide some advanced methods based on our publications.
+Overall, this `mfpml` package has two main goals, the first one is to provide basic code on implement typical methods in modeling, optimization, and reliability analysis field. Then, based on the basic code, we also provide some advanced methods based on our publications.
 
 ---
 
@@ -23,14 +21,14 @@ Overall, this mfpml package has two main goals, the first one is to provide basi
 
 **Models**
 
-- Kriging model 
+- Kriging model
 - Multi-fidelity Kriging model
 
 **Optimizations**
 
-- Evolutionary algorithms 
+- Evolutionary algorithms
 - Single fidelity Bayesian optimization
-- Multi-fidelity Bayesian optimization 
+- Multi-fidelity Bayesian optimization
 
 **Reliability analysis**
 
@@ -64,7 +62,7 @@ please check out those papers:
 ## Community Support
 
 If you find any issues, bugs or problems with this package, you can raise an issue
-on the github page, or contact the Authors directly.
+on the github page, or contact the authors directly.
 
 ## License
 

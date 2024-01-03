@@ -172,7 +172,8 @@ class HierarchicalKriging(MultiFidelityGP):
             mu = (np.dot(self.F.T, alpha) / np.dot(self.F.T, beta)).squeeze()
             gamma = solve(L.T, solve(L, (self.sample_yh_scaled - mu * self.F)))
             sigma2 = (
-                np.dot((self.sample_yh_scaled - mu * self.F).T, gamma).squeeze()
+                np.dot((self.sample_yh_scaled -
+                        mu * self.F).T, gamma).squeeze()
                 / self._num_xh
             ).squeeze()
             logp = -self._num_xh * np.log(sigma2) - 2 * np.sum(
