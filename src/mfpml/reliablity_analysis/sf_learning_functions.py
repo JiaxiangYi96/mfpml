@@ -4,7 +4,7 @@ import numpy as np
 from scipy.spatial import distance_matrix
 from scipy.stats import norm
 
-from mfpml.models.gpr_base import Kriging
+from mfpml.models.kriging import Kriging
 
 
 class SFLearningFunction(object):
