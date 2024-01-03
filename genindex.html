@@ -131,6 +131,7 @@
  | <a href="#R"><strong>R</strong></a>
  | <a href="#S"><strong>S</strong></a>
  | <a href="#T"><strong>T</strong></a>
+ | <a href="#U"><strong>U</strong></a>
  | <a href="#V"><strong>V</strong></a>
  
 </div>
@@ -377,6 +378,8 @@
 </li>
       <li><a href="mfpml.models.html#mfpml.models.kernels.KernelCore._get_high_bound">_get_high_bound (KernelCore property)</a>
 </li>
+      <li><a href="mfpml.models.html#mfpml.models.co_kriging.CoKriging._get_lf_model">_get_lf_model (CoKriging property)</a>
+</li>
       <li><a href="mfpml.models.html#mfpml.models.kernels.KernelCore._get_low_bound">_get_low_bound (KernelCore property)</a>
 </li>
       <li><a href="mfpml.problems.html#mfpml.problems.functions.Functions._get_low_fidelity">_get_low_fidelity (Functions property)</a>
@@ -389,7 +392,13 @@
 </li>
       <li><a href="mfpml.models.html#mfpml.models.kernels.KernelCore._get_param">_get_param (KernelCore property)</a>
 </li>
+      <li><a href="mfpml.models.html#mfpml.models.co_kriging.CoKriging._get_sample_hf">_get_sample_hf (CoKriging property)</a>
+</li>
+      <li><a href="mfpml.models.html#mfpml.models.co_kriging.CoKriging._get_sample_lf">_get_sample_lf (CoKriging property)</a>
+</li>
       <li><a href="mfpml.models.html#mfpml.models.mf_scale_kriging.ScaledKriging._getDisc">_getDisc() (ScaledKriging method)</a>
+</li>
+      <li><a href="mfpml.models.html#mfpml.models.co_kriging.Kriging_no_normalization._hyper_paras_optimization">_hyper_paras_optimization() (Kriging_no_normalization method)</a>
 </li>
       <li><a href="mfpml.optimization.html#mfpml.optimization.mf_acqusitions.mfSingleObjAcf._initial_update">_initial_update() (mfSingleObjAcf static method)</a>
 </li>
@@ -410,8 +419,16 @@
       <ul>
         <li><a href="mfpml.models.html#mfpml.models.hierarchical_kriging.HierarchicalKriging._logLikelihood">(HierarchicalKriging method)</a>
 </li>
+        <li><a href="mfpml.models.html#mfpml.models.co_kriging.Kriging_no_normalization._logLikelihood">(Kriging_no_normalization method)</a>
+</li>
       </ul></li>
       <li><a href="mfpml.design_of_experiment.html#mfpml.design_of_experiment.multifidelity_samplers.MultiFidelitySampler._mf_samples_rules">_mf_samples_rules() (MultiFidelitySampler method)</a>
+</li>
+      <li><a href="mfpml.models.html#mfpml.models.co_kriging.Kriging_no_normalization._num_samples">_num_samples (Kriging_no_normalization property)</a>
+</li>
+      <li><a href="mfpml.models.html#mfpml.models.co_kriging.CoKriging._num_xh">_num_xh (CoKriging property)</a>
+</li>
+      <li><a href="mfpml.models.html#mfpml.models.co_kriging.CoKriging._num_xl">_num_xl (CoKriging property)</a>
 </li>
       <li><a href="mfpml.models.html#mfpml.models.co_kriging.CoKriging._optHyp">_optHyp() (CoKriging method)</a>
 
@@ -431,15 +448,21 @@
 </li>
       <li><a href="mfpml.optimization.html#mfpml.optimization.evolutionary_algorithms.EABase._save_results">_save_results() (EABase method)</a>
 </li>
-      <li><a href="mfpml.models.html#mfpml.models.co_kriging.CoKriging._train_hf">_train_hf() (CoKriging method)</a>
+      <li><a href="mfpml.models.html#mfpml.models.hierarchical_kriging.HierarchicalKriging._train_hf">_train_hf() (HierarchicalKriging method)</a>
 
       <ul>
-        <li><a href="mfpml.models.html#mfpml.models.hierarchical_kriging.HierarchicalKriging._train_hf">(HierarchicalKriging method)</a>
-</li>
         <li><a href="mfpml.models.html#mfpml.models.mf_scale_kriging.ScaledKriging._train_hf">(ScaledKriging method)</a>
 </li>
       </ul></li>
-      <li><a href="mfpml.models.html#mfpml.models.mf_scale_kriging.ScaledKriging._update_optimizer_hf">_update_optimizer_hf() (ScaledKriging method)</a>
+      <li><a href="mfpml.models.html#mfpml.models.co_kriging.Kriging_no_normalization._update_kernel_matrix">_update_kernel_matrix() (Kriging_no_normalization method)</a>
+</li>
+      <li><a href="mfpml.models.html#mfpml.models.co_kriging.CoKriging._update_optimizer_hf">_update_optimizer_hf() (CoKriging method)</a>
+
+      <ul>
+        <li><a href="mfpml.models.html#mfpml.models.mf_scale_kriging.ScaledKriging._update_optimizer_hf">(ScaledKriging method)</a>
+</li>
+      </ul></li>
+      <li><a href="mfpml.models.html#mfpml.models.co_kriging.CoKriging._update_optimizer_lf">_update_optimizer_lf() (CoKriging method)</a>
 </li>
       <li><a href="mfpml.optimization.html#mfpml.optimization.sfbo.BayesOpt._update_para">_update_para() (BayesOpt method)</a>
 
@@ -865,6 +888,8 @@
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="mfpml.models.html#mfpml.models.co_kriging.Kriging_no_normalization">Kriging_no_normalization (class in mfpml.models.co_kriging)</a>
+</li>
       <li><a href="mfpml.models.html#mfpml.models.kernels.kronDelta">kronDelta() (in module mfpml.models.kernels)</a>
 </li>
   </ul></td>
@@ -1172,6 +1197,10 @@
 <h2 id="N">N</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="mfpml.models.html#mfpml.models.co_kriging.CoKriging.normalize_hf_output">normalize_hf_output() (CoKriging method)</a>
+</li>
+      <li><a href="mfpml.models.html#mfpml.models.co_kriging.CoKriging.normalize_input">normalize_input() (CoKriging method)</a>
+</li>
       <li><a href="mfpml.problems.html#mfpml.problems.singlefidelity_functions.Ackley.num_cons">num_cons (Ackley attribute)</a>
 
       <ul>
@@ -1476,8 +1505,6 @@
         <li><a href="mfpml.optimization.html#mfpml.optimization.evolutionary_algorithms.EABase.plot_optimization_history">(EABase method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="mfpml.design_of_experiment.html#mfpml.design_of_experiment.multifidelity_samplers.MultiFidelitySampler.plot_samples">plot_samples() (MultiFidelitySampler method)</a>
 
       <ul>
@@ -1486,14 +1513,20 @@
         <li><a href="mfpml.design_of_experiment.html#mfpml.design_of_experiment.singlefideliy_samplers.SingleFidelitySampler.plot_samples">(SingleFidelitySampler method)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="mfpml.models.html#mfpml.models.co_kriging.CoKriging.predict">predict() (CoKriging method)</a>
 
       <ul>
         <li><a href="mfpml.models.html#mfpml.models.hierarchical_kriging.HierarchicalKriging.predict">(HierarchicalKriging method)</a>
 </li>
+        <li><a href="mfpml.models.html#mfpml.models.co_kriging.Kriging_no_normalization.predict">(Kriging_no_normalization method)</a>
+</li>
         <li><a href="mfpml.models.html#mfpml.models.mf_scale_kriging.ScaledKriging.predict">(ScaledKriging method)</a>
 </li>
       </ul></li>
+      <li><a href="mfpml.models.html#mfpml.models.co_kriging.CoKriging.predict_lf">predict_lf() (CoKriging method)</a>
+</li>
       <li><a href="mfpml.optimization.html#mfpml.optimization.evolutionary_algorithms.EABase.print_info">print_info() (EABase method)</a>
 </li>
       <li><a href="mfpml.optimization.html#mfpml.optimization.evolutionary_algorithms.PSO">PSO (class in mfpml.optimization.evolutionary_algorithms)</a>
@@ -1575,6 +1608,30 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="mfpml.problems.html#mfpml.problems.singlefidelity_functions.Thevenot">Thevenot (class in mfpml.problems.singlefidelity_functions)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="mfpml.models.html#mfpml.models.co_kriging.CoKriging.train">train() (CoKriging method)</a>
+
+      <ul>
+        <li><a href="mfpml.models.html#mfpml.models.co_kriging.Kriging_no_normalization.train">(Kriging_no_normalization method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="U">U</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="mfpml.models.html#mfpml.models.co_kriging.CoKriging.update_model">update_model() (CoKriging method)</a>
+
+      <ul>
+        <li><a href="mfpml.models.html#mfpml.models.co_kriging.Kriging_no_normalization.update_model">(Kriging_no_normalization method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="mfpml.models.html#mfpml.models.co_kriging.Kriging_no_normalization.update_optimizer">update_optimizer() (Kriging_no_normalization method)</a>
 </li>
   </ul></td>
 </tr></table>

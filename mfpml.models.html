@@ -237,7 +237,7 @@
 
 <dl class="py class">
 <dt class="sig sig-object py" id="mfpml.models.kernels.RBF">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">RBF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">theta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['theta']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[-4,</span> <span class="pre">3]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/models/kernels.html#RBF"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.models.kernels.RBF" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">RBF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">theta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['theta']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[-2,</span> <span class="pre">3]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/models/kernels.html#RBF"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.models.kernels.RBF" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#mfpml.models.kernels.KernelCore" title="mfpml.models.kernels.KernelCore"><code class="xref py py-class docutils literal notranslate"><span class="pre">KernelCore</span></code></a></p>
 <p>calculate the rbf kernel</p>
 <dl class="field-list simple">
@@ -251,7 +251,7 @@
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="mfpml.models.kernels.RBF.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">theta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['theta']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[-4,</span> <span class="pre">3]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/models/kernels.html#RBF.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.models.kernels.RBF.__init__" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">theta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['theta']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[-2,</span> <span class="pre">3]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/models/kernels.html#RBF.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.models.kernels.RBF.__init__" title="Link to this definition">¶</a></dt>
 <dd><p>calculate the rbf kernel</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -444,7 +444,7 @@ default [-2, 3].</p></li>
 <dl class="py class">
 <dt class="sig sig-object py" id="mfpml.models.co_kriging.CoKriging">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">CoKriging</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">design_space</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer_restart</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel_bound</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[-4.0,</span> <span class="pre">3.0]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rho_bound</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[0.01,</span> <span class="pre">100.0]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/models/co_kriging.html#CoKriging"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.models.co_kriging.CoKriging" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">MultiFidelityGP</span></code></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>co-kriging model for handling multi-fidelity data</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -482,6 +482,48 @@ by default [-4, 3]</p></li>
 </dl>
 </dd></dl>
 
+<dl class="py property">
+<dt class="sig sig-object py" id="mfpml.models.co_kriging.CoKriging._get_lf_model">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">_get_lf_model</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.12)"><span class="pre">Any</span></a></em><a class="headerlink" href="#mfpml.models.co_kriging.CoKriging._get_lf_model" title="Link to this definition">¶</a></dt>
+<dd><p>Get the low-fidelity model</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>low-fidelity model instance</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Any</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mfpml.models.co_kriging.CoKriging._get_sample_hf">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">_get_sample_hf</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.26)"><span class="pre">ndarray</span></a></em><a class="headerlink" href="#mfpml.models.co_kriging.CoKriging._get_sample_hf" title="Link to this definition">¶</a></dt>
+<dd><p>Return samples of high-fidelity</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>high-fidelity samples</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mfpml.models.co_kriging.CoKriging._get_sample_lf">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">_get_sample_lf</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.26)"><span class="pre">ndarray</span></a></em><a class="headerlink" href="#mfpml.models.co_kriging.CoKriging._get_sample_lf" title="Link to this definition">¶</a></dt>
+<dd><p>Return samples of high-fidelity</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>high-fidelity samples</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="mfpml.models.co_kriging.CoKriging._logLikelihood">
 <span class="sig-name descname"><span class="pre">_logLikelihood</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/models/co_kriging.html#CoKriging._logLikelihood"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.models.co_kriging.CoKriging._logLikelihood" title="Link to this definition">¶</a></dt>
@@ -499,6 +541,34 @@ by default [-4, 3]</p></li>
 </dl>
 </dd></dl>
 
+<dl class="py property">
+<dt class="sig sig-object py" id="mfpml.models.co_kriging.CoKriging._num_xh">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">_num_xh</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a></em><a class="headerlink" href="#mfpml.models.co_kriging.CoKriging._num_xh" title="Link to this definition">¶</a></dt>
+<dd><p>Return the number of high-fidelity samples</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>#high-fidelity samples</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mfpml.models.co_kriging.CoKriging._num_xl">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">_num_xl</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a></em><a class="headerlink" href="#mfpml.models.co_kriging.CoKriging._num_xl" title="Link to this definition">¶</a></dt>
+<dd><p>Return the number of low-fidelity samples</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>#low-fidelity samples</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="mfpml.models.co_kriging.CoKriging._optHyp">
 <span class="sig-name descname"><span class="pre">_optHyp</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/models/co_kriging.html#CoKriging._optHyp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.models.co_kriging.CoKriging._optHyp" title="Link to this definition">¶</a></dt>
@@ -511,15 +581,26 @@ by default [-4, 3]</p></li>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="mfpml.models.co_kriging.CoKriging._train_hf">
-<span class="sig-name descname"><span class="pre">_train_hf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sample_xh</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_yh</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/models/co_kriging.html#CoKriging._train_hf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.models.co_kriging.CoKriging._train_hf" title="Link to this definition">¶</a></dt>
-<dd><p>Train the high-fidelity model</p>
+<dt class="sig sig-object py" id="mfpml.models.co_kriging.CoKriging._update_optimizer_hf">
+<span class="sig-name descname"><span class="pre">_update_optimizer_hf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">optimizer</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/models/co_kriging.html#CoKriging._update_optimizer_hf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.models.co_kriging.CoKriging._update_optimizer_hf" title="Link to this definition">¶</a></dt>
+<dd><p>Change the optimizer for high-fidelity hyper parameters</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>sample_xh</strong> (<em>np.ndarray</em>) – array of high-fidelity samples</p></li>
-<li><p><strong>sample_yh</strong> (<em>np.ndarray</em>) – array of high-fidelity responses</p></li>
-</ul>
+<dd class="field-odd"><p><strong>optimizer</strong> (<em>any</em>) – instance of optimizer</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.models.co_kriging.CoKriging._update_optimizer_lf">
+<span class="sig-name descname"><span class="pre">_update_optimizer_lf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">optimizer</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/models/co_kriging.html#CoKriging._update_optimizer_lf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.models.co_kriging.CoKriging._update_optimizer_lf" title="Link to this definition">¶</a></dt>
+<dd><p>Change the optimizer for low-fidelity hyper parameters</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>optimizer</strong> (<em>Any</em>) – instance of optimizer</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
@@ -534,6 +615,40 @@ by default [-4, 3]</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.models.co_kriging.CoKriging.normalize_hf_output">
+<span class="sig-name descname"><span class="pre">normalize_hf_output</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outputs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/models/co_kriging.html#CoKriging.normalize_hf_output"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.models.co_kriging.CoKriging.normalize_hf_output" title="Link to this definition">¶</a></dt>
+<dd><p>Normalize output to normal distribution</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>outputs</strong> (<em>np.ndarray</em>) – output to scale</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>normalized output</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.models.co_kriging.CoKriging.normalize_input">
+<span class="sig-name descname"><span class="pre">normalize_input</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inputs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/models/co_kriging.html#CoKriging.normalize_input"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.models.co_kriging.CoKriging.normalize_input" title="Link to this definition">¶</a></dt>
+<dd><p>Normalize samples to range [0, 1]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>inputs</strong> (<em>np.ndarray</em>) – samples to scale</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>normalized samples</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
 </dd>
 </dl>
 </dd></dl>
@@ -554,6 +669,192 @@ by default [-4, 3]</p></li>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.models.co_kriging.CoKriging.predict_lf">
+<span class="sig-name descname"><span class="pre">predict_lf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x_predict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_std</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/models/co_kriging.html#CoKriging.predict_lf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.models.co_kriging.CoKriging.predict_lf" title="Link to this definition">¶</a></dt>
+<dd><p>Predict low-fidelity responses</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x_predict</strong> (<em>np.ndarray</em>) – array of low-fidelity to be predicted</p></li>
+<li><p><strong>return_std</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a><em>, </em><em>optional</em>) – whether to return std values, by default False</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>prediction of low-fidelity</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.models.co_kriging.CoKriging.train">
+<span class="sig-name descname"><span class="pre">train</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">responses</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/models/co_kriging.html#CoKriging.train"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.models.co_kriging.CoKriging.train" title="Link to this definition">¶</a></dt>
+<dd><p>Train the hierarchical Kriging model</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>samples</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><em>dict</em></a>) – dict with two keys, ‘hf’ contains np.ndarray of
+high-fidelity sample points and ‘lf’ contains
+low-fidelity</p></li>
+<li><p><strong>responses</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><em>dict</em></a>) – dict with two keys, ‘hf’ contains high-fidelity
+responses and ‘lf’ contains low-fidelity ones</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.models.co_kriging.CoKriging.update_model">
+<span class="sig-name descname"><span class="pre">update_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Xnew</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Ynew</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/models/co_kriging.html#CoKriging.update_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.models.co_kriging.CoKriging.update_model" title="Link to this definition">¶</a></dt>
+<dd><p>Update the multi-fidelity model with new samples</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Xnew</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><em>dict</em></a>) – dict with two keys, where contains the new samples
+If value is None then no sample to update</p></li>
+<li><p><strong>Ynew</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><em>dict</em></a>) – corresponding responses w.r.t. Xnew</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mfpml.models.co_kriging.Kriging_no_normalization">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Kriging_no_normalization</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">design_space</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">regr=&lt;mfpml.models.basis_functions.Ordinary</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer_restart=0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/models/co_kriging.html#Kriging_no_normalization"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.models.co_kriging.Kriging_no_normalization" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Deterministic Gaussian Process Regression (GPR) model.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.models.co_kriging.Kriging_no_normalization._hyper_paras_optimization">
+<span class="sig-name descname"><span class="pre">_hyper_paras_optimization</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/models/co_kriging.html#Kriging_no_normalization._hyper_paras_optimization"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.models.co_kriging.Kriging_no_normalization._hyper_paras_optimization" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.models.co_kriging.Kriging_no_normalization._logLikelihood">
+<span class="sig-name descname"><span class="pre">_logLikelihood</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/models/co_kriging.html#Kriging_no_normalization._logLikelihood"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.models.co_kriging.Kriging_no_normalization._logLikelihood" title="Link to this definition">¶</a></dt>
+<dd><p>Compute the concentrated ln-likelihood</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>params</strong> (<em>np.ndarray</em>) – parameters of the kernel</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>nll</strong> – negative log likelihood</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="mfpml.models.co_kriging.Kriging_no_normalization._num_samples">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">_num_samples</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a></em><a class="headerlink" href="#mfpml.models.co_kriging.Kriging_no_normalization._num_samples" title="Link to this definition">¶</a></dt>
+<dd><p>Return the number of samples</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>num_samples</strong> – num samples</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.models.co_kriging.Kriging_no_normalization._update_kernel_matrix">
+<span class="sig-name descname"><span class="pre">_update_kernel_matrix</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/models/co_kriging.html#Kriging_no_normalization._update_kernel_matrix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.models.co_kriging.Kriging_no_normalization._update_kernel_matrix" title="Link to this definition">¶</a></dt>
+<dd><p>Update the kernel matrix with optimized parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.models.co_kriging.Kriging_no_normalization.predict">
+<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x_predict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_std</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/models/co_kriging.html#Kriging_no_normalization.predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.models.co_kriging.Kriging_no_normalization.predict" title="Link to this definition">¶</a></dt>
+<dd><p>Predict responses through the Kriging model</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x_predict</strong> (<em>np.ndarray</em>) – new sample need to predict</p></li>
+<li><p><strong>return_std</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a><em>, </em><em>optional</em>) – whether return the standard deviation
+, by default False</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>return the prediction with shape (#Xinput, 1)</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.models.co_kriging.Kriging_no_normalization.train">
+<span class="sig-name descname"><span class="pre">train</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sample_x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/models/co_kriging.html#Kriging_no_normalization.train"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.models.co_kriging.Kriging_no_normalization.train" title="Link to this definition">¶</a></dt>
+<dd><p>training procedure of gpr models</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sample_x</strong> (<em>np.ndarray</em>) – sample array of sample</p></li>
+<li><p><strong>sample_y</strong> (<em>np.ndarray</em>) – responses of the sample</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.models.co_kriging.Kriging_no_normalization.update_model">
+<span class="sig-name descname"><span class="pre">update_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">update_x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">update_y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/models/co_kriging.html#Kriging_no_normalization.update_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.models.co_kriging.Kriging_no_normalization.update_model" title="Link to this definition">¶</a></dt>
+<dd><p>update the model with new samples</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>update_x</strong> (<em>np.ndarray</em>) – update sample array</p></li>
+<li><p><strong>update_y</strong> (<em>np.ndarray</em>) – update responses</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.models.co_kriging.Kriging_no_normalization.update_optimizer">
+<span class="sig-name descname"><span class="pre">update_optimizer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">optimizer</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/models/co_kriging.html#Kriging_no_normalization.update_optimizer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.models.co_kriging.Kriging_no_normalization.update_optimizer" title="Link to this definition">¶</a></dt>
+<dd><p>Change the optimizer for optimizing hyper parameters</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>optimizer</strong> (<em>any</em>) – instance of optimizer</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
 </dd>
 </dl>
 </dd></dl>
