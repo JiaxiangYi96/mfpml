@@ -3,9 +3,9 @@ import numpy as np
 
 class DesignSpace:
     def __init__(self,
-                 names: list,
                  low_bound: list,
-                 high_bound: list
+                 high_bound: list,
+                 names: list=None,
                  ) -> None:
         """
         Parameters
@@ -38,6 +38,7 @@ class DesignSpace:
         # check the type of variables
         self._input_domain = np.ndarray
         self._design_space = dict()
+        if names is None: names = ['x'+str(i+1) for i in range(len(low_bound))]
         # check the consistency of variable
         self.__check_consistency(
             names=names, low_bound=low_bound, high_bound=high_bound
