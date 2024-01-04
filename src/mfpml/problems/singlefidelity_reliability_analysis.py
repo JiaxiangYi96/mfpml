@@ -170,13 +170,3 @@ class FourBranches(SFRFunctions):
         # reshape
         obj = np.reshape(obj, (len(obj), 1))
         return obj
-
-
-class NonlinearOscillator(SFRFunctions):
-
-    pass
-
-
-class RoofTruss(SFRFunctions):
-
-    pass

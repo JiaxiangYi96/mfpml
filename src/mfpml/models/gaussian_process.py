@@ -246,7 +246,8 @@ class GaussianProcess(SingleFidelityGP):
         # update parameters with optimized hyper-parameters
         self.K = self.kernel.get_kernel_matrix(
             self.sample_scaled_x,
-            self.sample_scaled_x) + np.eye(self.num_samples) * (self.noise/self.y_std)**2
+            self.sample_scaled_x) + \
+            np.eye(self.num_samples) * (self.noise/self.y_std)**2
         self.L = cholesky(self.K)
 
         #  step 1: get the optimal beta
@@ -264,8 +265,9 @@ class GaussianProcess(SingleFidelityGP):
         # step 2: get the optimal sigma2
         self.gamma = solve(self.L.T, solve(
             self.L, (self.sample_y_scaled - np.dot(self.f, self.beta))))
-        self.sigma2 = np.dot((self.sample_y_scaled - np.dot(self.f, self.beta)).T,
-                             self.gamma) / self.num_samples
+        self.sigma2 = np.dot((self.sample_y_scaled -
+                              np.dot(self.f, self.beta)).T, self.gamma) \
+            / self.num_samples
 
         # step 3: get the optimal log likelihood
         self.logp = (-0.5 * self.num_samples * self.sigma2 -
