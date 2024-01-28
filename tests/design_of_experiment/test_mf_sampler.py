@@ -3,114 +3,89 @@ import pytest
 
 from mfpml.design_of_experiment.multifidelity_samplers import (
     MFLatinHyperCube, MFSobolSequence)
-from mfpml.design_of_experiment.space import DesignSpace
 
 pytestmark = pytest.mark.smoke
 
 
-def test_sobol_sequence_nested() -> None:
-    space = DesignSpace(
-        names=["x1", "x2"], low_bound=[0.0, 0.0], high_bound=[1.0, 1.0]
-    )
-    design_space = space.design_space
-    mf_sampler = MFSobolSequence(
-        design_space=design_space, seed=10, nested=True)
-    samples = mf_sampler.get_samples(num_lf_samples=4, num_hf_samples=2)
+def test_mf_lhs_nested() -> None:
+    design_space = np.array([[5., 10], [1, 2]])
+    mf_sampler = MFLatinHyperCube(design_space=design_space,
+                                  num_fidelity=2,
+                                  nested=True)
+
+    data = mf_sampler.get_samples(num_samples=[2, 5], seed=123456)
     # test results
-    results_hf = np.array([[0.17129549, 0.73985035], [0.64001456, 0.39570647]])
-    results_lf = np.array(
-        [
-            [0.17129549, 0.73985035],
-            [0.64001456, 0.39570647],
-            [0.50126341, 0.54964036],
-            [0.0327029, 0.33054989],
-        ]
-    )
-    assert results_hf == pytest.approx(samples["hf"])
-    assert results_lf == pytest.approx(samples["lf"])
+    results = [np.array([[8.666279, 1.14971204],
+                         [9.33874143, 1.77814134]]),
+               np.array([[7.21168694, 1.40160066],
+                         [6.0414317, 1.2244589],
+                         [9.33874143,
+                          1.77814134],
+                         [5.04239678,
+                          1.91309308],
+                         [8.666279, 1.14971204]])]
+    assert results[0] == pytest.approx(data[0])
+    assert results[1] == pytest.approx(data[1])
 
 
-def test_sobol_sequence_unnested() -> None:
-    space = DesignSpace(
-        names=["x1", "x2"], low_bound=[0.0, 0.0], high_bound=[1.0, 1.0]
-    )
-    design_space = space.design_space
-    mf_sampler = MFSobolSequence(
-        design_space=design_space, seed=10, nested=False
-    )
-    samples = mf_sampler.get_samples(num_lf_samples=4, num_hf_samples=2)
+def test_mf_lhs_unnested() -> None:
+    design_space = np.array([[5., 10], [1, 2]])
+    mf_sampler = MFLatinHyperCube(design_space=design_space,
+                                  num_fidelity=2,
+                                  nested=False)
+
+    data = mf_sampler.get_samples(num_samples=[2, 5], seed=123456)
     # test results
-    results_hf = np.array([[0.84127845, 0.03307158], [0.04359769, 0.88905829]])
-    results_lf = np.array(
-        [
-            [0.17129549, 0.73985035],
-            [0.64001456, 0.39570647],
-            [0.50126341, 0.54964036],
-            [0.0327029, 0.33054989],
-        ]
-    )
-    assert results_hf == pytest.approx(samples["hf"])
-    assert results_lf == pytest.approx(samples["lf"])
+    results = [np.array([[8.40871563, 1.30759417],
+                        [7.38138645, 1.52237363]]),
+               np.array([[7.21168694, 1.40160066],
+                        [6.0414317, 1.2244589],
+                         [9.33874143, 1.77814134],
+                         [5.04239678, 1.91309308],
+                         [8.666279, 1.14971204]])]
+    assert results[0] == pytest.approx(data[0])
+    assert results[1] == pytest.approx(data[1])
 
 
-def test_lhs_unnested() -> None:
-    space = DesignSpace(
-        names=["x1", "x2"], low_bound=[0.0, 0.0], high_bound=[1.0, 1.0]
-    )
-    design_space = space.design_space
-    mf_sampler = MFLatinHyperCube(
-        design_space=design_space, seed=12, nested=False
-    )
-    samples = mf_sampler.get_samples(num_lf_samples=4, num_hf_samples=2)
+def test_sobol_unnested() -> None:
+    design_space = np.array([[5., 10], [1, 2]])
+    mf_sampler = MFSobolSequence(design_space=design_space,
+                                 num_fidelity=2,
+                                 nested=False)
+
+    data = mf_sampler.get_samples(num_samples=[2, 5], seed=123456)
     # test results
-    results_hf = np.array([[0.06760121, 0.57234874], [0.5944883, 0.36927682]])
-    results_lf = np.array(
-        [
-            [0.43729389, 0.26331176],
-            [0.7026699, 0.95517715],
-            [0.91252769, 0.69236469],
-            [0.08238856, 0.22123015],
-        ]
-    )
-    assert results_hf == pytest.approx(samples["hf"])
-    assert results_lf == pytest.approx(samples["lf"])
+    results = [np.array([[8.2381979, 1.28450888],
+                         [6.83417066, 1.68135563]]),
+               np.array([[8.2381979, 1.28450888],
+                        [6.83417066,
+                         1.68135563],
+                        [7.40140805,
+                         1.47841079],
+                        [7.55499782,
+                         1.61233338],
+                        [9.61076839, 1.08658168]])]
+    assert results[0] == pytest.approx(data[0])
+    assert results[1] == pytest.approx(data[1])
 
 
-def test_1d_plot() -> None:
-    space = DesignSpace(
-        names=["x1"], low_bound=[0.0], high_bound=[1.0]
-    )
-    design_space = space.design_space
-    mf_sampler = MFLatinHyperCube(
-        design_space=design_space, seed=12, nested=False
-    )
-    mf_sampler.get_samples(num_lf_samples=4, num_hf_samples=2)
-    mf_sampler.plot_samples()
-    assert True
+def test_sobol_nested() -> None:
+    design_space = np.array([[5., 10], [1, 2]])
+    mf_sampler = MFSobolSequence(design_space=design_space,
+                                 num_fidelity=2,
+                                 nested=True)
 
-
-def test_2d_plot() -> None:
-    space = DesignSpace(
-        names=["x1", "x2"], low_bound=[0.0, 0.0], high_bound=[1.0, 1.0]
-    )
-    design_space = space.design_space
-    mf_sampler = MFLatinHyperCube(
-        design_space=design_space, seed=12, nested=False
-    )
-    mf_sampler.get_samples(num_lf_samples=4, num_hf_samples=2)
-    mf_sampler.plot_samples()
-    assert True
-
-
-def test_3d_plot() -> None:
-    space = DesignSpace(
-        names=["x1", "x2", "x3"], low_bound=[0.0, 0.0, 0.0], high_bound=[1.0, 1.0, 1.0]
-    )
-    design_space = space.design_space
-    mf_sampler = MFLatinHyperCube(
-        design_space=design_space, seed=12, nested=False
-    )
-    mf_sampler.get_samples(num_lf_samples=4, num_hf_samples=2)
-
-    with pytest.raises(Exception):
-        mf_sampler.plot_samples()
+    data = mf_sampler.get_samples(num_samples=[2, 5], seed=123456)
+    # test results
+    results = [np.array([[8.2381979, 1.28450888],
+                         [6.83417066, 1.68135563]]),
+               np.array([[8.2381979, 1.28450888],
+                         [6.83417066,
+                          1.68135563],
+                         [7.40140805,
+                          1.47841079],
+                         [7.55499782,
+                          1.61233338],
+                         [9.61076839, 1.08658168]])]
+    assert results[0] == pytest.approx(data[0])
+    assert results[1] == pytest.approx(data[1])

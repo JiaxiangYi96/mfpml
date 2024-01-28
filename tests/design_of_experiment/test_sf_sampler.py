@@ -10,66 +10,59 @@ from mfpml.design_of_experiment.singlefideliy_samplers import (
 pytestmark = pytest.mark.smoke
 
 
-def test_sobolsequence() -> None:
+def test_random_sampler() -> None:
 
-    design_space = np.array([[0.0, 1.0], [0.0, 1.0]])
-    sampler = SobolSequence(design_space=design_space, seed=12)
-    samples = sampler.get_samples(num_samples=10)
+    design_space = np.array([[1, 5], [-1, 1]])
+    sampler = RandomSampler(design_space=design_space)
+    samples = sampler.get_samples(num_samples=10, seed=123456)
     results = np.array(
-        [
-            [0.85791405, 0.06944251],
-            [0.38605036, 0.98125293],
-            [0.32699364, 0.14201562],
-            [0.91701757, 0.80735379],
-            [0.60346028, 0.43486295],
-            [0.13684348, 0.52207483],
-            [0.22297508, 0.05505399],
-            [0.50147379, 0.89425058],
-            [0.94087794, 0.26977609],
-            [0.28773614, 0.68709683],
-        ]
+        [[1.50787933, 0.93343568],
+         [2.04190402,  0.79447305],
+         [2.50699886, -0.32755651],
+         [2.80550588,  0.68051017],
+         [1.49240858, 0.0860524],
+         [2.4920489,  -0.10400635],
+         [1.51776272,  0.71975741],
+         [4.28155345, -0.29589292],
+         [1.91554922,  0.5535675],
+         [3.37913436, -0.72489289]]
     )
     assert results == pytest.approx(samples)
 
 
 def test_lhs() -> None:
-    space = DesignSpace(
-        names=["x1", "x2"], low_bound=[0.0, 0.0], high_bound=[1.0, 1.0]
-    )
-    design_space = space.design_space
-    sampler = LatinHyperCube(design_space=design_space, seed=12)
-    samples = sampler.get_samples(num_samples=10)
+    design_space = np.array([[1, 5], [-1, 1]])
+
+    sampler = LatinHyperCube(design_space=design_space)
+    samples = sampler.get_samples(num_samples=10, seed=123456)
     results = np.array(
-        [
-            [0.07491755, 0.30532471],
-            [0.98106796, 0.28207086],
-            [0.86501108, 0.77694588],
-            [0.33295543, 0.48849206],
-            [0.71036906, 0.91418695],
-            [0.19971730, 0.84585338],
-            [0.28931487, 0.17420450],
-            [0.55831040, 0.05463839],
-            [0.45318534, 0.50724833],
-            [0.67412289, 0.68121098],
-        ]
+        [[2.3453945,   0.32303767],
+         [2.98102183, -0.39105055],
+            [4.63757963, -0.09139391],
+            [1.28778661,  0.47277024],
+            [3.40771572,  0.83751364],
+            [2.0779207,   0.08639781],
+            [1.79172513,  0.6853799],
+            [3.23512346, -0.86905749],
+            [4.30781921, -0.45634598],
+            [4.19106622, -0.65025851]]
     )
     assert results == pytest.approx(samples)
 
 
-def test_randome_sampler() -> None:
-    space = DesignSpace(
-        names=["x1", "x2"], low_bound=[0.0, 0.0], high_bound=[1.0, 1.0]
-    )
-    design_space = space.design_space
-    sampler = RandomSampler(design_space=design_space, seed=12)
-    samples = sampler.get_samples(num_samples=2)
-    results = np.array([[0.15416284, 0.7400497], [0.26331502, 0.53373939]])
+def test_sobol_sequence() -> None:
+    design_space = np.array([[1, 5], [-1, 1]])
+    sampler = SobolSequence(design_space=design_space)
+    samples = sampler.get_samples(num_samples=2, seed=123456)
+    results = np.array([[3.59055832, -0.43098223],
+                        [2.46733653,  0.36271125]])
     assert results == pytest.approx(samples)
 
 
 def test_fix_sampler() -> None:
-    design_space = OrderedDict({"x1": 0.1})
-    sampler = FixNumberSampler(design_space=design_space, seed=12)
-    samples = sampler.get_samples(num_samples=2)
-    results = np.array([[0.1], [0.1]])
+    fix_sampler = FixNumberSampler(np.array([[1], [3]]))
+    samples = fix_sampler.get_samples(num_samples=2, seed=123456)
+
+    results = np.array([[1, 3],
+                        [1, 3]])
     assert results == pytest.approx(samples)

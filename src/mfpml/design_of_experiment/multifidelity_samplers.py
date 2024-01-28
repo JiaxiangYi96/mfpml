@@ -65,8 +65,7 @@ class MultiFidelitySampler:
         data.insert(0, self._get_non_nested_samples(
             num_sample=num_samples.pop(),
             fidelity=len(num_samples)))
-        print(f"fidelity: {len(num_samples)}")
-        print(f"sample: {data[0]}")
+
         # get samples sequentially
         while len(num_samples) > 0:
             if self.nested is True:
@@ -79,8 +78,6 @@ class MultiFidelitySampler:
                 sample = self._get_non_nested_samples(
                     num_sample=num_samples.pop(),
                     fidelity=len(num_samples))
-                print(f"fidelity: {len(num_samples)}")
-                print(f"sample: {sample}")
 
             # insert the samples
             data.insert(0, sample)
