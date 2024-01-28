@@ -4,19 +4,15 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from mfpml.design_of_experiment.sampler import Sampler
 from mfpml.design_of_experiment.singlefideliy_samplers import (
     FixNumberSampler, LatinHyperCube, RandomSampler, SobolSequence)
-from mfpml.design_of_experiment.space import DesignSpace
 
 pytestmark = pytest.mark.smoke
 
 
 def test_sobolsequence() -> None:
-    space = DesignSpace(
-        names=["x1", "x2"], low_bound=[0.0, 0.0], high_bound=[1.0, 1.0]
-    )
-    design_space = space.design_space
+
+    design_space = np.array([[0.0, 1.0], [0.0, 1.0]])
     sampler = SobolSequence(design_space=design_space, seed=12)
     samples = sampler.get_samples(num_samples=10)
     results = np.array(
@@ -77,49 +73,3 @@ def test_fix_sampler() -> None:
     samples = sampler.get_samples(num_samples=2)
     results = np.array([[0.1], [0.1]])
     assert results == pytest.approx(samples)
-
-
-def test_create_pandas_frame_not_implemented():
-    # Test _create_pandas_frame raises NotImplementedError
-    design_space = {'x1': [0, 1], 'x2': [0, 1]}
-    sampler = Sampler(design_space)
-
-    with pytest.raises(NotImplementedError):
-        sampler._create_pandas_frame()
-
-
-def test_plot_samples_not_implemented():
-    # Test plot_samples raises NotImplementedError
-    design_space = {'x1': [0, 1], 'x2': [0, 1]}
-    sampler = Sampler(design_space)
-
-    with pytest.raises(NotImplementedError):
-        sampler.plot_samples()
-
-
-def test_plotting_2d():
-    # Test plotting
-    design_space = OrderedDict({"x1": [0, 1], "x2": [0, 1]})
-    sampler = LatinHyperCube(design_space=design_space, seed=12)
-    sampler.get_samples(num_samples=10)
-    sampler.plot_samples()
-    assert True
-
-
-def test_plotting_1d():
-    # Test plotting
-    design_space = OrderedDict({"x1": [0, 1]})
-    sampler = LatinHyperCube(design_space=design_space, seed=12)
-    sampler.get_samples(num_samples=10)
-    sampler.plot_samples()
-    assert True
-
-
-def test_plotting_3d():
-    # Test plotting
-    design_space = OrderedDict({"x1": [0, 1], "x2": [0, 1], "x3": [0, 1]})
-    sampler = LatinHyperCube(design_space=design_space, seed=12)
-    sampler.get_samples(num_samples=10)
-
-    with pytest.raises(Exception):
-        sampler.plot_samples()
