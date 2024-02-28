@@ -1,44 +1,42 @@
 
+import pickle
+from abc import ABC
+from typing import Any, List
+
 import numpy as np
-import pandas as pd
-from matplotlib import pyplot as plt
 from scipy.stats.qmc import LatinHypercube, Sobol
 
-# local modulus
-from mfpml.design_of_experiment.sampler import Sampler
 
+class SingleFidelitySampler(ABC):
+    """
+    Class for drawing samples from design space
 
-class SingleFidelitySampler(Sampler):
-    def __init__(self, design_space: dict, seed: int) -> None:
+    """
+
+    def __init__(self, design_space: np.ndarray | List) -> None:
         """
+        Initialization of sampler class
 
         Parameters
         ----------
-        design_space: dict
+        design_space: np.ndarray
             design space
-        seed: int
-            seed
-        Returns
-        ----------
-
         """
-        super(SingleFidelitySampler, self).__init__(
-            design_space=design_space, seed=seed
-        )
 
-    def _create_pandas_frame(self) -> None:
-        """
-        create pandas frame for samples
-        Returns
-        -------
+        # make sure the design space is a 2d array
+        design_space = np.atleast_2d(np.asarray(design_space))
+        #
+        self.design_space = design_space
+        # number of dimensions
+        self.num_dim = len(design_space)
 
+        # TODO: This is a hack to make the code work. The samples attribute
+        self.samples: np.ndarray = None  # type: ignore
 
-        """
-        self._samples = pd.DataFrame(
-            self._samples, columns=list(self.design_space.keys())
-        )
-
-    def get_samples(self, num_samples: int, **kwargs) -> np.ndarray:
+    def get_samples(self,
+                    num_samples: int,
+                    seed: int = 123456,
+                    **kwargs) -> Any:
         """
         Get the samples
 
@@ -46,174 +44,147 @@ class SingleFidelitySampler(Sampler):
         ----------
         num_samples: int
             number of samples
+        kwargs: int,int
+            num_lf_samples: int
+            num_hf_samples: int
 
         Returns
         ---------
-        samples: np.ndarray
-          samples generated from sampling methods
+        samples: any
+            samples
 
         Notes
         ---------
         The function should be completed at the sub-sclass
 
+
         """
 
         raise NotImplementedError("Subclasses should implement this method.")
 
-    def plot_samples(
-        self, fig_name: str = "sf_sampler",
-        save_sig: bool = False, **kwargs
-    ) -> None:
+    def save_data(self, file_name: str = "data") -> None:
         """
-        Visualization of sampling method
+        This function is used to save the design_of_experiment to Json files
 
         Parameters
         ----------
-        figure_name: str
-            figure name
-        save_plot: bool
-            save the figure or not
+        file_name:str
+            name for the pickle.file
 
         Returns
         -------
 
-        Examples
-        --------
-        >>> design_space = {'x1': [0, 1], 'x2': [0, 1]}
-        >>> sampler = LatinHyperCube(design_space=design_space, seed=123456)
-        >>> samples = sampler.get_samples(num_samples=10)
-        >>> sampler.plot_samples(figure_name='sampler', save_plot=False)
-
         """
 
-        if self.num_dim == 2:
-            # two dimensional plot
-            fig, ax = plt.subplots(**kwargs)
-            ax.plot(
-                self.samples.iloc[:, 0],
-                self.samples.iloc[:, 1],
-                "*",
-                label="Samples",
-            )
-            ax.legend()
-            ax.set(xlabel=r"$x_1$")
-            ax.set(ylabel=r"$x_2$")
-            plt.grid()
-            plt.show()
-            if save_sig is True:
-                fig.savefig(fig_name, dpi=300)
+        with open(file_name + ".pickle", "wb") as file:
+            pickle.dump(self.samples, file)
 
-        elif self.num_dim == 1:
-            # one dimensional plot
-            fig, ax = plt.subplots(**kwargs)
-            ax.plot(
-                self.samples.iloc[:, 0],
-                np.zeros((self.samples.shape[0], 1)),
-                ".",
-                label="Samples",
-            )
-            ax.legend()
-            ax.set(xlabel=r"$x$")
-            ax.set(ylabel=r"$y$")
-            ax.autoscale(tight=True)
-            plt.grid()
-            plt.show()
-            if save_sig is True:
-                fig.savefig(fig_name, dpi=300)
+    def scale_samples(self, samples) -> np.ndarray:
+        """
+        Scale the samples to the design space
 
-        else:
-            raise Exception("Can not plot figure more than two dimension! \n ")
-
-    @property
-    def samples(self) -> pd.DataFrame:
-        """get samples
+        Parameters
+        ----------
+        samples: np.ndarray
+            samples
 
         Returns
         -------
-        samples : pd.DataFrame
-            a pandas dataframe of samples
+        scaled_samples: np.ndarray
+            scaled samples
+
         """
-        return self._samples
+
+        scaled_samples = self.lb + samples * (self.ub - self.lb)
+
+        return scaled_samples
 
     @property
-    def data(self) -> dict[str, pd.DataFrame]:
-        """get data"""
-        return {"inputs": self._samples}
+    def lb(self) -> np.ndarray[Any, Any]:
+        """return the lower bound of the design space
+
+        Returns
+        -------
+        np.ndarray[Any, Any]
+            lower bound of the design space
+        """
+        return self.design_space[:, 0]
+
+    @property
+    def ub(self) -> np.ndarray[Any, Any]:
+        return self.design_space[:, 1]
 
 
 class FixNumberSampler(SingleFidelitySampler):
-    def __init__(self, design_space: dict, seed: int) -> None:
+    """Fix number of samples from design space
+
+    Parameters
+    ----------
+    SingleFidelitySampler : class
+        base class for sampling
+    """
+
+    def __init__(self, design_space: np.ndarray) -> None:
         """
 
         Parameters
         ----------
-        design_space: dict
+        design_space: np.ndarray
             design space
-        seed: int
-            seed
 
-        Returns
-        -------
         """
-        super(FixNumberSampler, self).__init__(
-            design_space=design_space, seed=seed
-        )
+        super(FixNumberSampler, self).__init__(design_space=design_space)
 
-    def get_samples(self, num_samples: int, **kwargs) -> dict:
+    def get_samples(self,
+                    num_samples: int,
+                    seed=123456,
+                    **kwargs) -> np.ndarray:
         """
 
         Parameters
         ----------
         num_samples: int
             number of samples
+        seed: int
+            seed for reproducibility
         kwargs: additional info
 
         Returns
         -------
-        data: dict
+        samples: np.ndarray
             samples
 
-        Examples
-        --------
-        >>> design_space = {'x1': [0, 1], 'x2': [0, 1]}
-        >>> sampler = FixNumberSampler(design_space=design_space, seed=123456)
-        >>> samples = sampler.get_samples(num_samples=2)
-        >>> samples
-        {'inputs':    x1   x2
-        0  0.5  0.5
-        1  0.5  0.5}
-
         """
-        fixed_value = list(self.design_space.values())
-        samples = np.repeat(fixed_value[0], num_samples).reshape(
-            (-1, self.num_dim)
-        )
-        self._samples = samples.copy()
-        self._create_pandas_frame()
+        # transfer the design space into one dimension
+        space = self.design_space.flatten()
 
-        return samples
+        # repeat the design space for num_samples times
+        self.samples = np.tile(space, (num_samples, 1))
+
+        return self.samples
 
 
 class LatinHyperCube(SingleFidelitySampler):
     """
-    Latin Hyper cube sampling
+    Latin Hyper cube sampling via scipy
     """
 
-    def __init__(self, design_space: dict, seed: int) -> None:
+    def __init__(self, design_space: np.ndarray) -> None:
         """
 
         Parameters
         ----------
         design_space: dict
             design space
-        seed: int
-            seed
         """
         super(LatinHyperCube, self).__init__(
-            design_space=design_space, seed=seed
+            design_space=design_space,
         )
 
-    def get_samples(self, num_samples: int, **kwargs) -> np.ndarray:
+    def get_samples(self,
+                    num_samples: int,
+                    seed=123456,
+                    **kwargs) -> np.ndarray:
         """get samples
 
         Parameters
@@ -226,23 +197,16 @@ class LatinHyperCube(SingleFidelitySampler):
         sample : np.ndarray
             a numpy array of samples
 
-        Examples
-        --------
-        >>> design_space = {'x1': [0, 1], 'x2': [0, 1]}
-        >>> sampler = LatinHyperCube(design_space=design_space, seed=123456)
-        >>> samples = sampler.get_samples(num_samples=2)
-        >>> samples
-        array([[0.5, 0.5],
-                [0.5, 0.5]])
         """
+        # record the seed
+        self.seed = seed
         lhs_sampler = LatinHypercube(d=self.num_dim, seed=self.seed)
-        sample = lhs_sampler.random(num_samples)
-        for i, bounds in enumerate(self.design_space.values()):
-            sample[:, i] = sample[:, i] * (bounds[1] - bounds[0]) + bounds[0]
+        samples = lhs_sampler.random(num_samples)
 
-        self._samples = sample
-        self._create_pandas_frame()
-        return sample
+        # scale the samples
+        self.samples = self.scale_samples(samples=samples)
+
+        return self.samples
 
 
 class RandomSampler(SingleFidelitySampler):
@@ -250,7 +214,7 @@ class RandomSampler(SingleFidelitySampler):
     Random sampling
     """
 
-    def __init__(self, design_space: dict, seed: int) -> None:
+    def __init__(self, design_space: np.ndarray) -> None:
         """
 
         Parameters
@@ -261,10 +225,12 @@ class RandomSampler(SingleFidelitySampler):
             seed
         """
         super(RandomSampler, self).__init__(
-            design_space=design_space, seed=seed
+            design_space=design_space,
         )
 
-    def get_samples(self, num_samples: int, **kwargs) -> np.ndarray:
+    def get_samples(self, num_samples: int,
+                    seed=123456,
+                    **kwargs) -> np.ndarray:
         """get samples
 
         Parameters
@@ -272,29 +238,27 @@ class RandomSampler(SingleFidelitySampler):
         num_samples : int
             number of samples
 
+        seed: int
+            seed for reproducibility
+
+
         Returns
         -------
         sample : np.ndarray
             a numpy array of samples
 
-        Examples
-        --------
-        >>> design_space = {'x1': [0, 1], 'x2': [0, 1]}
-        >>> sampler = RandomSampler(design_space=design_space, seed=123456)
-        >>> samples = sampler.get_samples(num_samples=2)
-        >>> samples
-        array([[0.12696982, 0.96671784],
-                [0.26047601, 0.89750289]])
 
         """
+        # record the seed
+        self.seed = seed
+        # fix the seed for reproducibility
         np.random.seed(self.seed)
-        sample = np.random.random((num_samples, self.num_dim))
-        for i, bounds in enumerate(self.design_space.values()):
-            sample[:, i] = sample[:, i] * (bounds[1] - bounds[0]) + bounds[0]
+        samples = np.random.random((num_samples, self.num_dim))
 
-        self._samples = sample
-        self._create_pandas_frame()
-        return sample
+        # scale the samples
+        self.samples = self.scale_samples(samples=samples)
+
+        return self.samples
 
 
 class SobolSequence(SingleFidelitySampler):
@@ -303,7 +267,7 @@ class SobolSequence(SingleFidelitySampler):
     """
 
     def __init__(
-        self, design_space: dict, seed: int, num_skip: int = None
+        self, design_space: np.ndarray, num_skip: int = None
     ) -> None:
         """
 
@@ -316,15 +280,15 @@ class SobolSequence(SingleFidelitySampler):
         num_skip: int
             cut the first several samples s
         """
-        super(SobolSequence, self).__init__(
-            design_space=design_space, seed=seed
-        )
+        super(SobolSequence, self).__init__(design_space=design_space)
         if num_skip is None:
             self.num_skip = len(design_space)
         else:
             self.num_skip = num_skip
 
-    def get_samples(self, num_samples: int, **kwargs) -> np.ndarray:
+    def get_samples(self,
+                    num_samples: int,
+                    seed: int = 123456, **kwargs) -> np.ndarray:
         """get samples
 
         Parameters
@@ -332,32 +296,29 @@ class SobolSequence(SingleFidelitySampler):
         num_samples : int
             number of samples
 
+        seed: int
+            seed for reproducibility
+
         Returns
         -------
         sample : np.ndarray
             a numpy array of samples
 
-        Examples
-        --------
-        >>> design_space = {'x1': [0, 1], 'x2': [0, 1]}
-        >>> sampler = SobolSequence(design_space=design_space, seed=123456)
-        >>> samples = sampler.get_samples(num_samples=2)
-        >>> samples
-        array([[0.5, 0.5],
-                [0.5, 0.5]])
+
         """
+        # record the seed
+        self.seed = seed
+
+        # define the sobol sampler
         sobol_sampler = Sobol(d=self.num_dim, seed=self.seed)
         # generate lots of samples first
         sobol_sampler.random_base2(m=num_samples)
         _ = sobol_sampler.reset()
         _ = sobol_sampler.fast_forward(n=self.num_skip)
-        # get the samples
-        sample = sobol_sampler.random(n=num_samples)
+        # get the samples (an np.ndarray)
+        samples = sobol_sampler.random(n=num_samples)
 
-        for i, bounds in enumerate(self.design_space.values()):
-            sample[:, i] = sample[:, i] * (bounds[1] - bounds[0]) + bounds[0]
+        # scale the samples
+        self.samples = self.scale_samples(samples=samples)
 
-        self._samples = sample
-        self._create_pandas_frame()
-
-        return sample
+        return self.samples
