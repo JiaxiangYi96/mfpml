@@ -1,3 +1,5 @@
+from mfpml.core import mfArray
+
 
 from .design_of_experiment import (multifidelity_samplers,
                                    singlefideliy_samplers)

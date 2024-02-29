@@ -184,6 +184,14 @@ class SingleFidelityGP:
 
 
 class MultiFidelityGP:
+    """
+    Base class for multi-fidelity Gaussian process models. 
+    """
+    def __init__(self) -> None:
+        pass 
+
+    @property
+    
 
     def train(self, samples: dict, responses: dict) -> None:
         """Train the hierarchical Kriging model

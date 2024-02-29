@@ -4,6 +4,8 @@ from typing import Dict, List
 import numpy as np
 from scipy.stats.qmc import LatinHypercube, Sobol
 
+from mfpml.core import mfArray
+
 
 class MultiFidelitySampler:
     """
@@ -84,7 +86,7 @@ class MultiFidelitySampler:
         # assign data to self.data
         self.data = data
 
-        return data
+        return mfArray(data)
 
     def _mf_samples_rules(self, num_samples: List) -> None:
         """
@@ -208,7 +210,8 @@ class MFLatinHyperCube(MultiFidelitySampler):
 
     def _get_nested_samples(self,
                             num_sample: int,
-                            data_higher_fidelity) -> None:
+                            data_higher_fidelity: np.ndarray,
+                            ) -> None:
 
         # generate index randomly for nested sampling without repeating
         index = np.random.choice(
@@ -277,7 +280,8 @@ class MFSobolSequence(MultiFidelitySampler):
 
     def _get_nested_samples(self,
                             num_sample: int,
-                            data_higher_fidelity) -> np.ndarray:
+                            data_higher_fidelity: np.ndarray, 
+                            ) -> np.ndarray:
         """
 
         Returns
