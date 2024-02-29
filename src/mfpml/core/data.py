@@ -41,6 +41,10 @@ class mfArray:
     @property
     def hf_data(self) -> np.ndarray:
         return self.data[-1]
+    
+    @property
+    def shape(self) -> list: 
+        return [i.shape for i in self.data]
 
     @property
     def size(self):
