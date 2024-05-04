@@ -4,7 +4,7 @@ import numpy as np
 from scipy.optimize import differential_evolution
 from scipy.stats import norm
 
-from mfpml.models.kriging import Kriging
+from mfpml.models.gaussian_process import GaussianProcessRegression as Kriging
 
 
 class sfSingleObjAcf:

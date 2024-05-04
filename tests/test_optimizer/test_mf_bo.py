@@ -5,7 +5,7 @@ import pytest
 from mfpml.design_of_experiment.multifidelity_samplers import MFLatinHyperCube
 from mfpml.models.co_kriging import CoKriging
 from mfpml.models.hierarchical_kriging import HierarchicalKriging
-from mfpml.models.mf_scale_kriging import ScaledKriging
+from mfpml.models.scale_kriging import ScaledKriging
 from mfpml.optimization.mf_acqusitions import (augmentedEI, extendedPI, vfei,
                                                vflcb)
 from mfpml.optimization.mfbo import mfBayesOpt

@@ -40,7 +40,7 @@ class MultiFidelitySampler:
     def get_samples(self,
                     num_samples: List,
                     seed: int = 123456,
-                    **kwargs) -> Dict:
+                    **kwargs) -> List:
         """
         Get the samples
 

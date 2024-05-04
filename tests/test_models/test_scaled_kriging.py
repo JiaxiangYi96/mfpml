@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from mfpml.design_of_experiment.multifidelity_samplers import MFSobolSequence
-from mfpml.models.mf_scale_kriging import ScaledKriging
+from mfpml.models.scale_kriging import ScaledKriging
 from mfpml.optimization.evolutionary_algorithms import PSO
 from mfpml.problems.multifidelity_functions import Forrester_1b
 

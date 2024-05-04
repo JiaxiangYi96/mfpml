@@ -5,58 +5,50 @@ import numpy as np
 from numpy.linalg import cholesky, solve
 from scipy.optimize import minimize
 
-from .gpr_base import MultiFidelityGP
+from .gaussian_process import GaussianProcessRegression as GP
 from .kernels import RBF
-from .kriging import Kriging
+from .mf_gaussian_process import _mfGaussianProcess
 
 
-class HierarchicalKriging(MultiFidelityGP):
+class HierarchicalKriging(_mfGaussianProcess):
+
     def __init__(
         self,
         design_space: np.ndarray,
         optimizer: Any = None,
-        optimizer_restart: int = 0,
+        optimizer_restart: int = 5,
         kernel_bound: list = [-4.0, 2.0],
+        noise_prior: float = None,
     ) -> None:
-        """Initialize hierarchical Kriging model
 
-        Parameters
-        ----------
-        design_space: np.ndarray
-            array of shape=((num_dim,2)) where each row describes
-            the bound for the variable on specfic dimension.
-        optimizer: Any, optional
-            instance of the optimizer used to optimize the hyperparameters
-            with the use style optimizer.run_optimizer(objective function,
-            number of dimension, design space of variables), if not assigned,
-            the 'L-BFGS-B' method in scipy is used.
-        kernel_bound: list, optional
-            log bound of the kernel for hierarchical Kriging model, by
-            default [-2, 3].
-        """
-        self.bounds = design_space
+        # initialize the base class
+        super().__init__(design_space)
+
+        # initialize the parameters
         self.optimizer = optimizer
         self.optimizer_restart = optimizer_restart
         self.num_dim = design_space.shape[0]
         self.kernel = RBF(theta=np.zeros(self.num_dim), bounds=kernel_bound)
+        self.noise = noise_prior
+        # define the low-fidelity model
+        self.lfGP = GP(design_space=design_space,
+                       optimizer=optimizer,
+                       optimizer_restart=optimizer_restart,
+                       noise_prior=noise_prior)
 
-        self.lf_model = Kriging(design_space=design_space,
-                                optimizer=optimizer,
-                                optimizer_restart=optimizer_restart)
-
-    def _train_hf(self, sample_xh: np.ndarray, sample_yh: np.ndarray) -> None:
+    def _train_hf(self, X: np.ndarray, Y: np.ndarray) -> None:
         """Train the high-fidelity model
 
         Parameters
         ----------
-        sample_xh : np.ndarray
+        X : np.ndarray
             array of high-fidelity samples
-        sample_yh : np.ndarray
+        Y : np.ndarray
             array of high-fidelity responses
         """
         # get samples
-        self.sample_xh = sample_xh
-        self.sample_yh = sample_yh
+        self.sample_xh = X
+        self.sample_yh = Y
         # normalization
         self.sample_xh_scaled = self.normalize_input(self.sample_xh)
         self.sample_yh_scaled = self.normalize_hf_output(self.sample_yh)
@@ -69,13 +61,13 @@ class HierarchicalKriging(MultiFidelityGP):
         self._update_parameters()
 
     def predict(
-        self, x_predict: np.ndarray, return_std: bool = False
+        self, X: np.ndarray, return_std: bool = False
     ) -> np.ndarray | Tuple[np.ndarray, np.ndarray]:
         """Predict high-fidelity responses
 
         Parameters
         ----------
-        x_predict : np.ndarray
+        X : np.ndarray
             array of high-fidelity to be predicted
         return_std : bool, optional
             whether to return std values, by default False
@@ -86,12 +78,12 @@ class HierarchicalKriging(MultiFidelityGP):
             prediction of high-fidelity
         """
         # original prediction of lf
-        pre_lf = self.predict_lf(x_predict)
+        pre_lf = self.predict_lf(X)
         # scale it to hf
         pre_lf = (pre_lf - self.yh_mean) / self.yh_std
 
         # normalize the input
-        XHnew = np.atleast_2d(self.normalize_input(x_predict))
+        XHnew = np.atleast_2d(self.normalize_input(X))
         knew = self.kernel.get_kernel_matrix(XHnew, self.sample_xh_scaled)
 
         # get the prediction
@@ -120,20 +112,42 @@ class HierarchicalKriging(MultiFidelityGP):
 
     def _optHyp(self):
         """Optimize the hyperparameters"""
+        if self.noise is None:
+            # noise value needs to be optimized
+            lower_bound_theta = self.kernel._get_low_bound
+            upper_bound_theta = self.kernel._get_high_bound
+            # set up the bounds for noise sigma
+            lower_bound_sigma = 1e-5
+            upper_bound_sigma = 10.0
+            # set up the bounds for the hyper-parameters
+            lower_bound = np.hstack((lower_bound_theta, lower_bound_sigma))
+            upper_bound = np.hstack((upper_bound_theta, upper_bound_sigma))
+            # bounds for the hyper-parameters
+            hyper_bounds = np.vstack((lower_bound, upper_bound)).T
+            # number of hyper-parameters
+            num_hyper = self.kernel._get_num_para + 1
+        else:
+            lower_bound = self.kernel._get_low_bound
+            upper_bound = self.kernel._get_high_bound
+            # bounds for the hyper-parameters
+            hyper_bounds = np.vstack((lower_bound, upper_bound)).T
+            # number of hyper-parameters
+            num_hyper = self.kernel._get_num_para
+
         if self.optimizer is None:
             n_trials = self.optimizer_restart + 1
             opt_fs = float("inf")
             for _ in range(n_trials):
                 x0 = np.random.uniform(
-                    self.kernel._get_low_bound,
-                    self.kernel._get_high_bound,
-                    self.kernel._get_num_para,
+                    lower_bound,
+                    upper_bound,
+                    num_hyper
                 )
                 optRes = minimize(
                     self._logLikelihood,
                     x0=x0,
                     method="L-BFGS-B",
-                    bounds=self.kernel._get_bounds_list,
+                    bounds=hyper_bounds,
                 )
                 if optRes.fun < opt_fs:
                     opt_param = optRes.x
@@ -141,8 +155,8 @@ class HierarchicalKriging(MultiFidelityGP):
         else:
             optRes, _, _ = self.optimizer.run_optimizer(
                 self._logLikelihood,
-                num_dim=self.kernel._get_num_para,
-                design_space=self.kernel._get_bounds,
+                num_dim=num_hyper,
+                design_space=hyper_bounds,
             )
             opt_param = optRes["best_x"]
         self.opt_param = opt_param
@@ -160,12 +174,21 @@ class HierarchicalKriging(MultiFidelityGP):
         np.ndarray
             log likelihood
         """
+
         params = np.atleast_2d(params)
+        num_params = params.shape[1]
         out = np.zeros(params.shape[0])
         for i in range(params.shape[0]):
-            param = params[i, :]
+            # for optimization every row is a parameter set
+            if self.noise is None:
+                param = params[i, 0: num_params - 1]
+                noise_sigma = params[i, -1]
+            else:
+                param = params[i, :]
+                noise_sigma = self.noise / self.yh_std
+
             K = self.kernel(self.sample_xh_scaled,
-                            self.sample_xh_scaled, param)
+                            self.sample_xh_scaled, param) + noise_sigma**2 * np.eye(self._num_xh)
             L = cholesky(K)
             alpha = solve(L.T, solve(L, self.sample_yh_scaled))
             beta = solve(L.T, solve(L, self.F))
@@ -184,8 +207,14 @@ class HierarchicalKriging(MultiFidelityGP):
 
     def _update_parameters(self) -> None:
         """Update parameters of the model"""
+        if self.noise is None:
+            self.noise = self.opt_param[-1]*self.yh_std
+            self.kernel.set_params(self.opt_param[:-1])
+        else:
+            self.kernel.set_params(self.opt_param)
         self.K = self.kernel.get_kernel_matrix(
-            self.sample_xh_scaled, self.sample_xh_scaled)
+            self.sample_xh_scaled, self.sample_xh_scaled) + \
+            (self.noise/self.yh_std)**2 * np.eye(self._num_xh)
         self.L = cholesky(self.K)
         self.alpha = solve(self.L.T, solve(self.L, self.sample_yh_scaled))
         self.beta = solve(self.L.T, solve(self.L, self.F))

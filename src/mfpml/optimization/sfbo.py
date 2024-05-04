@@ -4,7 +4,7 @@ from typing import Any
 import numpy as np
 from matplotlib import pyplot as plt
 
-from ..models.kriging import Kriging
+from ..models.gaussian_process import GaussianProcessRegression as Kriging
 
 
 class BayesOpt(object):
