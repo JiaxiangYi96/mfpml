@@ -17,7 +17,7 @@ class HierarchicalKriging(_mfGaussianProcess):
         design_space: np.ndarray,
         optimizer: Any = None,
         optimizer_restart: int = 5,
-        kernel_bound: list = [-4.0, 2.0],
+        kernel_bound: list = [-2.0, 3.0],
         noise_prior: float = None,
     ) -> None:
 
@@ -53,11 +53,11 @@ class HierarchicalKriging(_mfGaussianProcess):
         self.sample_xh_scaled = self.normalize_input(self.sample_xh)
         self.sample_yh_scaled = self.normalize_hf_output(self.sample_yh)
         # prediction of low-fidelity at high-fidelity locations
-        F = self.predict_lf(self.sample_xh)
+        F = self.predict_lf(X)
         self.F = (F-self.yh_mean)/self.yh_std
         # optimize the hyper parameters
         self._optHyp()
-        self.kernel.set_params(self.opt_param)
+        # update the parameters
         self._update_parameters()
 
     def predict(
@@ -77,38 +77,70 @@ class HierarchicalKriging(_mfGaussianProcess):
         np.ndarray
             prediction of high-fidelity
         """
-        # original prediction of lf
-        pre_lf = self.predict_lf(X)
-        # scale it to hf
-        pre_lf = (pre_lf - self.yh_mean) / self.yh_std
+        # # original prediction of lf
+        # pre_lf = self.predict_lf(X)
+        # # scale it to hf
+        # pre_lf = (pre_lf - self.yh_mean) / self.yh_std
 
+        # # normalize the input
+        # XHnew = np.atleast_2d(self.normalize_input(X))
+        # knew = self.kernel.get_kernel_matrix(XHnew, self.sample_xh_scaled)
+
+        # # get the prediction
+        # fmean = self.beta * pre_lf + np.dot(knew, self.gamma)
+        # # scale it back to original scale
+        # fmean = fmean * self.yh_std + self.yh_mean
+        # if not return_std:
+        #     return fmean.reshape(-1, 1)
+        # else:
+        #     delta = solve(self.L.T, solve(self.L, knew.T))
+        #     mse = self.sigma2 * (
+        #         1
+        #         - np.diag(knew.dot(delta))
+        #         + np.diag(
+        #             np.dot(
+        #                 (knew.dot(self.beta) - pre_lf),
+        #                 (knew.dot(self.beta) - pre_lf).T,
+        #             )
+        #         )
+        #         / self.F.T.dot(self.beta)
+        #     )
+
+        #     # scale it back to original scale
+        #     self.epis_std = np.sqrt(np.maximum(mse, 0))*self.yh_std
+
+        #     # total std
+        #     total_std = np.sqrt((self.epis_std + self.noise**2))
         # normalize the input
-        XHnew = np.atleast_2d(self.normalize_input(X))
-        knew = self.kernel.get_kernel_matrix(XHnew, self.sample_xh_scaled)
-
-        # get the prediction
-        fmean = self.mu * pre_lf + np.dot(knew, self.gamma)
-        # scale it back to original scale
-        fmean = fmean * self.yh_std + self.yh_mean
+        sample_new = self.normalize_input(X)
+        sample_new = np.atleast_2d(sample_new)
+        # get the kernel matrix for predicted samples(scaled samples)
+        knew = self.kernel.get_kernel_matrix(self.sample_xh_scaled, sample_new)
+        # calculate the predicted mean
+        f = self.predict_lf(X, return_std=False)
+        # scale the prediction to high-fidelity
+        f = (f - self.yh_mean) / self.yh_std
+        # get the mean
+        fmean = np.dot(f, self.beta) + np.dot(knew.T, self.gamma)
+        fmean = (fmean * self.yh_std + self.yh_mean).reshape(-1, 1)
+        # calculate the standard deviation
         if not return_std:
             return fmean.reshape(-1, 1)
         else:
-            delta = solve(self.L.T, solve(self.L, knew.T))
-            mse = self.sigma2 * (
-                1
-                - np.diag(knew.dot(delta))
-                + np.diag(
-                    np.dot(
-                        (knew.dot(self.beta) - pre_lf),
-                        (knew.dot(self.beta) - pre_lf).T,
-                    )
-                )
-                / self.F.T.dot(self.beta)
-            )
+            delta = solve(self.L.T, solve(self.L, knew))
+            R = f.T - np.dot(self.F.T, delta)
+            # epistemic uncertainty calculation
+            mse = self.sigma2 * \
+                (1 - np.diag(np.dot(knew.T, delta)) +
+                    np.diag(R.T.dot(solve(self.ld.T, solve(self.ld, R))))
+                 )
+            std = np.sqrt(np.maximum(mse, 0)).reshape(-1, 1)
+            # epistemic uncertainty scale back
+            self.epistemic = std*self.yh_std
 
-            # scale it back to original scale
-            mse = np.sqrt(np.maximum(mse, 0))*self.yh_std
-            return fmean.reshape(-1, 1), mse.reshape(-1, 1)
+            # total uncertainty
+            total_unc = np.sqrt(self.epistemic**2 + self.noise**2)
+            return fmean, total_unc
 
     def _optHyp(self):
         """Optimize the hyperparameters"""
@@ -177,7 +209,7 @@ class HierarchicalKriging(_mfGaussianProcess):
 
         params = np.atleast_2d(params)
         num_params = params.shape[1]
-        out = np.zeros(params.shape[0])
+        nll = np.zeros(params.shape[0])
         for i in range(params.shape[0]):
             # for optimization every row is a parameter set
             if self.noise is None:
@@ -187,49 +219,68 @@ class HierarchicalKriging(_mfGaussianProcess):
                 param = params[i, :]
                 noise_sigma = self.noise / self.yh_std
 
+            # Step 1: estimate beta, which is the coefficient of basis function
+            # f, basis function
+            # f = self.predict_lf(self.sample_xh)
+            # alpha = K^(-1) * Y
+            # calculate the covariance matrix
             K = self.kernel(self.sample_xh_scaled,
-                            self.sample_xh_scaled, param) + noise_sigma**2 * np.eye(self._num_xh)
+                            self.sample_xh_scaled,
+                            param) + noise_sigma**2 * np.eye(self._num_xh)
             L = cholesky(K)
             alpha = solve(L.T, solve(L, self.sample_yh_scaled))
-            beta = solve(L.T, solve(L, self.F))
-            mu = (np.dot(self.F.T, alpha) / np.dot(self.F.T, beta)).squeeze()
-            gamma = solve(L.T, solve(L, (self.sample_yh_scaled - mu * self.F)))
-            sigma2 = (
-                np.dot((self.sample_yh_scaled -
-                        mu * self.F).T, gamma).squeeze()
-                / self._num_xh
-            ).squeeze()
-            logp = -self._num_xh * np.log(sigma2) - 2 * np.sum(
-                np.log(np.diag(L))
-            )
-            out[i] = logp.squeeze()
-        return -out
+            # K^(-1)f
+            KF = solve(L.T, solve(L, self.F))
+            # cholesky decomposition for (F^T *K^(-1)* F)
+            ld = cholesky(np.dot(self.F.T, KF))
+            # beta = (F^T *K^(-1)* F)^(-1) * F^T *R^(-1) * Y
+            beta = solve(ld.T, solve(ld, np.dot(self.F.T, alpha)))
+
+            # step 2: estimate sigma2
+            # gamma = 1/n * (Y - F * beta)^T * K^(-1) * (Y - F * beta)
+            gamma = solve(L.T, solve(
+                L, (self.sample_yh_scaled - np.dot(self.F, beta))))
+            sigma2 = np.dot((self.sample_yh_scaled - np.dot(self.F, beta)).T,
+                            gamma) / self._num_xh
+
+            # step 3: calculate the log likelihood
+            logp = -0.5 * self._num_xh * sigma2 - np.sum(np.log(np.diag(L)))
+
+            nll[i] = -logp.ravel()
+
+        return nll
 
     def _update_parameters(self) -> None:
         """Update parameters of the model"""
+        # update parameters with optimized hyper-parameters
         if self.noise is None:
             self.noise = self.opt_param[-1]*self.yh_std
             self.kernel.set_params(self.opt_param[:-1])
         else:
             self.kernel.set_params(self.opt_param)
+        # get the kernel matrix
         self.K = self.kernel.get_kernel_matrix(
             self.sample_xh_scaled, self.sample_xh_scaled) + \
             (self.noise/self.yh_std)**2 * np.eye(self._num_xh)
+
         self.L = cholesky(self.K)
+
+        # step 1: get the optimal beta
+        # alpha = K^(-1) * Y
         self.alpha = solve(self.L.T, solve(self.L, self.sample_yh_scaled))
-        self.beta = solve(self.L.T, solve(self.L, self.F))
-        self.mu = (
-            np.dot(self.F.T, self.alpha) / np.dot(self.F.T, self.beta)
-        ).item()
-        self.gamma = solve(
-            self.L.T, solve(self.L, (self.sample_yh_scaled - self.mu * self.F))
-        )
-        self.sigma2 = (
-            np.dot((self.sample_yh_scaled - self.mu * self.F).T,
-                   self.gamma).squeeze()
-            / self._num_xh
-        ).item()
-        self.logp = (
-            -self._num_xh * np.log(self.sigma2)
-            - np.sum(np.log(np.diag(self.L)))
-        ).item()
+        # K^(-1)f
+        self.KF = solve(self.L.T, solve(self.L, self.F))
+        self.ld = cholesky(np.dot(self.F.T, self.KF))
+        # beta = (F^T *K^(-1)* F)^(-1) * F^T *R^(-1) * Y
+        self.beta = solve(self.ld.T, solve(
+            self.ld, np.dot(self.F.T, self.alpha)))
+
+        # step 2: get the optimal sigma2
+        self.gamma = solve(self.L.T, solve(
+            self.L, (self.sample_yh_scaled - np.dot(self.F, self.beta))))
+        self.sigma2 = np.dot((self.sample_yh_scaled - np.dot(self.F, self.beta)).T,
+                             self.gamma) / self._num_xh
+
+        # step 3: get the optimal log likelihood
+        self.logp = (-0.5 * self._num_xh * self.sigma2 -
+                     np.sum(np.log(np.diag(self.L)))).item()

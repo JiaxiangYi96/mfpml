@@ -194,7 +194,7 @@ class GP:
             / self.num_samples
 
         # step 3: get the optimal log likelihood
-        self.logp = (-0.5 * self.num_samples * np.log(self.sigma2) -
+        self.logp = (-0.5 * self.num_samples * self.sigma2 -
                      np.sum(np.log(np.diag(self.L)))).item()
 
     def predict(self,
@@ -307,7 +307,7 @@ class CoKriging:
         design_space: np.ndarray,
         optimizer: Any = None,
         optimizer_restart: int = 0,
-        kernel_bound: list = [-4.0, 3.0],
+        kernel_bound: list = [-2.0, 3.0],
         rho_bound: list = [1e-2, 1e2],
         noise_prior: float = None,
     ) -> None:
@@ -375,6 +375,7 @@ class CoKriging:
         self.sample_yl_scaled = (self.sample_yl - self.yh_mean) / self.yh_std
         # scale the noise value
         if self.noise is not None:
+            print("Noise is not None")
             self.noise = self.noise / self.yh_std
             # update the noise value of the low-fidelity model
             self.lfGP.noise = self.noise
@@ -424,8 +425,6 @@ class CoKriging:
         """
         # transfer to 2d array
         Xnew = np.atleast_2d(self.normalize_input(X))
-        #
-        # oneC = np.ones((self.C.shape[0], 1))
         # calculate the covariance matrix
         c = np.concatenate(
             (
@@ -454,8 +453,10 @@ class CoKriging:
                 + self.sigma2
                 - c.T.dot(solve(self.LC.T, solve(self.LC, c)))
             )
-            std = np.sqrt(np.maximum(np.diag(s2), 0))*self.yh_std
-            return fmean.reshape(-1, 1), std.reshape(-1, 1)
+            self.epis_std = np.sqrt(np.maximum(np.diag(s2), 0))*self.yh_std
+            self.noise = self.noise * self.yh_std
+            total_std = np.sqrt((self.epis_std**2 + self.noise**2))
+            return fmean.reshape(-1, 1), total_std.reshape(-1, 1)
 
     def predict_lf(
         self, X: np.ndarray, return_std: bool = False
@@ -584,8 +585,7 @@ class CoKriging:
             gamma = solve(L.T, solve(L, (diff_y - mu)))
             sigma2 = np.dot((diff_y - mu).T, gamma) / self._num_xh
             # negative log likelihood
-            logp = -0.5 * self._num_xh * \
-                np.log(sigma2) - np.sum(np.log(np.diag(L)))
+            logp = -0.5 * self._num_xh * sigma2 - np.sum(np.log(np.diag(L)))
             out[i] = logp.ravel()
         return -out
 
