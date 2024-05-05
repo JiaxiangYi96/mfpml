@@ -385,7 +385,7 @@ class CoKriging:
         self.lfGP.train(self.sample_xl_scaled,
                         self.sample_yl_scaled)
         end_time = time.time()
-        self.lf_train_time = end_time - start_time
+        self.lf_traininig_time = end_time - start_time
         # train the high-fidelity model
         # prediction of low-fidelity at high-fidelity locations
         self.pred_ylh = self.lfGP.predict(
@@ -404,7 +404,7 @@ class CoKriging:
         # update the kernel matrix
         self._update_parameters()
         end_time_hf = time.time()
-        self.hf_train_time = end_time_hf - end_time
+        self.hf_training_time = end_time_hf - end_time
 
     def predict(
         self, X: np.ndarray, return_std: bool = False

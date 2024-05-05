@@ -54,9 +54,6 @@ class _mfGaussianProcess:
         # record the training time for low-fidelity and high-fidelity model
         self.lf_training_time = clock_lf - clock_start
         self.hf_training_time = clock_hf - clock_lf
-        # print the training time
-        print(f"Training time of low-fidelity model: {self.lf_training_time}")
-        print(f"Training time of high-fidelity model: {self.hf_training_time}")
 
     def _train_lf(self,
                   X: np.ndarray,
