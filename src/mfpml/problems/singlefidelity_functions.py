@@ -1,6 +1,5 @@
 
 
-import matplotlib.pyplot as plt
 import numpy as np
 
 from mfpml.problems.functions import Functions
@@ -51,7 +50,7 @@ class Branin(Functions):
     low_fidelity: list = None
 
     @classmethod
-    def is_dim_compatible(cls, num_dim):
+    def is_dim_compatible(cls, num_dim) -> int:
         assert (
             num_dim == cls.num_dim
         ), f"Can not change dimension for {cls.__name__} function"

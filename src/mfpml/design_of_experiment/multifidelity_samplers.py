@@ -1,5 +1,5 @@
 import pickle
-from typing import Dict, List
+from typing import List
 
 import numpy as np
 from scipy.stats.qmc import LatinHypercube, Sobol
@@ -236,7 +236,7 @@ class MFSobolSequence(MultiFidelitySampler):
 
         Parameters
         ----------
-        design_space : dict
+        design_space : List
             design space of the problem
         nested : bool, optional
             nested sampling or not, by default False

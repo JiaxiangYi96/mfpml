@@ -61,7 +61,9 @@ class HierarchicalKriging(_mfGaussianProcess):
         self._update_parameters()
 
     def predict(
-        self, X: np.ndarray, return_std: bool = False
+        self,
+        X: np.ndarray, 
+        return_std: bool = False
     ) -> np.ndarray | Tuple[np.ndarray, np.ndarray]:
         """Predict high-fidelity responses
 
@@ -77,40 +79,6 @@ class HierarchicalKriging(_mfGaussianProcess):
         np.ndarray
             prediction of high-fidelity
         """
-        # # original prediction of lf
-        # pre_lf = self.predict_lf(X)
-        # # scale it to hf
-        # pre_lf = (pre_lf - self.yh_mean) / self.yh_std
-
-        # # normalize the input
-        # XHnew = np.atleast_2d(self.normalize_input(X))
-        # knew = self.kernel.get_kernel_matrix(XHnew, self.sample_xh_scaled)
-
-        # # get the prediction
-        # fmean = self.beta * pre_lf + np.dot(knew, self.gamma)
-        # # scale it back to original scale
-        # fmean = fmean * self.yh_std + self.yh_mean
-        # if not return_std:
-        #     return fmean.reshape(-1, 1)
-        # else:
-        #     delta = solve(self.L.T, solve(self.L, knew.T))
-        #     mse = self.sigma2 * (
-        #         1
-        #         - np.diag(knew.dot(delta))
-        #         + np.diag(
-        #             np.dot(
-        #                 (knew.dot(self.beta) - pre_lf),
-        #                 (knew.dot(self.beta) - pre_lf).T,
-        #             )
-        #         )
-        #         / self.F.T.dot(self.beta)
-        #     )
-
-        #     # scale it back to original scale
-        #     self.epis_std = np.sqrt(np.maximum(mse, 0))*self.yh_std
-
-        #     # total std
-        #     total_std = np.sqrt((self.epis_std + self.noise**2))
         # normalize the input
         sample_new = self.normalize_input(X)
         sample_new = np.atleast_2d(sample_new)

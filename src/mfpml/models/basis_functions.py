@@ -4,7 +4,7 @@ import numpy as np
 
 
 class Ordinary:
-    """Ordinary basis function of Guassian process regression.
+    """Ordinary basis function of Gaussian process regression.
     """
 
     def __call__(self, x: np.ndarray) -> np.ndarray:

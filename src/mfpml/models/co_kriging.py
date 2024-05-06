@@ -9,7 +9,7 @@ from .basis_functions import Ordinary
 from .kernels import RBF
 
 
-class GP:
+class _GP:
     """single fidelity Gaussian process regression model, there is no 
     normalization for the input and output. This is because we have to 
     adapt the model to the Co-Kriging model.
@@ -153,8 +153,7 @@ class GP:
                             gamma) / self.num_samples
 
             # step 3: calculate the log likelihood
-            logp = -0.5 * self.num_samples * \
-                np.log(sigma2) - np.sum(np.log(np.diag(L)))
+            logp = -0.5 * self.num_samples * sigma2 - np.sum(np.log(np.diag(L)))
             nll[i] = -logp.ravel()
 
         return nll
@@ -340,7 +339,7 @@ class CoKriging:
         self.kernel = RBF(theta=np.zeros(self.num_dim),
                           bounds=kernel_bound)
         # lf model is a Kriging model with RBF kernel
-        self.lfGP = GP(
+        self.lfGP = _GP(
             design_space=design_space,
             optimizer=optimizer,
             optimizer_restart=optimizer_restart,
@@ -385,7 +384,7 @@ class CoKriging:
         self.lfGP.train(self.sample_xl_scaled,
                         self.sample_yl_scaled)
         end_time = time.time()
-        self.lf_traininig_time = end_time - start_time
+        self.lf_training_time = end_time - start_time
         # train the high-fidelity model
         # prediction of low-fidelity at high-fidelity locations
         self.pred_ylh = self.lfGP.predict(
