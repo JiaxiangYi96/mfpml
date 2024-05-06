@@ -165,8 +165,7 @@ class _GP:
             self.noise = self.opt_param[-1]
         else:
             self.kernel.set_params(self.opt_param)
-        # assign the best hyper-parameter to the kernel
-        self.kernel.set_params(self.opt_param)
+
         # update parameters with optimized hyper-parameters
         self.K = self.kernel.get_kernel_matrix(self.sample_scaled_x,
                                                self.sample_scaled_x) +\
@@ -374,7 +373,6 @@ class CoKriging:
         self.sample_yl_scaled = (self.sample_yl - self.yh_mean) / self.yh_std
         # scale the noise value
         if self.noise is not None:
-            print("Noise is not None")
             self.noise = self.noise / self.yh_std
             # update the noise value of the low-fidelity model
             self.lfGP.noise = self.noise

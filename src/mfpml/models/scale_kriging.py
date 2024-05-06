@@ -104,13 +104,13 @@ class ScaledKriging(_mfGaussianProcess):
         self.disc_model.train(self.sample_xh, self._getDisc())
 
     def predict(
-        self, x_predict: np.ndarray, return_std: bool = False
+        self, X: np.ndarray, return_std: bool = False
     ) -> Any:
         """Predict high-fidelity responses
 
         Parameters
         ----------
-        x_predict : np.ndarray
+        X : np.ndarray
             array of high-fidelity to be predicted
         return_std : bool, optional
             whether to return std values, by default False
@@ -121,11 +121,11 @@ class ScaledKriging(_mfGaussianProcess):
             prediction of high-fidelity
         """
         if not return_std:
-            return self.disc_model.predict(x_predict) * self.rho \
-                + self.lfGP.predict(x_predict)
+            return self.disc_model.predict(X) * self.rho \
+                + self.lfGP.predict(X)
         else:
-            pre_lf, std_lf = self.lfGP.predict(x_predict, return_std)
-            pre_disc, std_disc = self.disc_model.predict(x_predict, return_std)
+            pre_lf, std_lf = self.lfGP.predict(X, return_std)
+            pre_disc, std_disc = self.disc_model.predict(X, return_std)
             mse = self.rho**2 * std_lf**2 + std_disc**2
             return self.rho * pre_lf + pre_disc, np.sqrt(mse)
 
