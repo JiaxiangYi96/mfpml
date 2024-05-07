@@ -102,6 +102,7 @@ class ScaledKriging(_mfGaussianProcess):
         if self.rho_optimize:
             self._rho_optimize()
         self.disc_model.train(self.sample_xh, self._getDisc())
+        self.noise = self.disc_model.noise
 
     def predict(
         self, X: np.ndarray, return_std: bool = False
