@@ -84,7 +84,6 @@ class _GP:
                     x0=x0,
                     method="l-bfgs-b",
                     bounds=hyper_bounds,
-                    options={"maxfun": 200},
 
                 )
                 # greedy search for the optimum value
@@ -153,7 +152,8 @@ class _GP:
                             gamma) / self.num_samples
 
             # step 3: calculate the log likelihood
-            logp = -0.5 * self.num_samples * sigma2 - np.sum(np.log(np.diag(L)))
+            logp = -0.5 * self.num_samples * \
+                sigma2 - np.sum(np.log(np.diag(L)))
             nll[i] = -logp.ravel()
 
         return nll
