@@ -252,8 +252,12 @@ class GaussianProcessRegression:
                             gamma) / self.num_samples
 
             # step 3: calculate the log likelihood
-            logp = -0.5 * self.num_samples * \
-                sigma2 - np.sum(np.log(np.diag(L)))
+            if self.noise == 0.0:
+                logp = -0.5 * self.num_samples * \
+                    np.log(sigma2) - np.sum(np.log(np.diag(L)))
+            else:
+                logp = -0.5 * self.num_samples * \
+                    sigma2 - np.sum(np.log(np.diag(L)))
             nll[i] = -logp.ravel()
 
         return nll

@@ -152,8 +152,12 @@ class _GP:
                             gamma) / self.num_samples
 
             # step 3: calculate the log likelihood
-            logp = -0.5 * self.num_samples * \
-                sigma2 - np.sum(np.log(np.diag(L)))
+            if self.noise == 0.0:
+                logp = -0.5 * self.num_samples * \
+                    np.log(sigma2) - np.sum(np.log(np.diag(L)))
+            else:
+                logp = -0.5 * self.num_samples * \
+                    sigma2 - np.sum(np.log(np.diag(L)))
             nll[i] = -logp.ravel()
 
         return nll
@@ -236,7 +240,9 @@ class _GP:
 
             return fmean, std
 
-    def train(self, sample_x: np.ndarray, sample_y: np.ndarray) -> None:
+    def train(self,
+              sample_x: np.ndarray,
+              sample_y: np.ndarray) -> None:
         """training procedure of gpr models
 
         Parameters
@@ -582,7 +588,12 @@ class CoKriging:
             gamma = solve(L.T, solve(L, (diff_y - mu)))
             sigma2 = np.dot((diff_y - mu).T, gamma) / self._num_xh
             # negative log likelihood
-            logp = -0.5 * self._num_xh * sigma2 - np.sum(np.log(np.diag(L)))
+            if self.noise == 0.0:
+                logp = -0.5 * self._num_xh * np.log(sigma2) - \
+                    np.sum(np.log(np.diag(L)))
+            else:
+                logp = -0.5 * self._num_xh * \
+                    sigma2 - np.sum(np.log(np.diag(L)))
             out[i] = logp.ravel()
         return -out
 

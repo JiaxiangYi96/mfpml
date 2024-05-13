@@ -62,7 +62,7 @@ class HierarchicalKriging(_mfGaussianProcess):
 
     def predict(
         self,
-        X: np.ndarray, 
+        X: np.ndarray,
         return_std: bool = False
     ) -> np.ndarray | Tuple[np.ndarray, np.ndarray]:
         """Predict high-fidelity responses
@@ -212,7 +212,12 @@ class HierarchicalKriging(_mfGaussianProcess):
                             gamma) / self._num_xh
 
             # step 3: calculate the log likelihood
-            logp = -0.5 * self._num_xh * sigma2 - np.sum(np.log(np.diag(L)))
+            if self.noise == 0.0:
+                logp = -0.5 * self._num_xh * \
+                    np.log(sigma2) - np.sum(np.log(np.diag(L)))
+            else:
+                logp = -0.5 * self._num_xh * \
+                    sigma2 - np.sum(np.log(np.diag(L)))
 
             nll[i] = -logp.ravel()
 
