@@ -164,7 +164,7 @@ class MFLatinHyperCube(MultiFidelitySampler):
     """
 
     def __init__(
-        self, design_space: List,
+        self, design_space: List | np.ndarray,
         num_fidelity: int = None,  # type: ignore
         nested: bool = False,
     ) -> None:

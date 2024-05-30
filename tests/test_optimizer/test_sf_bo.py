@@ -4,8 +4,8 @@ import pytest
 
 # local funstions
 from mfpml.models.kriging import Kriging
-from mfpml.optimization.sf_acqusitions import EI, LCB, PI
-from mfpml.optimization.sfbo import BayesOpt
+from mfpml.optimization.sf_uncons_acqusitions import EI, LCB, PI
+from mfpml.optimization.sf_uncons_bo import BayesOpt
 from mfpml.problems.singlefidelity_functions import Forrester
 
 # define function

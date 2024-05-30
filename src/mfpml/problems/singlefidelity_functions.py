@@ -1,5 +1,7 @@
 
 
+from typing import Any, List
+
 import numpy as np
 
 from mfpml.problems.functions import Functions
@@ -15,12 +17,12 @@ class Forrester(Functions):
     num_cons: int = 0
     input_domain: np.ndarray = np.array([[0.0, 1.0]])
     optimum: float = -6.020740
-    optimum_scheme: list = [0.757248757841856]
+    optimum_scheme: List = [0.757248757841856]
     low_fidelity: bool = None
-    cost_ratio: list = None
+    cost_ratio: List = None
 
     @classmethod
-    def is_dim_compatible(cls, num_dim):
+    def is_dim_compatible(cls, num_dim) -> Any:
         assert (
             num_dim == cls.num_dim
         ), f"Can not change dimension for {cls.__name__} function"
@@ -46,8 +48,8 @@ class Branin(Functions):
     num_cons: int = 0
     input_domain = np.array([[-5.0, 10.0], [0.0, 15.0]])
     optimum: float = 0.397887
-    optimum_scheme: list = [[-np.pi, 12.275], [np.pi, 2.275], [9.42478, 2.475]]
-    low_fidelity: list = None
+    optimum_scheme: List = [[-np.pi, 12.275], [np.pi, 2.275], [9.42478, 2.475]]
+    low_fidelity: List = None
 
     @classmethod
     def is_dim_compatible(cls, num_dim) -> int:
@@ -91,8 +93,8 @@ class GoldPrice(Functions):
     num_cons: int = 0
     input_domain = np.array([[-2.0, 2.0], [-2.0, 2.0]])
     optimum: float = 3.0
-    optimum_scheme: list = [0.0, 1.0]
-    low_fidelity: list = None
+    optimum_scheme: List = [0.0, 1.0]
+    low_fidelity: List = None
 
     @classmethod
     def is_dim_compatible(cls, num_dim):
@@ -147,8 +149,8 @@ class Sixhump(Functions):
     num_cons: int = 0
     input_domain = np.array([[-3.0, 3.0], [-2.0, 2.0]])
     optimum: float = -1.0316
-    optimum_scheme: list = [[0.0898, -0.7126], [-0.0898, 0.7126]]
-    low_fidelity: list = None
+    optimum_scheme: List = [[0.0898, -0.7126], [-0.0898, 0.7126]]
+    low_fidelity: List = None
 
     @classmethod
     def is_dim_compatible(cls, num_dim):
@@ -186,8 +188,8 @@ class Sasena(Functions):
     num_cons: int = 0
     input_domain = np.array([[0.0, 5.0], [0.0, 5.0]])
     optimum: float = -1.4565
-    optimum_scheme: list = [2.5044, 2.5778]
-    low_fidelity: list = None
+    optimum_scheme: List = [2.5044, 2.5778]
+    low_fidelity: List = None
 
     @classmethod
     def is_dim_compatible(cls, num_dim):
@@ -226,8 +228,8 @@ class Hartman3(Functions):
     num_cons: int = 0
     input_domain = np.array([[0.0, 1.0], [0.0, 1.0], [0.0, 1.0]])
     optimum: float = -3.86278214782076
-    optimum_scheme: list = [0.1, 0.55592003, 0.85218259]
-    low_fidelity: list = None
+    optimum_scheme: List = [0.1, 0.55592003, 0.85218259]
+    low_fidelity: List = None
 
     @classmethod
     def is_dim_compatible(cls, num_dim):
@@ -355,7 +357,7 @@ class Thevenot(Functions):
     low_fidelity: list = None
 
     @classmethod
-    def is_dim_compatible(cls, d) -> any:
+    def is_dim_compatible(cls, d) -> Any:
         assert (d is None) or (
             isinstance(d, int) and (not d < 0)
         ), "The dimension d must be None or a positive integer"
@@ -419,8 +421,8 @@ class Ackley(Functions):
     num_cons: int = 0
     input_domain: np.ndarray = None
     optimum: float = None
-    optimum_scheme: list = None
-    low_fidelity: list = None
+    optimum_scheme: List = None
+    low_fidelity: List = None
 
     @classmethod
     def is_dim_compatible(cls, d):
@@ -505,8 +507,8 @@ class AckleyN2(Functions):
     num_cons: int = 0
     input_domain: np.ndarray = np.array([[-32.0, 32.0], [-32.0, 32.0]])
     optimum: float = [0.0, 0.0]
-    optimum_scheme: list = -200.0
-    low_fidelity: list = None
+    optimum_scheme: List = -200.0
+    low_fidelity: List = None
 
     @classmethod
     def is_dim_compatible(cls, d):
