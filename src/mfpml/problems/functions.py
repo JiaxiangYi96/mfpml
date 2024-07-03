@@ -8,6 +8,7 @@ import numpy as np
 class Functions(ABC):
 
     num_dim: int = None
+    num_cons: int = None
     optimum: float = None
     optimum_scheme: list = None
     input_domain: np.ndarray = None

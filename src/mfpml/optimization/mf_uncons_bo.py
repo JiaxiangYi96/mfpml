@@ -14,7 +14,7 @@ class mfUnConsBayesOpt:
     """
 
     def __init__(self, problem: Functions,
-                 acquisition: MF) -> None:
+                 acquisition: Any) -> None:
         """Initialize the multi-fidelity Bayesian optimization
 
         Parameters
