@@ -14,7 +14,7 @@ class SFUnConsAcq(ABC):
 
     def __init__(self,
                  optimizer: Any) -> None:
-   
+
         # optimizer for getting update points
         self.optimizer = optimizer
 
@@ -70,6 +70,7 @@ class SFUnConsAcq(ABC):
 
         return opt_x
 
+
 class LCB(SFUnConsAcq):
     """Lower confidence bounding"""
 
@@ -117,12 +118,13 @@ class LCB(SFUnConsAcq):
         lcb = self.kappa[0]*y_hat - self.kappa[1] * sigma
         return lcb
 
+
 class EI(SFUnConsAcq):
     """
     Expected improvement acquisition function
     """
 
-    def __init__(self, 
+    def __init__(self,
                  optimizer: Any = None) -> None:
         super(EI, self).__init__(optimizer=optimizer)
 
@@ -152,6 +154,7 @@ class EI(SFUnConsAcq):
         ) + sigma * norm.pdf((f_min - y_hat) / (sigma + 1e-9))
 
         return -ei
+
 
 class PI(SFUnConsAcq):
     """

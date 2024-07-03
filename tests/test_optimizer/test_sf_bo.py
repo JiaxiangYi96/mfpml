@@ -5,8 +5,8 @@ import pytest
 # local funstions
 from mfpml.models.kriging import Kriging
 from mfpml.optimization.sf_uncons_acqusitions import EI, LCB, PI
-from mfpml.optimization.sf_uncons_bo import BayesOpt
-from mfpml.problems.singlefidelity_functions import Forrester
+from mfpml.optimization.sf_uncons_bo import BayesUnConsOpt
+from mfpml.problems.sf_functions import Forrester
 
 # define function
 func = Forrester()
@@ -49,7 +49,7 @@ def test_sf_acquisitions():
 def test_sg_bo():
 
     # initialize the BayesOpt class
-    bo = BayesOpt(problem=func)
+    bo = BayesUnConsOpt(problem=func)
     # note by changing acquisition, to lcb and ei, we can get different results
     bo.run_optimizer(init_x=x,
                      init_y=y,

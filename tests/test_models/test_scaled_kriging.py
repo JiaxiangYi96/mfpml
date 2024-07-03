@@ -4,10 +4,10 @@ import sys
 import matplotlib.pyplot as plt
 import numpy as np
 
-from mfpml.design_of_experiment.multifidelity_samplers import MFSobolSequence
+from mfpml.design_of_experiment.mf_samplers import MFSobolSequence
 from mfpml.models.scale_kriging import ScaledKriging
 from mfpml.optimization.evolutionary_algorithms import PSO
-from mfpml.problems.multifidelity_functions import Forrester_1b
+from mfpml.problems.mf_functions import Forrester_1b
 
 # define function
 func = Forrester_1b()

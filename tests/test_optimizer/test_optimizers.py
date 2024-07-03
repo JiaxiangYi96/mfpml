@@ -2,7 +2,7 @@ import numpy as np
 import pytest
 
 from mfpml.optimization.evolutionary_algorithms import DE, PSO
-from mfpml.problems.singlefidelity_functions import Ackley
+from mfpml.problems.sf_functions import Ackley
 
 pytestmark = pytest.mark.smoke
 

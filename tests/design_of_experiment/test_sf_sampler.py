@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from mfpml.design_of_experiment.singlefideliy_samplers import (
+from mfpml.design_of_experiment.sf_samplers import (
     FixNumberSampler, LatinHyperCube, RandomSampler, SobolSequence)
 
 pytestmark = pytest.mark.smoke

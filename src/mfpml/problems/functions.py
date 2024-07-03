@@ -7,6 +7,12 @@ import numpy as np
 
 class Functions(ABC):
 
+    num_dim: int = None
+    optimum: float = None
+    optimum_scheme: list = None
+    input_domain: np.ndarray = None
+    low_fidelity: list = None
+
     @staticmethod
     def f(x: np.ndarray) -> np.ndarray:
         """

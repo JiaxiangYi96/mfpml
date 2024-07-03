@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 
-from mfpml.design_of_experiment.multifidelity_samplers import (
+from mfpml.design_of_experiment.mf_samplers import (
     MFLatinHyperCube, MFSobolSequence)
 
 pytestmark = pytest.mark.smoke

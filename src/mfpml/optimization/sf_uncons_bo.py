@@ -6,15 +6,16 @@ import numpy as np
 
 from ..design_of_experiment import LatinHyperCube as LHS
 from ..models.gaussian_process import GaussianProcessRegression as Kriging
+from ..problems.functions import Functions
 from .sf_uncons_acqusitions import SFUnConsAcq
 
 
-class BayesUnconsOpt(ABC):
+class BayesUnConsOpt(ABC):
     """Bayesian optimization for single fidelity unconstrained problems
     """
 
     def __init__(self,
-                 problem: Any,
+                 problem: Functions,
                  acquisition: SFUnConsAcq,
                  num_init: int,
                  verbose: bool = False,
@@ -29,12 +30,12 @@ class BayesUnconsOpt(ABC):
         np.random.seed(self.seed)
 
         # record optimization info
-        self.best : float = np.inf
-        self.best_x : np.ndarray = None
-        self.history_best : List[float] = []
-        self.history_best_x : List[np.ndarray] = []
-        self.known_optimum : float = None
-        self.stopping_error : float = 1.0
+        self.best: float = np.inf
+        self.best_x: np.ndarray = None
+        self.history_best: List[float] = []
+        self.history_best_x: List[np.ndarray] = []
+        self.known_optimum: float = None
+        self.stopping_error: float = 1.0
 
         # initialization
         self._initialization()
@@ -44,13 +45,12 @@ class BayesUnconsOpt(ABC):
                       stopping_error: float = 1.0,
                       ) -> Tuple[float, np.ndarray]:
 
-
         # get additional info for optimization
         if self.problem.optimum is not None:
             self.known_optimum = self.problem.optimum
         else:
             self.known_optimum = None
-   
+
         # error-based stopping criterion
         self.stopping_error = stopping_error
         # main loop
@@ -77,26 +77,27 @@ class BayesUnconsOpt(ABC):
             error = self.__update_error()
 
         return self.best, self.best_x
-    
+
     def _initialization(self) -> None:
         """initialization for single fidelity bayesian optimization
         """
         # get initial samples
         sampler = LHS(design_space=self.problem.input_domain)
-        self.init_sample = sampler.get_samples(num_samples=self.num_init, seed=self.seed)
+        self.init_sample = sampler.get_samples(
+            num_samples=self.num_init, seed=self.seed)
         self.init_response = self.problem.f(self.init_sample)
 
-        # initialize the surrogate model 
+        # initialize the surrogate model
         self.surrogate = Kriging(design_space=self.problem.input_domain,
                                  noise_prior=0.0,
                                  optimizer_restart=10,)
         self.surrogate.train(X=self.init_sample,
                              Y=self.init_response)
-        
+
         # update the sample and response
         self.sample = self.init_sample.copy()
         self.response = self.init_response.copy()
-        
+
         # initialize the acquisition function
         self.best = np.min(self.init_response)
         self.best_x = self.init_sample[np.argmin(self.init_response), :]
@@ -107,7 +108,6 @@ class BayesUnconsOpt(ABC):
 
         if self.verbose:
             self.__print_info(iteration=0)
-
 
     def _update_para(self) -> None:
         # update best
@@ -120,7 +120,6 @@ class BayesUnconsOpt(ABC):
         # record the optimization history
         self.history_best.append(self.best)
         self.history_best_x.append(self.best_x)
-
 
     def __update_error(self) -> Any | float:
         """update error between the known optimum and the current optimum
@@ -140,7 +139,6 @@ class BayesUnconsOpt(ABC):
 
         return error
 
-
     def __print_info(self, iteration: int) -> None:
         """print optimum information to screen
 
@@ -157,7 +155,8 @@ class BayesUnconsOpt(ABC):
             print(f"best_x: {self.best_x}")
 
         else:
-            print(f"============= Best objective value at iteration {iteration} =========")
+            print(
+                f"============= Best objective value at iteration {iteration} =========")
             print(f"best_y: {self.best:4f}")
             print(f"best_x: {self.best_x}")
             if self.stopping_error < 1.0:
