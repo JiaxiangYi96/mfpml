@@ -2,14 +2,14 @@
 import numpy as np
 import pytest
 
-from mfpml.design_of_experiment.multifidelity_samplers import MFLatinHyperCube
+from mfpml.design_of_experiment.mf_samplers import MFLatinHyperCube
 from mfpml.models.co_kriging import CoKriging
 from mfpml.models.hierarchical_kriging import HierarchicalKriging
-from mfpml.models.mf_scale_kriging import ScaledKriging
+from mfpml.models.scale_kriging import ScaledKriging
 from mfpml.optimization.mf_acqusitions import (augmentedEI, extendedPI, vfei,
                                                vflcb)
-from mfpml.optimization.mfbo import mfBayesOpt
-from mfpml.problems.multifidelity_functions import Forrester_1a, mf_Hartman3
+from mfpml.optimization.mf_uncons_bo import BayesUnConsOpt
+from mfpml.problems.mf_functions import Forrester_1a, mf_Hartman3
 
 # define problem
 func = Forrester_1a()
@@ -35,7 +35,7 @@ acf4 = extendedPI()
 def test_mf_bo_vfei():
 
     # initialize the BayesOpt class
-    opti = mfBayesOpt(problem=func)
+    opti = BayesUnConsOpt(problem=func)
     # note by changing acquisition, to lcb and ei, we can get different results
 
     opti.run_optimizer(

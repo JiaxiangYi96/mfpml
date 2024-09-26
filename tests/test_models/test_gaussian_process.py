@@ -2,14 +2,14 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-from mfpml.design_of_experiment.singlefideliy_samplers import LatinHyperCube
+from mfpml.design_of_experiment.sf_samplers import LatinHyperCube
 from mfpml.models.basis_functions import Linear, Ordinary, Quadratic
 from mfpml.models.gaussian_process import GaussianProcess
 from mfpml.models.kernels import RBF
 # local funstions
 from mfpml.models.kriging import Kriging
 from mfpml.optimization.evolutionary_algorithms import DE
-from mfpml.problems.singlefidelity_functions import Forrester
+from mfpml.problems.sf_functions import Forrester
 
 # define function
 func = Forrester()

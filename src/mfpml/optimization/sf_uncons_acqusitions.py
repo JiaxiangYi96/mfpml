@@ -1,26 +1,51 @@
-from typing import Any
+from abc import ABC, abstractmethod
+from typing import Any, Dict, List
 
 import numpy as np
 from scipy.optimize import differential_evolution
 from scipy.stats import norm
 
-from mfpml.models.kriging import Kriging
+from mfpml.models.gaussian_process import GaussianProcessRegression as Kriging
 
 
-class sfSingleObjAcf:
+class SFUnConsAcq(ABC):
     """base class for sf acquisition functions for single objective
     """
 
-    def query(self, surrogate: Any, params: dict) -> np.ndarray:
+    def __init__(self,
+                 optimizer: Any) -> None:
+
+        # optimizer for getting update points
+        self.optimizer = optimizer
+
+    @abstractmethod
+    def eval(self,
+             x: np.ndarray,
+             surrogate: Kriging) -> np.ndarray:
+        """core of acquisition function
+
+        Parameters
+        ----------
+        x : np.ndarray
+            locations for evaluation
+        surrogate : Kriging
+            Kriging model at current iteration
+
+        Returns
+        -------
+        np.ndarray
+            values of acquisition function
+        """
+        raise NotImplementedError("eval method is not implemented")
+
+    def query(self,
+              surrogate: Any) -> np.ndarray:
         """get the next location to evaluate
 
         Parameters
         ----------
         surrogate : Any
-            Kriging model
-        params : dict
-            params of bayesian optimization
-
+            Gaussian process regression model
         Returns
         -------
         opt_x : np.ndarray
@@ -29,7 +54,7 @@ class sfSingleObjAcf:
 
         if self.optimizer is None:
             res = differential_evolution(self.eval,
-                                         bounds=params['design_space'],
+                                         bounds=surrogate.bounds,
                                          args=(surrogate,),
                                          maxiter=500,
                                          popsize=40)
@@ -37,24 +62,21 @@ class sfSingleObjAcf:
             opt_x = res.x
 
         else:
-            # use local optimizer
-            _, opt_acq, opt_x = self.optimizer.run_optimizer(
+            _, _, opt_x = self.optimizer.run_optimizer(
                 self.eval,
                 num_dim=surrogate.num_dim,
-                design_space=params['design_space'],
+                design_space=surrogate.bounds,
             )
 
         return opt_x
-# class of lower confidence bounding
-# =========================================================================== #
 
 
-class LCB(sfSingleObjAcf):
+class LCB(SFUnConsAcq):
     """Lower confidence bounding"""
 
     def __init__(self,
                  optimizer: Any = None,
-                 kappa: list = [1.0, 1.96]) -> None:
+                 kappa: List = [1.0, 1.96]) -> None:
         """initialize lcb acquisition function
 
         Parameters
@@ -64,8 +86,7 @@ class LCB(sfSingleObjAcf):
         kappa : list, optional
             factors for exploration and exploitation, by default [1.0, 1.96]
         """
-        # optimizer for getting update points
-        self.optimizer = optimizer
+        super(LCB, self).__init__(optimizer=optimizer)
         # kappa for lcb (factor for exploration and exploitation)
         self.kappa = kappa
 
@@ -98,18 +119,14 @@ class LCB(sfSingleObjAcf):
         return lcb
 
 
-# class of expected improvement
-# =========================================================================== #
-
-
-class EI(sfSingleObjAcf):
+class EI(SFUnConsAcq):
     """
     Expected improvement acquisition function
     """
 
-    def __init__(self, optimizer: Any = None) -> None:
-
-        self.optimizer = optimizer
+    def __init__(self,
+                 optimizer: Any = None) -> None:
+        super(EI, self).__init__(optimizer=optimizer)
 
     def eval(self, x: np.ndarray,
              surrogate: Kriging) -> np.ndarray:
@@ -138,11 +155,8 @@ class EI(sfSingleObjAcf):
 
         return -ei
 
-# class of probability improvement
-# =========================================================================== #
 
-
-class PI(sfSingleObjAcf):
+class PI(SFUnConsAcq):
     """
     Probability improvement acquisition function
     """
@@ -155,7 +169,7 @@ class PI(sfSingleObjAcf):
         optimizer : Any, optional
             optimizer for get new location, by default None
         """
-        self.optimizer = optimizer
+        super(PI, self).__init__(optimizer=optimizer)
 
     def eval(self, x: np.ndarray,
              surrogate: Kriging) -> np.ndarray:

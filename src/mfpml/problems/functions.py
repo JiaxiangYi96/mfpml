@@ -6,6 +6,14 @@ import numpy as np
 
 
 class Functions(ABC):
+
+    num_dim: int = None
+    num_cons: int = None
+    optimum: float = None
+    optimum_scheme: list = None
+    input_domain: np.ndarray = None
+    low_fidelity: list = None
+
     @staticmethod
     def f(x: np.ndarray) -> np.ndarray:
         """
@@ -73,7 +81,7 @@ class Functions(ABC):
         raise NotImplementedError("Subclasses should implement this method.")
 
     @staticmethod
-    def lf(x: np.ndarray, factor: float) -> np.ndarray:
+    def lf(x: np.ndarray, factor: float = None) -> np.ndarray:
         """
         low fidelity function
 
@@ -209,24 +217,6 @@ class Functions(ABC):
         """
         raise NotImplementedError("Subclasses should implement this method.")
 
-    def plot_function(
-        self, with_low_fidelity: bool = False, save_figure: bool = True
-    ) -> None:
-        """
-        Function to visualize the landscape of the function s
-        Parameters
-        ----------
-        with_low_fidelity: bool
-            plot low fidelity functions or not
-        save_figure : bool
-            save figure or not
-
-        Returns
-        -------
-
-        """
-        raise NotImplementedError("Subclasses should implement this method.")
-
     @property
     def _get_dimension(self) -> int:
         """
@@ -275,18 +265,6 @@ class Functions(ABC):
 
         """
         return self.__class__.optimum_scheme
-
-    @property
-    def _design_space(self) -> dict:
-        """
-
-        Returns
-        -------
-        design_space:
-
-        """
-
-        return self.__class__.design_space
 
     @property
     def _input_domain(self) -> np.ndarray:

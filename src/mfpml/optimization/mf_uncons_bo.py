@@ -5,24 +5,18 @@ from typing import Any
 import matplotlib.pyplot as plt
 import numpy as np
 
+from ..problems.functions import Functions
+from .sf_cons_acqusitions import SFConsAcq
 
-class mfBayesOpt:
+
+class mfUnConsBayesOpt:
     """
     Multi-fidelity single objective Bayesian optimization
     """
 
-    def __init__(self, problem: Any) -> None:
+    def __init__(self, problem: Functions,
+                 acquisition: SFConsAcq) -> None:
         """Initialize the multi-fidelity Bayesian optimization
-
-        Parameters
-        ----------
-        problem : Any
-            optimization problem
-        """
-        self.problem = problem
-
-    def change_problem(self, problem: Any) -> None:
-        """Change the function for optimization
 
         Parameters
         ----------

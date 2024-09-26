@@ -8,7 +8,7 @@ from scipy.stats import norm
 # =========================================================================== #
 
 
-class mfSingleObjAcf:
+class MFUnConsAcq:
     """
     Base class for mf acquisition functions for single objective
     optimization.
@@ -25,7 +25,7 @@ class mfSingleObjAcf:
 # =========================================================================== #
 
 
-class augmentedEI(mfSingleObjAcf):
+class augmentedEI(MFUnConsAcq):
     """Augmented Expected Improvement acquisition function"""
 
     def __init__(
@@ -187,7 +187,7 @@ class augmentedEI(mfSingleObjAcf):
 # =========================================================================== #
 
 
-class vfei(mfSingleObjAcf):
+class vfei(MFUnConsAcq):
     def __init__(
             self,
             optimizer: Any = None) -> None:
@@ -293,7 +293,7 @@ class vfei(mfSingleObjAcf):
 # =========================================================================== #
 
 
-class vflcb(mfSingleObjAcf):
+class vflcb(MFUnConsAcq):
     """Variable-fidelity Lower Confidence Bound acqusition function"""
 
     def __init__(
@@ -402,7 +402,7 @@ class vflcb(mfSingleObjAcf):
         return update_x
 
 
-class extendedPI(mfSingleObjAcf):
+class extendedPI(MFUnConsAcq):
     """Extended Probability Improvement acqusition function
 
     Reference

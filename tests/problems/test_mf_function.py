@@ -1,8 +1,8 @@
 import numpy as np
 import pytest
 
-from mfpml.design_of_experiment.multifidelity_samplers import MFSobolSequence
-from mfpml.problems.multifidelity_functions import Forrester_1b
+from mfpml.design_of_experiment.mf_samplers import MFSobolSequence
+from mfpml.problems.mf_functions import Forrester_1b
 
 pytestmark = pytest.mark.smoke
 

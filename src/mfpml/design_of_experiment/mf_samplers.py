@@ -1,5 +1,5 @@
 import pickle
-from typing import Dict, List
+from typing import Any, List
 
 import numpy as np
 from scipy.stats.qmc import LatinHypercube, Sobol
@@ -40,7 +40,7 @@ class MultiFidelitySampler:
     def get_samples(self,
                     num_samples: List,
                     seed: int = 123456,
-                    **kwargs) -> Dict:
+                    **kwargs) -> List:
         """
         Get the samples
 
@@ -164,7 +164,7 @@ class MFLatinHyperCube(MultiFidelitySampler):
     """
 
     def __init__(
-        self, design_space: List,
+        self, design_space: List | Any,
         num_fidelity: int = None,  # type: ignore
         nested: bool = False,
     ) -> None:
@@ -230,13 +230,13 @@ class MFSobolSequence(MultiFidelitySampler):
         design_space: List | np.ndarray,
         num_fidelity: int = None,
         nested: bool = False,
-        num_skip: int = None,  # type: ignore
+        num_skip: int = None,
     ) -> None:
         """Initialization
 
         Parameters
         ----------
-        design_space : dict
+        design_space : List
             design space of the problem
         nested : bool, optional
             nested sampling or not, by default False

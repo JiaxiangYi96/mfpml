@@ -1,4 +1,5 @@
-from typing import Any, Tuple
+import time
+from typing import Any, List, Tuple
 
 import numpy as np
 from numpy.linalg import cholesky, solve
@@ -8,22 +9,26 @@ from .basis_functions import Ordinary
 from .kernels import RBF
 
 
-class Kriging_no_normalization:
-    """Deterministic Gaussian Process Regression (GPR) model."""
+class _GP:
+    """single fidelity Gaussian process regression model, there is no 
+    normalization for the input and output. This is because we have to 
+    adapt the model to the Co-Kriging model.
+    """
 
     def __init__(self,
                  design_space: np.ndarray,
                  kernel: Any = None,
                  regr: Any = Ordinary(),
                  optimizer: Any = None,
-                 optimizer_restart: int = 0) -> None:
+                 optimizer_restart: int = 0,
+                 noise_prior: float = 0.0) -> None:
 
         # initialize parameters
         self.num_dim = design_space.shape[0]
         # bounds of design space
-        self.bounds = design_space
+        self.design_space = design_space
 
-        # getting kernel
+        # get kernel
         if kernel is None:
             # if kernel is None, use RBF kernel as default
             self.kernel = RBF(theta=np.zeros(self.num_dim))
@@ -35,8 +40,32 @@ class Kriging_no_normalization:
         self.optimizer_restart = optimizer_restart
         # get basis function
         self.regr = regr
+        self.noise = noise_prior
 
     def _hyper_paras_optimization(self) -> None:
+        if self.noise is None:
+            # the type II maximum likelihood should be used to optimize the
+            # for both the hyper-parameters and noise value
+            # noise value needs to be optimized
+            lower_bound_theta = self.kernel._get_low_bound
+            upper_bound_theta = self.kernel._get_high_bound
+            # set up the bounds for noise sigma
+            lower_bound_sigma = 1e-5
+            upper_bound_sigma = 10
+            # set up the bounds for the hyper-parameters
+            lower_bound = np.hstack((lower_bound_theta, lower_bound_sigma))
+            upper_bound = np.hstack((upper_bound_theta, upper_bound_sigma))
+            # bounds for the hyper-parameters
+            hyper_bounds = np.vstack((lower_bound, upper_bound)).T
+            # number of hyper-parameters
+            num_hyper = self.kernel._get_num_para + 1
+        else:
+            lower_bound = self.kernel._get_low_bound
+            upper_bound = self.kernel._get_high_bound
+            # bounds for the hyper-parameters
+            hyper_bounds = np.vstack((lower_bound, upper_bound)).T
+            # number of hyper-parameters
+            num_hyper = self.kernel._get_num_para
 
         if self.optimizer is None:
             # use the L-BFGS-B method in scipy
@@ -45,17 +74,16 @@ class Kriging_no_normalization:
             for _ in range(n_trials):
                 # initial point
                 x0 = np.random.uniform(
-                    self.kernel._get_low_bound,
-                    self.kernel._get_high_bound,
-                    self.kernel._get_num_para,
+                    lower_bound,
+                    upper_bound,
+                    num_hyper,
                 )
                 # get the optimum value
                 optimum_info = minimize(
                     self._logLikelihood,
                     x0=x0,
                     method="l-bfgs-b",
-                    bounds=self.kernel._get_bounds_list,
-                    options={"maxfun": 200},
+                    bounds=hyper_bounds,
 
                 )
                 # greedy search for the optimum value
@@ -66,8 +94,8 @@ class Kriging_no_normalization:
             # use the optimizer in the repo, such as DE and PSO
             optimum_info, _, _ = self.optimizer.run_optimizer(
                 self._logLikelihood,
-                num_dim=self.kernel._get_num_para,
-                design_space=self.kernel._get_bounds,
+                num_dim=num_hyper,
+                design_space=hyper_bounds,
             )
             opt_param = optimum_info["best_x"]
         # update the kernel with optimized parameters
@@ -87,15 +115,22 @@ class Kriging_no_normalization:
             negative log likelihood
         """
         params = np.atleast_2d(params)
+        num_params = params.shape[1]
         nll = np.zeros(params.shape[0])
 
         for i in range(params.shape[0]):
             # for optimization every row is a parameter set
-            param = params[i, :]
+            # for optimization every row is a parameter set
+            if self.noise is None:
+                param = params[i, 0: num_params-1]
+                noise_sigma = params[i, -1]
+            else:
+                param = params[i, 0: num_params]
+                noise_sigma = self.noise
             # calculate the covariance matrix
             K = self.kernel(self.sample_scaled_x,
                             self.sample_scaled_x,
-                            param)
+                            param) + np.eye(self.num_samples) * noise_sigma**2
             L = cholesky(K)
             # Step 1: estimate beta, which is the coefficient of basis function
             # f, basis function
@@ -117,19 +152,28 @@ class Kriging_no_normalization:
                             gamma) / self.num_samples
 
             # step 3: calculate the log likelihood
-            logp = -0.5 * self.num_samples * \
-                np.log(sigma2) - np.sum(np.log(np.diag(L)))
+            if self.noise == 0.0:
+                logp = -0.5 * self.num_samples * \
+                    np.log(sigma2) - np.sum(np.log(np.diag(L)))
+            else:
+                logp = -0.5 * self.num_samples * \
+                    sigma2 - np.sum(np.log(np.diag(L)))
             nll[i] = -logp.ravel()
 
         return nll
 
     def _update_kernel_matrix(self) -> None:
         """Update the kernel matrix with optimized parameters."""
-        # assign the best hyper-parameter to the kernel
-        self.kernel.set_params(self.opt_param)
+        if self.noise is None:
+            self.kernel.set_params(self.opt_param[0:(len(self.opt_param)-1)])
+            self.noise = self.opt_param[-1]
+        else:
+            self.kernel.set_params(self.opt_param)
+
         # update parameters with optimized hyper-parameters
         self.K = self.kernel.get_kernel_matrix(self.sample_scaled_x,
-                                               self.sample_scaled_x)
+                                               self.sample_scaled_x) +\
+            np.eye(self.num_samples) * (self.noise)**2
         self.L = cholesky(self.K)
 
         # step 1: get the optimal beta
@@ -152,7 +196,7 @@ class Kriging_no_normalization:
             / self.num_samples
 
         # step 3: get the optimal log likelihood
-        self.logp = (-0.5 * self.num_samples * np.log(self.sigma2) -
+        self.logp = (-0.5 * self.num_samples * self.sigma2 -
                      np.sum(np.log(np.diag(self.L)))).item()
 
     def predict(self,
@@ -187,45 +231,18 @@ class Kriging_no_normalization:
             delta = solve(self.L.T, solve(self.L, knew))
             R = f.T - np.dot(self.f.T, delta)
             # first use vectorization to calculate the epistemic uncertainty
-            try:
-                mse = self.sigma2 * \
-                    (1 - np.diag(np.dot(knew.T, delta)) +
-                     np.diag(R.T.dot(solve(self.ld.T, solve(self.ld, R))))
-                     )
-            except Exception:
-                print("The matrix is too big, use for loop to calculate")
-                # if the matrix is too big, use for loop to calculate
-                mse = np.zeros((knew.shape[1], 1))
-                batch = 100
-                iter = knew.shape[1] / batch
-                for i in range(int(iter)):
-                    try:
-                        knew_i = knew[:, i * batch: (i+1)*batch]
-                        delta_i = solve(self.L.T, solve(self.L, knew_i))
-                        R_i = R[:, i * batch: (i+1)*batch]
-                        mse[i * batch: (i+1)*batch] = self.sigma2 * \
-                            (1 - np.diag(np.dot(knew_i.T, delta_i)) +
-                                np.diag(R_i.T.dot(solve(self.ld.T,
-                                                        solve(self.ld, R_i))))
-                             ).reshape(-1, 1)
-
-                    except Exception:
-                        # remain part of the matrix
-                        knew_i = knew[:, i * batch:]
-                        delta_i = solve(self.L.T, solve(self.L, knew_i))
-                        R_i = R[:, i * batch:]
-                        mse[i * batch:] = self.sigma2 * \
-                            (1 - np.diag(np.dot(knew_i.T, delta_i)) +
-                                np.diag(R_i.T.dot(solve(self.ld.T,
-                                                        solve(self.ld, R_i))))
-                             ).reshape(-1, 1)
-
+            mse = self.sigma2 * \
+                (1 - np.diag(np.dot(knew.T, delta)) +
+                    np.diag(R.T.dot(solve(self.ld.T, solve(self.ld, R))))
+                 )
             # epistemic uncertainty
-            std = np.sqrt(np.maximum(mse, 0)).reshape(-1, 1)
+            std = np.sqrt(np.maximum(mse, 0) + self.noise**2).reshape(-1, 1)
 
             return fmean, std
 
-    def train(self, sample_x: np.ndarray, sample_y: np.ndarray) -> None:
+    def train(self,
+              sample_x: np.ndarray,
+              sample_y: np.ndarray) -> None:
         """training procedure of gpr models
 
         Parameters
@@ -294,8 +311,9 @@ class CoKriging:
         design_space: np.ndarray,
         optimizer: Any = None,
         optimizer_restart: int = 0,
-        kernel_bound: list = [-4.0, 3.0],
+        kernel_bound: list = [-2.0, 3.0],
         rho_bound: list = [1e-2, 1e2],
+        noise_prior: float = None,
     ) -> None:
         """co-kriging model for handling multi-fidelity data
 
@@ -323,14 +341,19 @@ class CoKriging:
         self.num_dim = design_space.shape[0]
         self.rho_bound = rho_bound
         # initialize kernel and low-fidelity model
-        self.kernel = RBF(theta=np.zeros(self.num_dim), bounds=kernel_bound)
+        self.kernel = RBF(theta=np.zeros(self.num_dim),
+                          bounds=kernel_bound)
         # lf model is a Kriging model with RBF kernel
-        self.lf_model = Kriging_no_normalization(
+        self.lfGP = _GP(
             design_space=design_space,
             optimizer=optimizer,
-            optimizer_restart=optimizer_restart)
+            optimizer_restart=optimizer_restart,
+            noise_prior=noise_prior)
 
-    def train(self, samples: dict, responses: dict) -> None:
+        # noise (unscaled, it will be scaled later)
+        self.noise = noise_prior
+
+    def train(self, samples: List, responses: List) -> None:
         """Train the hierarchical Kriging model
 
         Parameters
@@ -344,41 +367,56 @@ class CoKriging:
             responses and 'lf' contains low-fidelity ones
         """
         # load the samples and responses at the original scale
-        self.sample_xh = samples["hf"]
-        self.sample_yh = responses["hf"]
-        self.sample_xl = samples["lf"]
-        self.sample_yl = responses["lf"]
+        self.sample_xh = samples[0]
+        self.sample_yh = responses[0]
+        self.sample_xl = samples[1]
+        self.sample_yl = responses[1]
 
         # normalize the input and output
         self.sample_xh_scaled = self.normalize_input(self.sample_xh.copy())
         self.sample_xl_scaled = self.normalize_input(self.sample_xl.copy())
         self.sample_yh_scaled = self.normalize_hf_output(self.sample_yh.copy())
         self.sample_yl_scaled = (self.sample_yl - self.yh_mean) / self.yh_std
-
+        # scale the noise value
+        if self.noise is not None:
+            self.noise = self.noise / self.yh_std
+            # update the noise value of the low-fidelity model
+            self.lfGP.noise = self.noise
         # train the low-fidelity model
-        self.lf_model.train(self.sample_xl_scaled,
-                            self.sample_yl_scaled)
+        start_time = time.time()
 
+        self.lfGP.train(self.sample_xl_scaled,
+                        self.sample_yl_scaled)
+        end_time = time.time()
+        self.lf_training_time = end_time - start_time
         # train the high-fidelity model
         # prediction of low-fidelity at high-fidelity locations
-        self.pred_ylh = self.lf_model.predict(
+        self.pred_ylh = self.lfGP.predict(
             self.sample_xh_scaled, return_std=False)
         # optimize the hyper parameters
         self._optHyp()
         # update rho value
         self.rho = self.opt_param[0]
-        # calculate the covariance matrix
-        self.kernel.set_params(self.opt_param[1:])
+        if self.noise is None:
+            # scaled noise value
+            self.noise = self.opt_param[1]
+            # calculate the covariance matrix
+            self.kernel.set_params(self.opt_param[2:])
+        else:
+            self.kernel.set_params(self.opt_param[1:])
+        # update the kernel matrix
         self._update_parameters()
+        end_time_hf = time.time()
+        self.hf_training_time = end_time_hf - end_time
 
     def predict(
-        self, x_predict: np.ndarray, return_std: bool = False
+        self, X: np.ndarray, return_std: bool = False
     ) -> np.ndarray | Tuple[np.ndarray, np.ndarray]:
         """Predict high-fidelity responses
 
         Parameters
         ----------
-        x_predict : np.ndarray
+        X : np.ndarray
             array of high-fidelity to be predicted
         return_std : bool, optional
             whether to return std values, by default False
@@ -389,18 +427,16 @@ class CoKriging:
             prediction of high-fidelity
         """
         # transfer to 2d array
-        Xnew = np.atleast_2d(self.normalize_input(x_predict))
-        #
-        # oneC = np.ones((self.C.shape[0], 1))
+        Xnew = np.atleast_2d(self.normalize_input(X))
         # calculate the covariance matrix
         c = np.concatenate(
             (
                 self.rho
-                * self.lf_model.sigma2
-                * self.lf_model.kernel.get_kernel_matrix(
+                * self.lfGP.sigma2
+                * self.lfGP.kernel.get_kernel_matrix(
                     self.sample_xl_scaled, Xnew),
                 self.rho**2
-                * self.lf_model.sigma2*self.lf_model.kernel.get_kernel_matrix(
+                * self.lfGP.sigma2*self.lfGP.kernel.get_kernel_matrix(
                     self.sample_xh_scaled, Xnew) + self.sigma2 *
                 self.kernel.get_kernel_matrix(self.sample_xh_scaled, Xnew),
             ),
@@ -416,23 +452,23 @@ class CoKriging:
             return fmean.reshape(-1, 1)
         else:
             s2 = (
-                self.rho**2 * self.lf_model.sigma2
+                self.rho**2 * self.lfGP.sigma2
                 + self.sigma2
                 - c.T.dot(solve(self.LC.T, solve(self.LC, c)))
-                # + (1-oneC.T.dot(solve(self.LC.T, solve(self.LC, c)))) /
-                # oneC.T.dot(solve(self.LC.T, solve(self.LC, oneC)))
             )
-            std = np.sqrt(np.maximum(np.diag(s2), 0))*self.yh_std
-            return fmean.reshape(-1, 1), std.reshape(-1, 1)
+            self.epis_std = np.sqrt(np.maximum(np.diag(s2), 0))*self.yh_std
+            self.noise = self.noise * self.yh_std
+            total_std = np.sqrt((self.epis_std**2 + self.noise**2))
+            return fmean.reshape(-1, 1), total_std.reshape(-1, 1)
 
     def predict_lf(
-        self, x_predict: np.ndarray, return_std: bool = False
+        self, X: np.ndarray, return_std: bool = False
     ) -> np.ndarray | Tuple[np.ndarray, np.ndarray]:
         """Predict low-fidelity responses
 
         Parameters
         ----------
-        x_predict : np.ndarray
+        X : np.ndarray
             array of low-fidelity to be predicted
         return_std : bool, optional
             whether to return std values, by default False
@@ -443,26 +479,54 @@ class CoKriging:
             prediction of low-fidelity
         """
         # get the scaled points
-        x_predict = np.atleast_2d(self.normalize_input(x_predict))
+        x_predict = np.atleast_2d(self.normalize_input(X))
         if not return_std:
-            obj = self.lf_model.predict(x_predict)*self.yh_std + self.yh_mean
+            obj = self.lfGP.predict(
+                x_predict, return_std=False)*self.yh_std + self.yh_mean
             return obj
         else:
-            obj, std = self.lf_model.predict(x_predict, return_std=True)
+            obj, std = self.lfGP.predict(x_predict, return_std=True)
             return obj*self.yh_std + self.yh_mean, std*self.yh_std
 
     def _optHyp(self) -> None:
         """Optimize the hyperparameters"""
-        bounds = np.concatenate(
-            (np.array([self.rho_bound]), self.kernel._get_bounds), axis=0
-        )
+        # consider the situation where noise exists
+        if self.noise is None:
+            # the type II maximum likelihood should be used to optimize the
+            # for both the hyper-parameters and noise value
+            # noise value needs to be optimized
+            lower_bound_theta = self.kernel._get_low_bound
+            upper_bound_theta = self.kernel._get_high_bound
+            # set up the bounds for noise sigma
+            lower_bound_sigma = 1e-5
+            upper_bound_sigma = 10
+            # set up the bounds for the hyper-parameters
+            lower_bound = np.hstack((lower_bound_sigma, lower_bound_theta))
+            upper_bound = np.hstack((upper_bound_sigma, upper_bound_theta))
+            # bounds for the hyper-parameters
+            hyper_bounds = np.vstack((lower_bound, upper_bound)).T
+            # add rho bound
+            bounds = np.concatenate(
+                (np.atleast_2d(self.rho_bound), hyper_bounds), axis=0)
+            # number of hyper-parameters
+            num_hyper = bounds.shape[0]
+        else:
+            lower_bound = self.kernel._get_low_bound
+            upper_bound = self.kernel._get_high_bound
+            # bounds for the hyper-parameters
+            bounds = np.concatenate(
+                (np.array([self.rho_bound]), self.kernel._get_bounds), axis=0
+            )
+            # number of hyper-parameters
+            num_hyper = bounds.shape[0]
+
         if self.optimizer is None:
             # define the number of trials of L-BFGS-B optimizations
             n_trials = self.optimizer_restart + 1
             opt_fs = float("inf")
             for _ in range(n_trials):
                 x0 = np.random.uniform(
-                    bounds[:, 0], bounds[:, 1], bounds.shape[0]
+                    bounds[:, 0], bounds[:, 1], num_hyper
                 )
                 optRes = minimize(
                     self._logLikelihood,
@@ -476,7 +540,7 @@ class CoKriging:
         else:
             optRes, _, _ = self.optimizer.run_optimizer(
                 self._logLikelihood,
-                num_dim=bounds.shape[0],
+                num_dim=num_hyper,
                 design_space=bounds,
             )
             opt_param = optRes["best_x"]
@@ -499,12 +563,18 @@ class CoKriging:
         params = np.atleast_2d(params)
         out = np.zeros(params.shape[0])
         for i in range(params.shape[0]):
-            rho = params[i, 0]
-            theta = params[i, 1:]
+            if self.noise is None:
+                rho = params[i, 0]
+                noise_sigma = params[i, 1]
+                theta = params[i, 2:]
+            else:
+                rho = params[i, 0]
+                noise_sigma = self.noise / self.yh_std
+                theta = params[i, 1:]
             # correlation matrix R
             K = self.kernel(self.sample_xh_scaled,
                             self.sample_xh_scaled,
-                            theta)
+                            theta) + np.eye(self._num_xh) * noise_sigma**2
             L = cholesky(K)
             # responses for difference
             diff_y = self.sample_yh_scaled - rho * self.pred_ylh
@@ -518,8 +588,12 @@ class CoKriging:
             gamma = solve(L.T, solve(L, (diff_y - mu)))
             sigma2 = np.dot((diff_y - mu).T, gamma) / self._num_xh
             # negative log likelihood
-            logp = -0.5 * self._num_xh * \
-                np.log(sigma2) - np.sum(np.log(np.diag(L)))
+            if self.noise == 0.0:
+                logp = -0.5 * self._num_xh * np.log(sigma2) - \
+                    np.sum(np.log(np.diag(L)))
+            else:
+                logp = -0.5 * self._num_xh * \
+                    sigma2 - np.sum(np.log(np.diag(L)))
             out[i] = logp.ravel()
         return -out
 
@@ -527,7 +601,10 @@ class CoKriging:
         """Update parameters of the model"""
         # correlation matrix R
         self.K = self.kernel.get_kernel_matrix(self.sample_xh_scaled,
-                                               self.sample_xh_scaled)
+                                               self.sample_xh_scaled) +\
+            np.eye(self._num_xh) * (self.noise)**2
+
+        # cholesky decomposition
         L = cholesky(self.K)
         # R^(-1)Y
         self.diff_y = self.sample_yh_scaled - self.rho * self.pred_ylh
@@ -547,21 +624,21 @@ class CoKriging:
             (
                 np.concatenate(
                     (
-                        self.lf_model.sigma2 * self.lf_model.K,
-                        self.rho * self.lf_model.sigma2
-                        * self.lf_model.kernel.get_kernel_matrix(
+                        self.lfGP.sigma2 * self.lfGP.K,
+                        self.rho * self.lfGP.sigma2
+                        * self.lfGP.kernel.get_kernel_matrix(
                             self.sample_xl_scaled, self.sample_xh_scaled),
                     ),
                     axis=1,
                 ),
                 np.concatenate(
                     (
-                        self.rho * self.lf_model.sigma2
-                        * self.lf_model.kernel.get_kernel_matrix(
+                        self.rho * self.lfGP.sigma2
+                        * self.lfGP.kernel.get_kernel_matrix(
                             self.sample_xh_scaled,
                             self.sample_xl_scaled),
-                        self.rho**2 * self.lf_model.sigma2
-                        * self.lf_model.kernel.get_kernel_matrix(
+                        self.rho**2 * self.lfGP.sigma2
+                        * self.lfGP.kernel.get_kernel_matrix(
                             self.sample_xh_scaled,
                             self.sample_xh_scaled)
                         + self.sigma2 * self.K,
@@ -580,44 +657,6 @@ class CoKriging:
         self.mu = oneC.T.dot(
             solve(self.LC.T, solve(self.LC, self.y))
         ) / oneC.T.dot(solve(self.LC.T, solve(self.LC, oneC))).item()
-
-    def update_model(self, Xnew: dict, Ynew: dict) -> None:
-        """Update the multi-fidelity model with new samples
-
-        Parameters
-        ----------
-        Xnew : dict
-            dict with two keys, where contains the new samples
-            If value is None then no sample to update
-        Ynew : dict
-            corresponding responses w.r.t. Xnew
-        """
-        XHnew = Xnew["hf"]
-        YHnew = Ynew["hf"]
-        XLnew = Xnew["lf"]
-        YLnew = Ynew["lf"]
-        if XLnew is not None and YLnew is not None:
-            if XHnew is not None and YHnew is not None:
-                X = {}
-                Y = {}
-                X["hf"] = np.concatenate((self.sample_xh, XHnew))
-                Y["hf"] = np.concatenate((self.sample_yh, YHnew))
-                X["lf"] = np.concatenate((self.sample_xl, XLnew))
-                Y["lf"] = np.concatenate((self.sample_yl, YLnew))
-                self.train(X, Y)
-            else:
-                X = {}
-                Y = {}
-                X["hf"] = self.sample_xh
-                Y["hf"] = self.sample_yh
-                X["lf"] = np.concatenate((self.sample_xl, XLnew))
-                Y["lf"] = np.concatenate((self.sample_yl, YLnew))
-                self.train(X, Y)
-        else:
-            if XHnew is not None and YHnew is not None:
-                XH = np.concatenate((self.sample_xh, XHnew))
-                YH = np.concatenate((self.sample_yh, YHnew))
-                self._train_hf(XH, YH)
 
     def _update_optimizer_hf(self, optimizer: Any) -> None:
         """Change the optimizer for high-fidelity hyper parameters
@@ -638,7 +677,7 @@ class CoKriging:
             instance of optimizer
         """
         # update the optimizer for low-fidelity model
-        self.lf_model.update_optimizer(optimizer)
+        self.lfGP.update_optimizer(optimizer)
 
     def normalize_input(self, inputs: np.ndarray) -> np.ndarray:
         """Normalize samples to range [0, 1]
@@ -683,7 +722,7 @@ class CoKriging:
             low-fidelity model instance
         """
 
-        return self.lf_model
+        return self.lfGP
 
     @ property
     def _num_xh(self) -> int:
@@ -705,7 +744,7 @@ class CoKriging:
         int
             #low-fidelity samples
         """
-        return self.lf_model._num_samples
+        return self.lfGP._num_samples
 
     @ property
     def _get_sample_hf(self) -> np.ndarray:
