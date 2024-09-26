@@ -31,7 +31,7 @@ class SFConsAcq(ABC):
             locations for evaluation
         surrogate : Kriging
             Kriging model at current iteration
-        
+
 
         Returns
         -------
@@ -58,7 +58,7 @@ class SFConsAcq(ABC):
         if self.optimizer is None:
             res = differential_evolution(self.eval,
                                          bounds=obj_surrogate.bounds,
-                                         args=(obj_surrogate,cons_surrogate),
+                                         args=(obj_surrogate, cons_surrogate),
                                          maxiter=500,
                                          popsize=40)
             # get the next location
@@ -72,6 +72,7 @@ class SFConsAcq(ABC):
             )
 
         return opt_x
+
 
 class CEI(SFConsAcq):
     """
@@ -100,7 +101,8 @@ class CEI(SFConsAcq):
         cei : np.ndarray
             negative expected improvement values
         """
-        
+        # get the resposes
+
         # get the expected improvement of objective function
         ei_obj = self.ei(x, obj_surrogate)
         # get the probability of feasibility
@@ -109,7 +111,7 @@ class CEI(SFConsAcq):
         cei = -ei_obj * pof
 
         return cei
-    
+
     def ei(self, x, obj_surrogate: Kriging) -> np.ndarray:
 
         num_dim = obj_surrogate.num_dim
@@ -123,14 +125,15 @@ class CEI(SFConsAcq):
         return ei
 
     def pof(self, x, cons_surrogates: List) -> np.ndarray:
+        x = np.atleast_2d(x)
         num_cons = len(cons_surrogates)
         u_g = np.zeros((x.shape[0], num_cons))
         mse_g = np.zeros((x.shape[0], num_cons))
         for ii in range(num_cons):
             cons_surrogate = cons_surrogates[ii]
-            u_g[:, ii], mse_g[:, ii] = cons_surrogate.predict(x, return_std=True)
+            u_g[:, ii], mse_g[:, ii] = cons_surrogate.predict(
+                x, return_std=True)
 
         # probability of feasibility
-        pof = np.prod(norm.cdf(u_g / (mse_g + 1e-9)), axis=1)
+        pof = np.prod(norm.cdf(0-u_g / (mse_g + 1e-9)), axis=1)
         return pof
-

@@ -70,11 +70,17 @@ class BayesConsOpt(ABC):
             self.obj_response = np.vstack((self.obj_response, update_obj))
             self.cons_response = np.vstack((self.cons_response, update_cons))
 
-
             # update surrogate
-            self.obj_surrogate.train(X=self.sample, Y=self.obj_response)
+            self.obj_surrogate.train(X=self.sample,
+                                     Y=self.obj_response)
             for ii in range(self.problem.num_cons):
-                self.cons_surrogates[ii].train(X=self.sample, Y=self.cons_response[:, ii])
+                self.cons_surrogates[ii].train(
+                    X=self.sample,
+                    Y=self.cons_response[:, ii])
+
+            print(f"update_x: {update_x}")
+            print(f"update_obj: {update_obj}")
+            print(f"update_cons: {update_cons}")
             # update paras
             self._update_para()
             iteration = iteration + 1
@@ -96,17 +102,18 @@ class BayesConsOpt(ABC):
 
         # initialize the surrogate model
         self.obj_surrogate = Kriging(design_space=self.problem.input_domain,
-                                 noise_prior=0.0,
-                                 optimizer_restart=10,)
+                                     noise_prior=0.0,
+                                     optimizer_restart=10,)
         self.obj_surrogate.train(X=self.init_sample,
-                             Y=self.init_obj_response)
+                                 Y=self.init_obj_response)
 
         # update the sample and response
         self.sample = self.init_sample.copy()
         self.obj_response = self.init_obj_response.copy()
+        self.cons_response = self.init_cons_response.copy()
         # create a List to save the constraint surrogate models
         self.cons_surrogates = []
-        # initialize the constraint surrogate models 
+        # initialize the constraint surrogate models
         for ii in range(self.problem.num_cons):
             cons_surrogate = Kriging(design_space=self.problem.input_domain,
                                      noise_prior=0.0,
@@ -114,13 +121,20 @@ class BayesConsOpt(ABC):
             cons_surrogate.train(X=self.init_sample,
                                  Y=self.init_cons_response[:, ii])
             self.cons_surrogates.append(cons_surrogate)
-        
+
         # get the index of feasible samples
-        feasible_index = np.where(np.sum(self.init_cons_response <= 0))[0]
+        try:
+            feasible_index = np.where(
+                np.sum(self.init_cons_response <= 0, axis=1) == self.problem.num_cons)
+        except:
+            feasible_index = np.where(
+                np.sum(self.init_cons_response <= 0, axis=1) == self.problem.num_cons)
 
         # get the best feasible sample
         self.best = np.min(self.init_obj_response[feasible_index])
-        self.best_x = self.init_sample[np.argmin(self.init_obj_response[feasible_index]), :]
+        min_index = np.where(self.init_obj_response == self.best)[0]
+        # get the best feasible sample
+        self.best_x = self.init_sample[min_index, :]
         # record the optimization history
         self.history_best.append(self.best)
         self.history_best_x.append(self.best_x)
@@ -129,11 +143,12 @@ class BayesConsOpt(ABC):
             self.__print_info(iteration=0)
 
     def _update_para(self) -> None:
-        # identify the feasible samples
-        feasible_index = np.where(np.sum(self.cons_response <= 0, axis=1))[0]
+        # identify the feasible samples (all constraints are satisfied)
+        feasible_index = np.where(
+            np.sum(self.cons_response <= 0, axis=1) == self.problem.num_cons)
         # get the best feasible sample
         min_y = np.min(self.obj_response[feasible_index])
-        min_index = np.argmin(self.obj_response[feasible_index])
+        min_index = np.where(self.obj_response == min_y)[0]
         print(f"min_index: {min_index}")
         # update best
         self.best = min_y
@@ -182,7 +197,3 @@ class BayesConsOpt(ABC):
             print(f"best_x: {self.best_x}")
             if self.stopping_error < 1.0:
                 print(f"error: {self.__update_error():4f}")
-
-
-# test the class by brain_1 function
-if 

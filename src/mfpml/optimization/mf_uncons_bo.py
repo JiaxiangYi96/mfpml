@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from ..problems.functions import Functions
+from .sf_cons_acqusitions import SFConsAcq
 
 
 class mfUnConsBayesOpt:
@@ -14,7 +15,7 @@ class mfUnConsBayesOpt:
     """
 
     def __init__(self, problem: Functions,
-                 acquisition: Any) -> None:
+                 acquisition: SFConsAcq) -> None:
         """Initialize the multi-fidelity Bayesian optimization
 
         Parameters
