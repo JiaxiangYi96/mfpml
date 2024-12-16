@@ -113,7 +113,6 @@ class BayesUnConsOpt(ABC):
         # update best
         min_y = np.min(self.response)
         min_index = np.argmin(self.response)
-        print(f"min_index: {min_index}")
         # update best
         self.best = min_y
         self.best_x = self.sample[min_index, :]
@@ -150,7 +149,6 @@ class BayesUnConsOpt(ABC):
         # print the best y of current iteration
         if iteration == 0:
             print("============= Best objective value at initial samples =========")
-            print(" ")
             print(f"best_y: {self.best:4f}")
             print(f"best_x: {self.best_x}")
 

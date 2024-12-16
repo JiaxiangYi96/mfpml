@@ -11,8 +11,25 @@ class _mfGaussianProcess:
 
     def __init__(self,
                  design_space: np.ndarray) -> None:
-        self.design_space = design_space
+        self.bound = design_space
         self.lfGP: GaussianProcessRegression = None
+
+    def predict(self,X: np.ndarray, return_std: bool = False) -> np.ndarray:
+        """Predict the response of the model
+
+        Parameters
+        ----------
+        X : np.ndarray
+            array of samples to be predicted
+        return_std : bool, optional
+            whether to return the standard deviation, by default False
+
+        Returns
+        -------
+        np.ndarray
+            prediction of the model
+        """
+        raise NotImplementedError("Subclasses should implement this method.")
 
     def _train_hf(self, X: np.ndarray, Y: np.ndarray) -> None:
         """Train the high-fidelity model
@@ -94,7 +111,7 @@ class _mfGaussianProcess:
         return self.lfGP.predict(X, return_std)
 
     def _eval_corr(
-        self, X: np.ndarray, Xprime: np.ndarray, fidelity="hf"
+        self, X: np.ndarray, Xprime: np.ndarray, fidelity: int = 0
     ) -> np.ndarray:
         """Evaluate the correlation values based on current multi-
         fidelity model
@@ -115,9 +132,9 @@ class _mfGaussianProcess:
         """
         X = self.normalize_input(X)
         Xprime = self.normalize_input(Xprime)
-        if fidelity == "hf":
+        if fidelity == 0:
             return self.kernel.get_kernel_matrix(X, Xprime)
-        elif fidelity == "lf":
+        elif fidelity == 1:
             return self.lfGP.kernel.get_kernel_matrix(X, Xprime)
         else:
             ValueError("Unknown fidelity input.")
@@ -134,8 +151,8 @@ class _mfGaussianProcess:
         np.ndarray
             normalized samples
         """
-        return (inputs - self.design_space[:, 0]) / (
-            self.design_space[:, 1] - self.design_space[:, 0]
+        return (inputs - self.bound[:, 0]) / (
+            self.bound[:, 1] - self.bound[:, 0]
         )
 
     def normalize_hf_output(self, outputs: np.ndarray) -> np.ndarray:

@@ -247,6 +247,7 @@ class HierarchicalKriging(_mfGaussianProcess):
         # beta = (F^T *K^(-1)* F)^(-1) * F^T *R^(-1) * Y
         self.beta = solve(self.ld.T, solve(
             self.ld, np.dot(self.F.T, self.alpha)))
+        
 
         # step 2: get the optimal sigma2
         self.gamma = solve(self.L.T, solve(

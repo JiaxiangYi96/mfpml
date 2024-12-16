@@ -1,12 +1,16 @@
 # import
-from collections import OrderedDict
-from typing import Any
+from typing import Any, List
+
 
 import matplotlib.pyplot as plt
 import numpy as np
 
 from ..problems.functions import Functions
-from .sf_cons_acqusitions import SFConsAcq
+from .mf_acqusitions import MFUnConsAcq
+from ..design_of_experiment.mf_samplers import MFLatinHyperCube as MFLHS
+from ..models.hierarchical_kriging import HierarchicalKriging as HK
+from ..models.scale_kriging import ScaledKriging as SK
+from ..models.co_kriging import CoKriging as CK
 
 
 class mfUnConsBayesOpt:
@@ -14,8 +18,13 @@ class mfUnConsBayesOpt:
     Multi-fidelity single objective Bayesian optimization
     """
 
-    def __init__(self, problem: Functions,
-                 acquisition: SFConsAcq) -> None:
+    def __init__(self,
+                 problem: Functions,
+                 acquisition: MFUnConsAcq,
+                 num_init: List, 
+                 surrogate_name: str =  'HierarchicalKriging',
+                 seed: int = 1996, 
+                 verbose: bool = True) -> None:
         """Initialize the multi-fidelity Bayesian optimization
 
         Parameters
@@ -24,124 +33,105 @@ class mfUnConsBayesOpt:
             optimization problem
         """
         self.problem = problem
+        self.acquisition = acquisition
+        self.surrogate_name = surrogate_name
+        self.num_init = num_init
+        self.seed = seed
+        self.verbose = verbose
 
-    def _initialization(self) -> None:
-        """Initialize parameters
-        """
-        self.iter = 0
-        self.best = None
-        self.history_best = []
-        self.best_x = None
-        self.log = OrderedDict()
-        self.params = {}
-        self.params['design_space'] = self.problem._input_domain
-        self.params['cr'] = self.problem.cr
+        # set the random seed
+        np.random.seed(seed)
+
+        # record optimization info
+        self.best: float = np.inf
+        self.best_x: np.ndarray = None
+        self.history_best: List[float] = []
+        self.history_best_x: List[np.ndarray] = []
+        self.known_optimum: float = None
+        self.stopping_error: float = 1.0
+        self.fidelity_query_order: List = []
+
+        # initialization 
+        self._initialization()
+
 
     def run_optimizer(self,
-                      init_x: dict,
-                      init_y: dict,
-                      mf_surrogate: Any,
-                      acquisition: Any,
-                      max_iter: float = float('inf'),
-                      max_cost: float = float('inf'),
-                      print_info: bool = True,
-                      resume: bool = False,
-                      **kwargs) -> None:
-        """Multi-fidelity Bayesian optimization
+                      max_iter: int = 10,
+                      cost_ratio: float = 1.0,
+                      stopping_error: float = 1.0) -> None:
+        """Run the optimization
 
         Parameters
         ----------
-        mf_surrogate : Any
-            instance of multi-fidelity model
-        acquisition : Any
-            instance of multi-fidelity acquisition
-        max_iter : float, optional
-            stop condition of iteration, by default float('inf')
-        max_cost : float, optional
-            stop condition of cost, by default float('inf')
-        print_info : bool, optional
-            whether to print information during the optimization
-            process, by default True
-        resume : bool, optional
-            whether to proceed optimization with the last run
-            , by default False
-        init_x : np.ndarray, optional
-            initial samples, by default None
-        init_y : np.ndarray, optional
-
+        max_iter : int, optional
+            maximum number of iterations, by default 10
+        cost_ratio : float, optional
+            cost ratio between high-fidelity and low-fidelity, by default 1.0
+        stopping_error : float, optional
+            stopping error, by default 1.0
         """
-        if not resume:
-            self._initialization()
-            self._first_run(mf_surrogate=mf_surrogate,
-                            init_x=init_x, init_y=init_y)
-        iter = 0
-        while iter < max_iter and self.params['cost'] < max_cost:
-            # get the next point to evaluate
-            update_x = acquisition.query(
-                mf_surrogate=mf_surrogate, params=self.params)
-            update_y = self.problem(update_x)
-            # update mf bo info
-            self._update_para(update_x, update_y)
-            # update surrogate model
-            mf_surrogate.update_model(update_x, update_y)
-            iter += 1
-            if print_info:
-                self._print_info(iter)
+        if self.problem.optimum is not None:
+            self.known_optimum = self.problem.optimum
+        else:
+            self.known_optimum = None
 
-    def historical_plot(self, save_figure: bool = False,
-                        name: str = 'historical_best.png', **kwarg) -> None:
-        """Plot historical figure of best observed function values
+        # error-based stopping criterion
+        self.stopping_error = stopping_error
+        # main loop
+        iteration = 0
+        error = self.__update_error()
+        print(f"Error: {error}")
+        while iteration < max_iter and error > stopping_error:
+            # update the surrogate model
+            update_x, fidelity = self.acquisition.query(mf_surrogate=self.surrogate,
+                                                        cost_ratio=cost_ratio, 
+                                                        fmin=self.best)
+            if fidelity == 0:
+                update_y = self.problem.hf(np.atleast_2d(update_x))
+                # update the samples 
+                self.sample[0] = np.vstack((self.sample[0], update_x))
+                self.response[0] = np.vstack((self.response[0], update_y))
+            else:
+                update_y = self.problem.lf(np.atleast_2d(update_x))
+                # update the samples
+                self.sample[1] = np.vstack((self.sample[1], update_x))
+                self.response[1] = np.vstack((self.response[1], update_y))
+            # update the surrogate model
+            self.surrogate.train(self.sample, self.response)
+            print("update_x: ", update_x)
+            print("update_y: ", update_y)
+            print("fidelity: ", fidelity)
+            # update the params 
+            self._update_para(update_x=update_x, update_y=update_y, fidelity=fidelity)
 
-        Parameters
-        ----------
-        save_figure : bool, optional
-            save figure or not, by default False
-        name : bool, optional
-            name of the figure, by default 'historical_best.png'
+            # iteration
+            iteration += 1
+            if self.verbose:
+                self._print_info(iteration)
+            # update the error
+            error = self.__update_error()
+
+
+
+    def __update_error(self) -> Any | float:
+        """update error between the known optimum and the current optimum
+
+        Returns
+        -------
+        float
+            error
         """
-        # with plt.style.context(['ieee', 'science']):
-        fig, ax = plt.subplots(**kwarg)
-        ax.plot(range(self.iter+1), self.history_best, '-o', color='b',
-                label="historical_best")
-        ax.grid()
-        ax.legend(loc='best')
-        ax.set(xlabel=r"$Iter$")
-        ax.set(ylabel=r"$f(x)$")
-        if save_figure is True:
-            fig.savefig(name, dpi=300, bbox_inches='tight')
-        plt.show()
+        if self.known_optimum is not None and self.known_optimum != 0:
+            error = np.abs((self.best - self.known_optimum) /
+                           self.known_optimum)
+        elif self.known_optimum == 0.0:
+            error = np.abs(self.best - self.known_optimum)
+        else:
+            error = 1.0
 
-    def _first_run(self, mf_surrogate: Any,
-                   init_x: dict,
-                   init_y: dict,
-                   print_info: bool = True) -> None:
-        """Initialize parameters in the Bayesian optimization
+        return error
 
-        Parameters
-        ----------
-        mf_surrogate : any
-            instance of multi-fidelity model
-        init_x : dict
-            initial samples
-        init_y : dict
-            initial responses
-        print_info : bool, optional
-            whether to print information, by default True
-        """
-        mf_surrogate.train(init_x, init_y)
-        self.params['n_hf'] = init_x['hf'].shape[0]
-        self.params['n_lf'] = init_x['lf'].shape[0]
-        self.params['cost'] = self.params['n_hf'] + \
-            self.params['n_lf'] / self.params['cr']
-        self.params['fmin'] = np.min(init_y['hf'])
-        index = np.argmin(init_y['hf'])
-        self.params['best_scheme'] = init_x['hf'][index, :]
-        self.history_best.append(self.params['fmin'])
-        self.log[0] = (init_x, init_y)
-        if print_info:
-            self._print_info(0)
-
-    def _update_para(self, update_x: dict, update_y: dict) -> None:
+    def _update_para(self,update_x, update_y, fidelity) -> None:
         """Update parameters
 
         Parameters
@@ -151,24 +141,62 @@ class mfUnConsBayesOpt:
         update_y : dict
             update responses
         """
-        self.iter += 1
-        # update log
-        self.log[self.iter] = (update_x, update_y)
-        if update_x['hf'] is not None:
-            min_y = np.min(update_y['hf'])
-            min_index = np.argmin(update_y['hf'], axis=1)
-            self.params['n_hf'] += update_x['hf'].shape[0]
-            if min_y < self.params['fmin']:
-                self.best = min_y
-                self.params['fmin'] = min_y
-                self.params['best_scheme'] = update_x['hf'][min_index]
-        elif update_x['lf'] is not None:
-            self.params['n_lf'] += update_x['lf'].shape[0]
-        self.params['cost'] = self.params['n_hf'] + \
-            self.params['n_lf'] / self.params['cr']
-        self.history_best.append(self.params['fmin'])
 
-    def _print_info(self, iter: int) -> None:
+        # add the fidelity query order
+        self.fidelity_query_order.append(fidelity)
+        # update the best scheme
+        if fidelity == 0:
+            if update_y[0][0] < self.best:
+                self.best = update_y[0][0]
+                self.best_x = update_x
+
+        # record the optimization history
+        self.history_best.append(self.best)
+        self.history_best_x.append(self.best_x)
+            
+
+    def _initialization(self) -> None:
+        """Initialize parameters
+        """
+        sampler = MFLHS(design_space=self.problem.input_domain, num_fidelity=2)
+        self.init_sample = sampler.get_samples(num_samples=self.num_init, seed=self.seed)
+        self.init_response = self.problem(self.init_sample)
+
+        # initialize the surrogate model
+        if self.surrogate_name == 'HierarchicalKriging':
+            self.surrogate = HK(design_space=self.problem.input_domain,
+                                noise_prior=0.0,
+                                optimizer_restart=10)
+        elif self.surrogate_name == 'ScaledKriging':
+            self.surrogate = SK(design_space=self.problem.input_domain,
+                                noise_prior=0.0,
+                                optimizer_restart=10)
+        elif self.surrogate_name == 'CoKriging':
+            self.surrogate = CK(design_space=self.problem.input_domain,
+                                noise_prior=0.0,
+                                optimizer_restart=10)
+        else:
+            raise ValueError('Unknown surrogate model')
+        
+        # train the model 
+        self.surrogate.train(self.init_sample, self.init_response)
+
+        # update the sample and response
+        self.sample = self.init_sample.copy()
+        self.response = self.init_response.copy()
+
+        # initialize best scheme
+        self.best = np.min(self.response[0])
+        self.best_x = self.sample[0][np.argmin(self.response[0]), :]
+
+        # record the optimization history
+        self.history_best.append(self.best)
+        self.history_best_x.append(self.best_x)
+
+        if self.verbose:
+            self._print_info(0)
+
+    def _print_info(self, iteration: int) -> None:
         """Print optimization information
 
         Parameters
@@ -176,48 +204,16 @@ class mfUnConsBayesOpt:
         iter : int
             current iteration
         """
-        print('===========================================')
-        print(f'iter: {iter}, '
-              f'eval HF: {self._get_num_hf()}, '
-              f'eval LF: {self._get_num_lf()}, '
-              f'found optimum: {self.best_objective():.5f}, ')
-
-    def _get_num_hf(self) -> int:
-        """Return the number of high-fidelity samples
-
-        Returns
-        -------
-        num_hf: int
-            number of high-fidelity samples
-        """
-        return self.params['n_hf']
-
-    def _get_num_lf(self) -> int:
-        """Return the number of low-fidelity samples
-
-        Returns
-        -------
-        num_lf: int
-            number of low-fidelity samples
-        """
-        return self.params['n_lf']
-
-    def best_objective(self) -> float:
-        """Get the best design of current iteration
-
-        Returns
-        -------
-        float
-            Minimum observed objective
-        """
-        return self.params['fmin']
-
-    def best_design_scheme(self) -> np.ndarray:
-        """Get the best design scheme of current iteration
-
-        Returns
-        -------
-        np.ndarray
-            Best design scheme
-        """
-        return self.params['best_scheme']
+        
+        if iteration == 0:
+            print("==================== Best objective value at initial samples ====================")
+            print(f"Best objective value: {self.best:.4f}")
+            print(f"Best scheme: {self.best_x}")
+        
+        else:
+            print("==================== Iteration {} ====================".format(iteration))
+            print(f"Best objective value: {self.best}")
+            print(f"Best scheme: {self.best_x}")
+            print("Fidelity query order: ", self.fidelity_query_order[-1])
+            if self.stopping_error<1.0:
+                print(f"Stopping error: {self.__update_error():4f}")
