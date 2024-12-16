@@ -126,36 +126,47 @@ class BayesConsOpt(ABC):
         try:
             feasible_index = np.where(
                 np.sum(self.init_cons_response <= 0, axis=1) == self.problem.num_cons)
+             # get the best feasible sample
+            self.best = np.min(self.init_obj_response[feasible_index])
+            min_index = np.where(self.init_obj_response == self.best)[0]
+            # get the best feasible sample
+            self.best_x = self.init_sample[min_index, :]
+            # record the optimization history
+            self.history_best.append(self.best)
+            self.history_best_x.append(self.best_x)
         except:
-            feasible_index = np.where(
-                np.sum(self.init_cons_response <= 0, axis=1) == self.problem.num_cons)
-
-        # get the best feasible sample
-        self.best = np.min(self.init_obj_response[feasible_index])
-        min_index = np.where(self.init_obj_response == self.best)[0]
-        # get the best feasible sample
-        self.best_x = self.init_sample[min_index, :]
-        # record the optimization history
-        self.history_best.append(self.best)
-        self.history_best_x.append(self.best_x)
-
+            print("No feasible sample in initial samples")
+            self.best = np.inf
+            self.best_x = None
+            # record the optimization history
+            self.history_best.append(self.best)
+            self.history_best_x.append(self.best_x)
+    
         if self.verbose:
             self.__print_info(iteration=0)
 
     def _update_para(self) -> None:
         # identify the feasible samples (all constraints are satisfied)
-        feasible_index = np.where(
-            np.sum(self.cons_response <= 0, axis=1) == self.problem.num_cons)
-        # get the best feasible sample
-        min_y = np.min(self.obj_response[feasible_index])
-        min_index = np.where(self.obj_response == min_y)[0]
-        print(f"min_index: {min_index}")
-        # update best
-        self.best = min_y
-        self.best_x = self.sample[min_index, :]
-        # record the optimization history
-        self.history_best.append(self.best)
-        self.history_best_x.append(self.best_x)
+        try:
+            feasible_index = np.where(
+                np.sum(self.cons_response <= 0, axis=1) == self.problem.num_cons)
+            # get the best feasible sample
+            min_y = np.min(self.obj_response[feasible_index])
+            min_index = np.where(self.obj_response == min_y)[0]
+            print(f"min_index: {min_index}")
+            # update best
+            self.best = min_y
+            self.best_x = self.sample[min_index, :]
+            # record the optimization history
+            self.history_best.append(self.best)
+            self.history_best_x.append(self.best_x)
+        except:
+            print("No feasible sample in current samples")
+            self.best = np.inf
+            self.best_x = None
+            # record the optimization history
+            self.history_best.append(self.best)
+            self.history_best_x.append(self.best_x)
 
     def __update_error(self) -> Any | float:
         """update error between the known optimum and the current optimum
@@ -197,3 +208,4 @@ class BayesConsOpt(ABC):
             print(f"best_x: {self.best_x}")
             if self.stopping_error < 1.0:
                 print(f"error: {self.__update_error():4f}")
+
