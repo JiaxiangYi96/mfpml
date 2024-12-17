@@ -9,18 +9,18 @@ mfpml.models.kernels
    :undoc-members:
    :show-inheritance:
 
-mfpml.models.sf\_gpr
----------------------------
+mfpml.models.gaussian\_process
+------------------------------
 
-.. automodule:: mfpml.models.sf_gpr
+.. automodule:: mfpml.models.gaussian_process
    :members:
    :undoc-members:
    :show-inheritance:
 
-mfpml.models.mf\_gprs
+mfpml.models.mf\_gaussian\_process
 ----------------------------------
 
-.. automodule:: mfpml.models.mf_gprs
+.. automodule:: mfpml.models.mf_gaussian_process
    :members:
    :undoc-members:
    :show-inheritance:
@@ -41,10 +41,10 @@ mfpml.models.co\_kriging
    :undoc-members:
    :show-inheritance:
 
-mfpml.models.mf\_scale\_kriging
+mfpml.models.scale\_kriging
 ----------------------------------
 
-.. automodule:: mfpml.models.mf_scale_kriging
+.. automodule:: mfpml.models.scale_kriging
    :members:
    :undoc-members:
    :show-inheritance:

@@ -3,16 +3,17 @@ from typing import Any
 import numpy as np
 from scipy.optimize import minimize
 
-from .gpr_base import MultiFidelityGP
+from .gaussian_process import GaussianProcessRegression
 from .kernels import RBF
-from .kriging import Kriging
+from .mf_gaussian_process import _mfGaussianProcess
 
 
-class ScaledKriging(MultiFidelityGP):
+class ScaledKriging(_mfGaussianProcess):
+
     def __init__(
         self,
         design_space: np.ndarray,
-        lf_model: Any = None,
+        lfGP: Any = None,
         disc_model: Any = None,
         optimizer: Any = None,
         optimizer_restart: int = 0,
@@ -21,6 +22,7 @@ class ScaledKriging(MultiFidelityGP):
         rho_method: str = "error",
         rho_bound: list = [1e-2, 1e1],
         rho_optimizer: Any = None,
+        noise_prior: float = None,
     ) -> None:
         """Multi-fidelity Kriging model with scaled function
 
@@ -29,7 +31,7 @@ class ScaledKriging(MultiFidelityGP):
         design_space : np.ndarray
             array of shape=((num_dim,2)) where each row describes
             the bound for the variable on specfic dimension
-        lf_model: any
+        lfGP: any
             instance of low-fidelity model, the model should have the method:
             train(x: np.ndarray, y: np.ndarray),
             predict(x: np.ndarray, return_std: bool)
@@ -55,9 +57,8 @@ class ScaledKriging(MultiFidelityGP):
         rho_optimizer : any, optional
             optimizer for the parameter rho, by default 'L-BFGS-B'
         """
-        self.bounds = design_space
-        self.lf_model = lf_model
-        self.optimizer = optimizer
+        super().__init__(design_space)
+        self.lfGP = lfGP
         self.optimizer_restart = optimizer_restart
         self.rho_optimize = rho_optimize
         self.rho = 1.0
@@ -67,25 +68,24 @@ class ScaledKriging(MultiFidelityGP):
         self.mu = 1.0
         self.num_dim = design_space.shape[0]
         self.kernel = RBF(theta=np.zeros(self.num_dim), bounds=kernel_bound)
-        if lf_model is None:
-            self.lf_model = Kriging(
-                design_space=design_space,
-                optimizer=optimizer,
-                optimizer_restart=optimizer_restart
-            )
-        else:
-            self.lf_model = lf_model
-        if disc_model is None:
-            self.disc_model = Kriging(
+        if lfGP is None:
+            self.lfGP = GaussianProcessRegression(
                 design_space=design_space,
                 optimizer=optimizer,
                 optimizer_restart=optimizer_restart,
+                noise_prior=noise_prior
+            )
+        else:
+            self.lfGP = lfGP
+        if disc_model is None:
+            self.disc_model = GaussianProcessRegression(
+                design_space=design_space,
+                optimizer=optimizer,
+                optimizer_restart=optimizer_restart,
+                noise_prior=noise_prior
             )
         else:
             self.disc_model = disc_model
-        if optimizer is not None:
-            self._update_optimizer_hf(optimizer)
-            self._update_optimizer_lf(optimizer)
 
     def _train_hf(self, sample_xh: np.ndarray, sample_yh: np.ndarray) -> None:
         """Train the discrepancy model in mf models
@@ -102,15 +102,16 @@ class ScaledKriging(MultiFidelityGP):
         if self.rho_optimize:
             self._rho_optimize()
         self.disc_model.train(self.sample_xh, self._getDisc())
+        self.noise = self.disc_model.noise
 
     def predict(
-        self, x_predict: np.ndarray, return_std: bool = False
+        self, X: np.ndarray, return_std: bool = False
     ) -> Any:
         """Predict high-fidelity responses
 
         Parameters
         ----------
-        x_predict : np.ndarray
+        X : np.ndarray
             array of high-fidelity to be predicted
         return_std : bool, optional
             whether to return std values, by default False
@@ -121,11 +122,11 @@ class ScaledKriging(MultiFidelityGP):
             prediction of high-fidelity
         """
         if not return_std:
-            return self.disc_model.predict(x_predict) * self.rho \
-                + self.lf_model.predict(x_predict)
+            return self.disc_model.predict(X) * self.rho \
+                + self.lfGP.predict(X)
         else:
-            pre_lf, std_lf = self.lf_model.predict(x_predict, return_std)
-            pre_disc, std_disc = self.disc_model.predict(x_predict, return_std)
+            pre_lf, std_lf = self.lfGP.predict(X, return_std)
+            pre_disc, std_disc = self.disc_model.predict(X, return_std)
             mse = self.rho**2 * std_lf**2 + std_disc**2
             return self.rho * pre_lf + pre_disc, np.sqrt(mse)
 
@@ -139,16 +140,6 @@ class ScaledKriging(MultiFidelityGP):
             discrepancy
         """
         return self.sample_yh - self.rho * self.predict_lf(self.sample_xh)
-
-    def _update_optimizer_hf(self, optimizer: Any) -> None:
-        """Change the optimizer for high-fidelity hyperparameters
-
-        Parameters
-        ----------
-        optimizer : any
-            instance of optimizer
-        """
-        self.disc_model.optimizer = optimizer
 
     def _rho_optimize(self) -> None:
         """Optimize the rho value"""

@@ -2,7 +2,7 @@ import numpy as np
 import pytest
 
 from mfpml.optimization.evolutionary_algorithms import DE, PSO
-from mfpml.problems.singlefidelity_functions import Ackley
+from mfpml.problems.sf_functions import Ackley
 
 pytestmark = pytest.mark.smoke
 
@@ -47,6 +47,3 @@ def test_DE() -> None:
     assert best_y == pytest.approx(optimum)
     assert best_x == pytest.approx(optimum_scheme)
 
-
-if __name__ == "__main__":  # pragma: no cover
-    pytest.main()

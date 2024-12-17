@@ -39,8 +39,8 @@ The idea of auto-regression model can be expressed by [4]_ , which can be expres
    f_h \left ( \boldsymbol{x}   \right) =  \boldsymbol{\rho} f_l \left ( \boldsymbol{x}   \right) + f_d \left ( \boldsymbol{x}   \right) 
 
 where the high-fidelity GP  :math:`f_h \left ( \boldsymbol{x}   \right)`
-is the summation of two GPs (the low-fidelity :math:`$f_l \left ( \boldsymbol{x}   \right)`
-and the difference :math:`f_d \left ( \boldsymbol{x}   \right)$`), 
+is the summation of two GPs (the low-fidelity :math:`f_l \left ( \boldsymbol{x}   \right)`
+and the difference :math:`f_d \left ( \boldsymbol{x}   \right)`), 
 and where :math:`\boldsymbol{\rho}` is  an additional hyper-parameter to 
 control the correlation level between high-fidelity and low-fidelity. 
 The auto-regression model expands the covariance matrix to the form of 
@@ -58,7 +58,7 @@ The auto-regression model expands the covariance matrix to the form of
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The training of Co-Kriging model consists of two stages. In the first stage, 
-we can train a low fidelity Kriging model :attr:`~mfpml.surrogates.sf_gpr.Kriging` based on the low-fidelity samples. 
+we can train a low fidelity Kriging model :attr:`~mfpml.models.GaussianProcessRegression` based on the low-fidelity samples. 
 Then, combine the low-fidelity Kriging model and the high-fidelity samples, we can train a discrepancy Kriging model, and finding 
 the best :math:`\boldsymbol{\rho}`. 
 
@@ -66,76 +66,76 @@ the best :math:`\boldsymbol{\rho}`.
 Implementation
 --------------
 
-The Co-Kriging model is implemented in :attr:`~mfpml.surrogates.co_kriging.Co_Kriging` class.
+The Co-Kriging model is implemented in :attr:`~mfpml.models.co_kriging.CoKriging` class.
 The following example is given to illustrate the usage of the how to train and predict with Co-Kriging model:
   
 .. code-block:: python
 
-  # import necessary functions
+  # Import required libraries
   import matplotlib.pyplot as plt
-  from mfpml.design_of_experiment.multifidelity_samplers import MFSobolSequence
-  from mfpml.models.co_kriging import CoKriging
-  from mfpml.problems.multifidelity_functions import Forrester_1b
+  import numpy as np
 
-  # define function
+  # Import necessary modules
+  from mfpml.design_of_experiment.mf_samplers import MFSobolSequence
+  from mfpml.models.co_kriging import CoKriging
+  from mfpml.problems.mf_functions import Forrester_1b
+
+  # Step 1: Define the Multi-Fidelity Function
   func = Forrester_1b()
 
-  # define sampler
-  sampler = MFSobolSequence(design_space=func._design_space, seed=4)
-  sample_x = sampler.get_samples(num_hf_samples=4, num_lf_samples=12)
+  # Step 2: Generate Samples at Two Fidelity Levels
+  sampler = MFSobolSequence(design_space=func._input_domain, num_fidelity=2)
+  sample_x = sampler.get_samples(num_samples=[10, 100], seed=2)
   sample_y = func(sample_x)
 
-  # generate test samples
+  # Add noise to the samples
+  np.random.seed(2)
+  sample_y[0] += np.random.normal(0, 0.3, sample_y[0].shape)  # Low-fidelity noise
+  sample_y[1] += np.random.normal(0, 0.3, sample_y[1].shape)  # High-fidelity noise
+
+  # Step 3: Generate Test Data
   test_x = np.linspace(0, 1, 1000).reshape(-1, 1)
-  test_hy = func.hf(test_x)
-  test_ly = func.lf(test_x)
+  test_hf_y = func.hf(test_x)  # High-fidelity ground truth
+  test_lf_y = func.lf(test_x)  # Low-fidelity ground truth
 
-  # initialize optimizer
-  optimizer = DE(num_gen=1000, num_pop=50, crossover_rate=0.5,
-                strategy="DE/best/1/bin")
-
-  # initialize the co-kriging model
-  coK = CoKriging(design_space=func._input_domain)
-  # train the co-kriging model
+  # Step 4: Train the Co-Kriging Model
+  coK = CoKriging(design_space=func._input_domain, optimizer_restart=10, noise_prior=None)
   coK.train(sample_x, sample_y)
 
-  # get predictions 
-  lf_pred, lf_std = coK.lf_model.predict(test_x, return_std=True)
-  hf_pred, hf_std = coK.predict(test_x, return_std=True)
+  # Step 5: Predictions
+  cok_predictions, cok_std = coK.predict(test_x, return_std=True)
 
-  
-  # plot the results
-  fig, ax = plt.subplots(figsize=(5, 4))
-  plt.plot(test_x, test_hy, "r--", label="True HF")
-  plt.plot(test_x, test_ly, "g--", label="True LF")
-  plt.plot(test_x, cok_pre, "b-", label="CoKriging")
-  plt.fill_between(
+  # Step 6: Plot the Results
+  fig, ax = plt.subplots(figsize=(6, 4))
+  ax.plot(test_x, test_hf_y, "r--", label="True High-Fidelity")
+  ax.plot(test_x, test_lf_y, "g--", label="True Low-Fidelity")
+  ax.plot(test_x, cok_predictions, "b-", label="Co-Kriging Predictions")
+  ax.fill_between(
       test_x[:, 0],
-      cok_pre[:, 0] - 1.96 * cok_mse[:, 0],
-      cok_pre[:, 0] + 1.96 * cok_mse[:, 0],
+      cok_predictions[:, 0] - 1.96 * cok_std[:, 0],
+      cok_predictions[:, 0] + 1.96 * cok_std[:, 0],
       alpha=0.4,
       color="b",
-      label="95% CI",
+      label="95% Confidence Interval",
   )
-  plt.plot(test_x, lf_pred, "k-", label="LF model")
-  plt.fill_between(
-      test_x[:, 0],
-      lf_pred[:, 0] - 1.96 * lf_std[:, 0],
-      lf_pred[:, 0] + 1.96 * lf_std[:, 0],
-      alpha=0.4,
-      color="y",
-      label="95% CI lf",
-  )
-  plt.plot(sample_x["hf"], sample_y["hf"], "kx", label="HF samples")
-  plt.plot(sample_x["lf"], sample_y["lf"], "k+", label="LF samples")
-  plt.legend(loc="best")
-  plt.grid()
+  ax.scatter(sample_x[0], sample_y[0], color="green", label="Low-Fidelity Samples")
+  ax.scatter(sample_x[1], sample_y[1], color="red", label="High-Fidelity Samples")
+  ax.legend(loc="best")
+  ax.grid("--")
+  plt.xlabel("x")
+  plt.ylabel("y")
+  plt.title("Multi-Fidelity Co-Kriging Regression")
   plt.show()
+
+  # Step 7: Print Training Information
+  print(f"Low-Fidelity Training Time: {coK.lf_training_time:.4f} seconds")
+  print(f"High-Fidelity Training Time: {coK.hf_training_time:.4f} seconds")
+
 
 .. image:: figures/co-kriging.png
    :width: 400
    :align: center
-   :alt: prediction of co-kriging model
+   :alt: prediction of CoKriging model
 
 
 Implemented multi-fidelity surrogates
@@ -146,7 +146,7 @@ Multifidelity surrogate                   API of sampling methods
 ======================== ========================================================================================         
 Co-Kriging                 :attr:`~mfpml.models.co_kriging.CoKriging`
 Hierarchical Kriging       :attr:`~mfpml.models.hierarchical_kriging.HierarchicalKriging`
-Scaled Kriging             :attr:`~mfpml.models.mf_scale_kriging.ScaledKriging`
+Scaled Kriging             :attr:`~mfpml.models.scale_kriging.ScaledKriging`
 ======================== ========================================================================================
 
 References

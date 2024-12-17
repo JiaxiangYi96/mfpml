@@ -1,5 +1,5 @@
 from .evolutionary_algorithms import DE, PSO
-from .mf_acqusitions import augmentedEI, extendedPI, vfei, vflcb
-from .mfbo import mfBayesOpt
-from .sf_acqusitions import EI, LCB, PI
-from .sfbo import BayesOpt
+from .mf_acqusitions import AugmentedEI, ExtendedPI, VFEI, VFLCB
+from .mf_uncons_bo import mfUnConsBayesOpt
+from .sf_uncons_acqusitions import EI, LCB, PI
+from .sf_uncons_bo import BayesUnConsOpt

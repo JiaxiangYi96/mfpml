@@ -10,8 +10,8 @@ Welcome to mfpml's documentation!
    :width: 100%
    :align: center
 
-
-`Docs <https://jiaxiangyi96.github.io/mfpml/>`__ | `GitHub <https://github.com/JiaxiangYi96/mfpml.git>`__
+**Links**:
+`Documentation <https://jiaxiangyi96.github.io/mfpml/>`__ | `GitHub repository <https://github.com/JiaxiangYi96/mfpml.git>`__
 
 
 **First publication:** August 23, 2023
@@ -52,13 +52,6 @@ Welcome to mfpml's documentation!
    :caption: Optimization:  
    
    optimization.rst
-
-.. toctree::
-   :maxdepth: 3
-   :caption: reliability analysis:  
-   
-   reliability_analysis.rst
-
 
 .. toctree::
    :maxdepth: 3
