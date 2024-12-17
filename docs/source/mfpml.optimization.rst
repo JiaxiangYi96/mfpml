@@ -10,34 +10,34 @@ mfpml.optimization.evolutionary\_algorithms
    :undoc-members:
    :show-inheritance:
 
-mfpml.optimization.mfbo
-------------------------------
+mfpml.optimization.single\_fidelity\_Bayesian\_optimization
+-----------------------------------------------------------
 
-.. automodule:: mfpml.optimization.mfbo
+.. automodule:: mfpml.optimization.sf_uncons_bo
    :members:
    :undoc-members:
    :show-inheritance:
 
-mfpml.optimization.mf\_acqusitions
+mfpml.optimization.single\_fidelity\_acqusitions
 -----------------------------------------
+
+.. automodule:: mfpml.optimization.sf_uncons_acqusitions
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+mfpml.optimization.multi\_fidelity\_Bayesian\_optimization
+----------------------------------------------------------
+
+.. automodule:: mfpml.optimization.mf_uncons_bo
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+mfpml.optimization.multi\_fidelity\_acqusitions
+-----------------------------------------------
 
 .. automodule:: mfpml.optimization.mf_acqusitions
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-mfpml.optimization.sf\_acqusitions
------------------------------------------
-
-.. automodule:: mfpml.optimization.sf_acqusitions
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-mfpml.optimization.sfbo
------------------------------------------
-
-.. automodule:: mfpml.optimization.sfbo
    :members:
    :undoc-members:
    :show-inheritance:

@@ -23,9 +23,9 @@ for path in src_dir:
 # Source: https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 project = 'mfpml'
 author = 'Jiaxiang Yi'
-copyright = '2023, Jiaxiang Yi'
-version = '0.0.1'
-release = '0.0.1'
+copyright = '2024, Jiaxiang Yi'
+version = '1.0.0'
+release = '1.0.0'
 
 
 # -- General configuration ----------------------------------------------------

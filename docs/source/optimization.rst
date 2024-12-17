@@ -1,19 +1,21 @@
-Optimization 
-============
 
-optimization is needed also everywhere in the field of machine learning, and also
+Optimization is needed also everywhere in the field of machine learning, and also
 in the field of product, structure, and material design. In this packages, we have 
 implemented a few optimization algorithms, which can be categorized into two groups:
 
-1. Evolutionary algorithms
+--------------------------------
 
-2. Single fidelity Bayesian optimization
+**1. Evolutionary algorithms**
 
-3. Multi fidelity Bayesian optimization
+**2. Single fidelity Bayesian optimization**
+
+**3. Multi fidelity Bayesian optimization**
+
+--------------------------------
 
 
-1. Evolutionary algorithms
-==========================
+Evolutionary algorithms
+=======================
 Evolutionary is a class of algorithms inspired by the biological evolution, and they 
 don't require the gradient information of the objective function. In this package, we 
 have implemented the following evolutionary algorithms:
@@ -23,8 +25,8 @@ have implemented the following evolutionary algorithms:
 (2) differential evolution (DE)
 
 
-1.1 Particle swarm optimization
--------------------------------
+Particle swarm optimization
+---------------------------
 
 Particle swarm optimization (PSO) is a population-based stochastic optimization algorithm.
 The basic idea of PSO is to simulate the social behavior of birds flocking or fish schooling.
@@ -35,24 +37,24 @@ according to certain rules. More details can be referred to [1]_
 
 .. code-block:: python
 
-    from mfpml.problems.singlefidelity_functions import Forrester
-    from mfpml.optimization.sf_pso import PSO
+    from mfpml.problems.sf_functions import Forrester
+    from mfpml.optimization.evolutionary_algorithms import PSO
     # define problem 
     problem = Forrester()
 
     # initialize the PSO class
     pso = PSO(num_gen=100, num_pop=20)
     # run the optimizer
-    best_results = pso.run_optimizer(
-        func=problem.f,
-        num_dim=problem.num_dim,
-        design_space=problem._input_domain,
-        print_info=False,
+    best_results = pso_opt.run_optimizer(
+    func=function.f,
+    num_dim=function.num_dim,
+    design_space=function.input_domain,
+    print_info=False,
     )
 
 
-1.2 Differential evolution
----------------------------
+Differential evolution
+----------------------
 
 Differential evolution (DE) is a population-based stochastic optimization algorithm.
 The basic idea of DE is to generate a new population by adding the weighted difference
@@ -63,8 +65,8 @@ can be referred to [2]_
 
 .. code-block:: python
 
-    from mfpml.problems.singlefidelity_functions import Forrester
-    from mfpml.optimization.sf_de import DE
+    from mfpml.problems.sf_functions import Forrester
+    from mfpml.evolutionary_algorithms import DE
     # define problem 
     problem = Forrester()
 
@@ -74,13 +76,13 @@ can be referred to [2]_
     best_results = de.run_optimizer(
         func=problem.f,
         num_dim=problem.num_dim,
-        design_space=problem._input_domain,
+        design_space=problem.input_domain,
         print_info=False,
     )
 
 
-2. Bayesian optimization
-========================
+Single-fidelity Bayesian optimization
+=====================================
 Bayesian optimization is a powerful tool to handling expensive optimization problems. 
 The basic idea of Bayesian optimization is to use Gaussian Process model to approximate 
 the objective function, and then use the predictive mean and variance to determine the next sampling location.
@@ -155,24 +157,19 @@ where :math:`\kappa` is a hyper-parameter, which is usually set to be 2.
 
 .. code-block:: python
     
-    from mfpml.problems.singlefidelity_functions import Forrester
-    from mfpml.optimization.sfbo import BayesOpt
-    from mfpml.optimization.sf_acqusitions import EI
+    from mfpml.problems.sf_functions import Forrester
+    from mfpml.optimization.sf_uncons_bo import BayesUnConsOpt
+    from mfpml.optimization.sf_uncons_acqusitions import EI
     # define problem 
     problem = Forrester()
-    # initialize the samples 
-    x = np.array([[0.0], [0.5], [1.0]])
-    y = problem.f(x)
 
     # initialize the BayesOpt class
-    bo = BayesOpt(problem=problem)
-    # note by changing acquistion, to lcb and ei, we can get different results
-    bo.run_optimizer(init_x=x,
-                    init_y=y,
-                    max_iter=10,
-                    surrogate=kriging,
-                    acquisition=EI(),
-                    print_info=False)
+    bayes_opt = BayesUnConsOpt(problem=func,
+                               acquisition=EI(),
+                               num_init=3,
+                               verbose=True,
+                               seed=4)
+    bayes_opt.run_optimizer(max_iter=10, stopping_error=0.01)
 
 .. figure:: figures/bo_forrester.png
    :width: 50%
@@ -188,15 +185,15 @@ Implemented single fidelity acquisition functions
 ======================== ========================================================================================
 Methods                   API of sampling methods                                            
 ======================== ========================================================================================         
-Expected Improvement       :attr:`~mfpml.optimization.sf_acqusitions.EI`
-Probability Improvement    :attr:`~mfpml.optimization.sf_acqusitions.PI`
-Low Confidence Bound       :attr:`~mfpml.optimization.sf_acqusitions.LCB`
+Expected Improvement       :attr:`~mfpml.optimization.sf_uncons_acqusitions.EI`
+Probability Improvement    :attr:`~mfpml.optimization.sf_uncons_acqusitions.PI`
+Low Confidence Bound       :attr:`~mfpml.optimization.sf_uncons_acqusitions.LCB`
 ======================== ========================================================================================
 
 
-3. Multi fidelity Bayesian optimization
-=======================================
-Multi fidelity Bayesian optimization is getting more popular nowadays, because it can
+Multi-fidelity Bayesian optimization
+====================================
+Multi-fidelity Bayesian optimization is getting more popular nowadays, because it can
 integrate multi-fidelity data to improve the optimization performance. However, the research 
 of Multi-fidelity Bayesian optimization is still in its infancy. 
 
@@ -205,68 +202,44 @@ basically the methods introduced about multi-fidelity Bayesian optimization are 
 based on our published papers and the methods that been compared in our research. 
 
 In this repo, we make the implementation of multi-fidelity Bayesian optimization as general as possible,
-meaning one only needs to define a multi-fidelity kriging model :attr:`~mfpml.models.mf_gprs`  and getting 
+meaning one only needs to define a multi-fidelity kriging model :attr:`~mfpml.models.mf_gaussian_process`  and getting 
 a multi-fidelity acquisition function :attr:`~mfpml.optimization.mf_acqusitions`  to run the multi-fidelity 
 Bayesian optimization.
 
-3.1 Multi-fidelity acquisition functions
-----------------------------------------
 
-3.1.1 variable-fidelity Lower Confidence Bound (VF-LCB)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-3.1.2 variable-fidelity Expected Improvement (VF-EI)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-3.1.3 Extended Probability of Improvement (VF-PI)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-3.1.4 Augmented Expected Improvement (AEI)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-3.2 Implementation
-------------------
+Implementation
+--------------
 
 Here gives an example on how to use the multi-fidelity Bayesian optimization.
 
 .. code-block:: python
 
-    from mfpml.problems.multifidelity_functions import Forrester_1a
-    from mfpml.optimization.mfbo import mfBayesOpt
-    from mfpml.models.co_kriging import CoKriging
-    from mfpml.optimization.mf_acqusitions import augmentedEI
-    from mfpml.design_of_experiment.multifidelity_samplers import MFLatinHyperCube
+    from mfpml.problems.mf_functions import Forrester_1a
+    from mfpml.optimization.mf_uncons_bo import mfUnConsBayesOpt
+    from mfpml.optimization.mf_acqusitions import  AugmentedEI,
 
 
     # define problem 
     problem = Forrester_1a()
-    # initialize the samples
-    sampler = MFLatinHyperCube(design_space=func._design_space, seed=7)
+    # define the optimizer
+    optimizer = mfUnConsBayesOpt(problem=problem,
+                                acquisition=VFEI(),
+                                num_init=[5, 20],
+                                )
+    # execute the optimizer
+    optimizer.run_optimizer(max_iter=20, stopping_error=0.01, cost_ratio=5.0)
 
-    # get initial samples
-    sample_x = sampler.get_samples(
-        num_hf_samples=3 * func.num_dim, num_lf_samples=6 * func.num_dim
-    )
-    sample_y = func(sample_x)
+Implemented multi-fidelity acquisition functions
+-------------------------------------------------
 
-    # initialize the model 
-    mf_model = ScaledKriging(design_space=func._input_domain)
-
-    # initialize the mfBayesOpt class
-    mgbo = mfBayesOpt(problem=problem)
-    # note by changing acquistion, to lcb and ei, we can get different results
-    mgbo.run_optimizer(init_x=sample_x,
-                       init_y=sample_y,
-                       max_iter=10,
-                       surrogate=mf_model,
-                       acquisition=augmentedEI(),
-                       print_info=False)
-
-
+======================== ========================================================================================
+Methods                   API of sampling methods                                            
+======================== ========================================================================================         
+Augmented EI                :attr:`~mfpml.optimization.mf_acqusitions.AugmentedEI`
+VFEI                        :attr:`~mfpml.optimization.mf_acqusitions.VFEI`
+VFLCB                       :attr:`~mfpml.optimization.mf_acqusitions.VFLCB`
+ExtendedPI                  :attr:`~mfpml.optimization.mf_acqusitions.ExtendedPI`
+======================== ========================================================================================
 
 References
 ----------

@@ -10,17 +10,17 @@ mfpml.problems.functions
    :show-inheritance:
 
 mfpml.problems.multifidelity\_functions
-----------------------------------------------
+---------------------------------------
 
-.. automodule:: mfpml.problems.multifidelity_functions
+.. automodule:: mfpml.problems.mf_functions
    :members:
    :undoc-members:
    :show-inheritance:
 
 mfpml.problems.singlefidelity\_functions
------------------------------------------------
+----------------------------------------
 
-.. automodule:: mfpml.problems.singlefidelity_functions
+.. automodule:: mfpml.problems.sf_functions
    :members:
    :undoc-members:
    :show-inheritance:

@@ -3,7 +3,6 @@ Installation
 ---------------
 
 Building from source is required to work on a contribution (bug fix, new feature, code or documentation improvement).
-We recommend using a `Linux distribution system <https://releases.ubuntu.com/focal/>`_.
 
 .. _git_repo:
 
@@ -35,15 +34,8 @@ We recommend using a `Linux distribution system <https://releases.ubuntu.com/foc
 
      pip install --verbose --no-build-isolation --editable .
 
-4. In order to check your installation you can use
 
-  .. code-block:: console
-
-     $ python -c "import mfpml"
-     >>> 2023-07-05 14:56:40,015 - Imported mfpml (version: 0.0.1)
-
-
-5. Install the development requirements:
+3. Install the development requirements:
 
    .. code-block:: console
 
