@@ -1,11 +1,10 @@
-from typing import Any, List
+from typing import List
 
 import matplotlib.pyplot as plt
 import numpy as np
 
 from mfpml.design_of_experiment.mf_samplers import (MFLatinHyperCube,
                                                     MFSobolSequence)
-# import local functions
 from mfpml.design_of_experiment.sf_samplers import (LatinHyperCube,
                                                     RandomSampler,
                                                     SobolSequence)
@@ -15,7 +14,8 @@ class SFSamplerVisualization:
     """Sampler visualization class
     """
 
-    def __init__(self, sampler: SobolSequence | LatinHyperCube | RandomSampler):
+    def __init__(self,
+                 sampler: SobolSequence | LatinHyperCube | RandomSampler):
 
         self.sampler = sampler
 
@@ -23,7 +23,9 @@ class SFSamplerVisualization:
         if self.sampler.samples is None:
             raise ValueError("Please generate the samples first.")
 
-    def plot_samples(self, save_figure: bool = False, filename: str = "samples.png"):
+    def plot_samples(self,
+                     save_figure: bool = False,
+                     filename: str = "samples.png"):
 
         # check the fimension of the samples
         num_dim = self.sampler.num_dim
@@ -127,7 +129,8 @@ class MFSamplerVisualization:
         # get the fidelity of the samples
         self.num_fidelity = self.sampler.num_fidelity
 
-    def plot_samples(self, save_figure: bool = False, filename: str = "samples.png"):
+    def plot_samples(self, save_figure: bool = False,
+                     filename: str = "samples.png"):
         num_dim = self.sampler.num_dim
         if num_dim == 1:
             self._plot_1D(self.sampler.data, save_figure, filename)
@@ -208,8 +211,11 @@ class MFSamplerVisualization:
         fig, ax = plt.subplots(figsize=(5, 4))
         # plot the samples
         for fidelity, samples in reversed(list(enumerate(samples))):
-            ax.scatter(samples[:, 0], np.zeros(samples.shape[0]), c=self.__get_color(
-                fidelity), marker=self.__get_marker(fidelity), s=(30 + 10*fidelity), label=f'fidelity {fidelity}')
+            ax.scatter(samples[:, 0], np.zeros(samples.shape[0]),
+                       c=self.__get_color(fidelity),
+                       marker=self.__get_marker(fidelity),
+                       s=(30 + 10*fidelity),
+                       label=f'fidelity {fidelity}')
         plt.xlabel(r"$x_1$", fontsize=12)
         plt.title("1D samples", fontsize=12)
         plt.legend(fontsize=12)

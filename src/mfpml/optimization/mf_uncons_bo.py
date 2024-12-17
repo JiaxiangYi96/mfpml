@@ -1,16 +1,14 @@
 # import
 from typing import Any, List
 
-
-import matplotlib.pyplot as plt
 import numpy as np
 
-from ..problems.functions import Functions
-from .mf_acqusitions import MFUnConsAcq
 from ..design_of_experiment.mf_samplers import MFLatinHyperCube as MFLHS
+from ..models.co_kriging import CoKriging as CK
 from ..models.hierarchical_kriging import HierarchicalKriging as HK
 from ..models.scale_kriging import ScaledKriging as SK
-from ..models.co_kriging import CoKriging as CK
+from ..problems.functions import Functions
+from .mf_acqusitions import MFUnConsAcq
 
 
 class mfUnConsBayesOpt:
@@ -21,9 +19,9 @@ class mfUnConsBayesOpt:
     def __init__(self,
                  problem: Functions,
                  acquisition: MFUnConsAcq,
-                 num_init: List, 
-                 surrogate_name: str =  'HierarchicalKriging',
-                 seed: int = 1996, 
+                 num_init: List,
+                 surrogate_name: str = 'HierarchicalKriging',
+                 seed: int = 1996,
                  verbose: bool = True) -> None:
         """Initialize the multi-fidelity Bayesian optimization
 
@@ -51,9 +49,8 @@ class mfUnConsBayesOpt:
         self.stopping_error: float = 1.0
         self.fidelity_query_order: List = []
 
-        # initialization 
+        # initialization
         self._initialization()
-
 
     def run_optimizer(self,
                       max_iter: int = 10,
@@ -83,12 +80,13 @@ class mfUnConsBayesOpt:
         print(f"Error: {error}")
         while iteration < max_iter and error > stopping_error:
             # update the surrogate model
-            update_x, fidelity = self.acquisition.query(mf_surrogate=self.surrogate,
-                                                        cost_ratio=cost_ratio, 
-                                                        fmin=self.best)
+            update_x, fidelity = self.acquisition.query(
+                mf_surrogate=self.surrogate,
+                cost_ratio=cost_ratio,
+                fmin=self.best)
             if fidelity == 0:
                 update_y = self.problem.hf(np.atleast_2d(update_x))
-                # update the samples 
+                # update the samples
                 self.sample[0] = np.vstack((self.sample[0], update_x))
                 self.response[0] = np.vstack((self.response[0], update_y))
             else:
@@ -101,8 +99,9 @@ class mfUnConsBayesOpt:
             print("update_x: ", update_x)
             print("update_y: ", update_y)
             print("fidelity: ", fidelity)
-            # update the params 
-            self._update_para(update_x=update_x, update_y=update_y, fidelity=fidelity)
+            # update the params
+            self._update_para(update_x=update_x,
+                              update_y=update_y, fidelity=fidelity)
 
             # iteration
             iteration += 1
@@ -110,8 +109,6 @@ class mfUnConsBayesOpt:
                 self._print_info(iteration)
             # update the error
             error = self.__update_error()
-
-
 
     def __update_error(self) -> Any | float:
         """update error between the known optimum and the current optimum
@@ -131,7 +128,7 @@ class mfUnConsBayesOpt:
 
         return error
 
-    def _update_para(self,update_x, update_y, fidelity) -> None:
+    def _update_para(self, update_x, update_y, fidelity) -> None:
         """Update parameters
 
         Parameters
@@ -153,13 +150,13 @@ class mfUnConsBayesOpt:
         # record the optimization history
         self.history_best.append(self.best)
         self.history_best_x.append(self.best_x)
-            
 
     def _initialization(self) -> None:
         """Initialize parameters
         """
         sampler = MFLHS(design_space=self.problem.input_domain, num_fidelity=2)
-        self.init_sample = sampler.get_samples(num_samples=self.num_init, seed=self.seed)
+        self.init_sample = sampler.get_samples(
+            num_samples=self.num_init, seed=self.seed)
         self.init_response = self.problem(self.init_sample)
 
         # initialize the surrogate model
@@ -177,8 +174,8 @@ class mfUnConsBayesOpt:
                                 optimizer_restart=10)
         else:
             raise ValueError('Unknown surrogate model')
-        
-        # train the model 
+
+        # train the model
         self.surrogate.train(self.init_sample, self.init_response)
 
         # update the sample and response
@@ -204,16 +201,18 @@ class mfUnConsBayesOpt:
         iter : int
             current iteration
         """
-        
+
         if iteration == 0:
-            print("==================== Best objective value at initial samples ====================")
+            print(
+                "======= Best objective value  ==========")
             print(f"Best objective value: {self.best:.4f}")
             print(f"Best scheme: {self.best_x}")
-        
+
         else:
-            print("==================== Iteration {} ====================".format(iteration))
+            print(
+                "=========== Iteration {} ===========".format(iteration))
             print(f"Best objective value: {self.best}")
             print(f"Best scheme: {self.best_x}")
             print("Fidelity query order: ", self.fidelity_query_order[-1])
-            if self.stopping_error<1.0:
+            if self.stopping_error < 1.0:
                 print(f"Stopping error: {self.__update_error():4f}")

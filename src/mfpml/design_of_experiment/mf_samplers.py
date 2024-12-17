@@ -98,7 +98,7 @@ class MultiFidelitySampler:
         """
         for i in range(len(num_samples)-1):
             assert (num_samples[i] <= num_samples[i+1]), \
-                "samples of low fidelity should larger than tha of high fidelity"
+                "samples of low fidelity should larger than high fidelity"
 
     def lb(self, fidelity: int = 0) -> np.ndarray:
         """lower bound of the design space

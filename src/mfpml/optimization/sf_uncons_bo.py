@@ -1,6 +1,5 @@
-from abc import ABC, abstractmethod
-from collections import OrderedDict
-from typing import Any, Dict, List, Tuple
+from abc import ABC
+from typing import Any, List, Tuple
 
 import numpy as np
 
@@ -148,13 +147,13 @@ class BayesUnConsOpt(ABC):
         """
         # print the best y of current iteration
         if iteration == 0:
-            print("============= Best objective value at initial samples =========")
+            print("============= Best objective =========")
             print(f"best_y: {self.best:4f}")
             print(f"best_x: {self.best_x}")
 
         else:
             print(
-                f"============= Best objective value at iteration {iteration} =========")
+                f"=========== Best objective at iter {iteration} =========")
             print(f"best_y: {self.best:4f}")
             print(f"best_x: {self.best_x}")
             if self.stopping_error < 1.0:

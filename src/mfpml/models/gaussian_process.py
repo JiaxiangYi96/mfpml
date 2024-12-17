@@ -11,7 +11,7 @@ from .kernels import RBF
 
 class GaussianProcessRegression:
     """
-    Gaussian Process Regressor, it can be used for noisy data or noise-free data
+    Gaussian Process Regressor, for noisy data or noise-free data
     """
 
     def __init__(
@@ -35,7 +35,7 @@ class GaussianProcessRegression:
         regr : Any, optional
             mean function, by default Ordinary()
         optimizer : Any, optional
-            optimizer for optimizing the log likelihood function , by default None
+            optimizer for the log likelihood function , by default None
         noise_prior : float, optional
             noise prior of the , by default 0.0 (noise-free data), if the
             noise is not None, the type II maximum likelihood should be used

@@ -1,10 +1,12 @@
-from typing import Any, Tuple, Dict
 from abc import ABC, abstractmethod
+from typing import Any, Dict, Tuple
+
 import numpy as np
 from scipy.optimize import differential_evolution
 from scipy.stats import norm
-from mfpml.models.mf_gaussian_process import _mfGaussianProcess
+
 from mfpml.models.hierarchical_kriging import HierarchicalKriging
+from mfpml.models.mf_gaussian_process import _mfGaussianProcess
 
 # base class for multi-fidelity acquisition functions
 # =========================================================================== #
@@ -14,7 +16,7 @@ class MFUnConsAcq(ABC):
     """
     Base class for multi-fidelity acquisition functions
     """
-      
+
     @abstractmethod
     def eval(self,
              x: np.ndarray,
@@ -40,11 +42,11 @@ class MFUnConsAcq(ABC):
             acqusition function values
         """
         raise NotImplementedError('eval method is not implemented.')
-    
+
     @abstractmethod
     def query(self, mf_surrogate: _mfGaussianProcess,
-              cost_ratio: float, 
-              fmin:float) -> Dict:
+              cost_ratio: float,
+              fmin: float) -> Dict:
         """Query the acqusition function
 
         Parameters
@@ -62,7 +64,6 @@ class MFUnConsAcq(ABC):
         """
         raise NotImplementedError('query method is not implemented.')
 
-    
 
 class AugmentedEI(MFUnConsAcq):
     """Augmented Expected Improvement acquisition function"""
@@ -127,9 +128,9 @@ class AugmentedEI(MFUnConsAcq):
         aei = aei * alpha1 * alpha3
         return (-aei).ravel()
 
-    def query(self, mf_surrogate: _mfGaussianProcess, 
-              cost_ratio: float=1.0, 
-              fmin:float=1.0) -> Tuple[np.ndarray, int]:
+    def query(self, mf_surrogate: _mfGaussianProcess,
+              cost_ratio: float = 1.0,
+              fmin: float = 1.0) -> Tuple[np.ndarray, int]:
         """Query the acqusition function
 
         Parameters
@@ -176,7 +177,8 @@ class AugmentedEI(MFUnConsAcq):
         return update_x, fidelity
 
     @staticmethod
-    def _effective_best(mf_surrogate: _mfGaussianProcess, c: float = 1.) -> np.ndarray:
+    def _effective_best(mf_surrogate: _mfGaussianProcess,
+                        c: float = 1.) -> np.ndarray:
         """Return the effective best solution
 
         Parameters
@@ -270,7 +272,7 @@ class VFEI(MFUnConsAcq):
         # check model type
         if not isinstance(mf_surrogate, HierarchicalKriging):
             raise ValueError('Model type is not supported for VFEI.')
-        
+
         # get prediction for inputs
         pre, std = mf_surrogate.predict(x, return_std=True)
         if fidelity == 0:
@@ -291,7 +293,7 @@ class VFEI(MFUnConsAcq):
     def query(self,
               mf_surrogate: HierarchicalKriging,
               fmin: float,
-              cost_ratio: float=5.0,
+              cost_ratio: float = 5.0,
               ) -> dict:
         """Query the acqusition function
 
@@ -312,13 +314,13 @@ class VFEI(MFUnConsAcq):
             # identify the best point for high-fidelity
             res_hf = differential_evolution(self.eval,
                                             bounds=mf_surrogate.bound,
-                                            args=(fmin, mf_surrogate,0),
+                                            args=(fmin, mf_surrogate, 0),
                                             maxiter=500,
                                             popsize=40)
             # identify the best point for low-fidelity
             res_lf = differential_evolution(self.eval,
                                             bounds=mf_surrogate.bound,
-                                            args=(fmin, mf_surrogate,1),
+                                            args=(fmin, mf_surrogate, 1),
                                             maxiter=500,
                                             popsize=40)
             # update the point for high-fidelity
@@ -394,7 +396,7 @@ class VFLCB(MFUnConsAcq):
         _, std_lf = mf_surrogate.predict_lf(x, return_std=True)
         if fidelity == 0:
             std = std_hf
-        elif fidelity ==1:
+        elif fidelity == 1:
             std = std_lf * cr
         else:
             ValueError('Unknown fidelity input.')
@@ -403,8 +405,8 @@ class VFLCB(MFUnConsAcq):
         return vflcb.ravel()
 
     def query(self, mf_surrogate: _mfGaussianProcess,
-              cost_ratio: float =1.0,
-              fmin:float=1.0) -> dict:
+              cost_ratio: float = 1.0,
+              fmin: float = 1.0) -> dict:
         """Query the acqusition function
 
         Parameters
@@ -453,7 +455,6 @@ class VFLCB(MFUnConsAcq):
             update_x = np.atleast_2d(x_lf)
             fidelity = 1
         return update_x, fidelity
-
 
 
 class ExtendedPI(MFUnConsAcq):
@@ -526,8 +527,8 @@ class ExtendedPI(MFUnConsAcq):
         return -pi*corr*cr*eta
 
     def query(self, mf_surrogate: _mfGaussianProcess,
-              cost_ratio: float=1.0,
-              fmin:float =1.0) -> Tuple[np.ndarray, int]:
+              cost_ratio: float = 1.0,
+              fmin: float = 1.0) -> Tuple[np.ndarray, int]:
         """Query the acqusition function
 
         Parameters

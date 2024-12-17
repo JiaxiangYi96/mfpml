@@ -1,6 +1,6 @@
 
 import time
-from typing import Any, Dict, List
+from typing import Any, List
 
 import numpy as np
 
@@ -14,7 +14,7 @@ class _mfGaussianProcess:
         self.bound = design_space
         self.lfGP: GaussianProcessRegression = None
 
-    def predict(self,X: np.ndarray, return_std: bool = False) -> np.ndarray:
+    def predict(self, X: np.ndarray, return_std: bool = False) -> np.ndarray:
         """Predict the response of the model
 
         Parameters
@@ -46,9 +46,9 @@ class _mfGaussianProcess:
     def train(self,
               samples: List,
               responses: List) -> None:
-        """training for multi-fidelity Gaussian process regression model, it is 
-        for two-fidelity model, where the first fidelity is high-fidelity and the
-        second fidelity is low-fidelity. 
+        """training for multi-fidelity Gaussian process regression model
+        for two-fidelity model, where the first fidelity is high-fidelity and
+        second fidelity is low-fidelity.
 
         Parameters
         ----------
@@ -172,7 +172,7 @@ class _mfGaussianProcess:
         self.yh_std = np.std(outputs)
         return (outputs - self.yh_mean) / self.yh_std
 
-    @ property
+    @property
     def _get_lfGP(self) -> Any:
         """Get the low-fidelity model
 
@@ -184,7 +184,7 @@ class _mfGaussianProcess:
 
         return self.lfGP
 
-    @ property
+    @property
     def _num_xh(self) -> int:
         """Return the number of high-fidelity samples
 
@@ -195,7 +195,7 @@ class _mfGaussianProcess:
         """
         return self.sample_xh.shape[0]
 
-    @ property
+    @property
     def _num_xl(self) -> int:
         """Return the number of low-fidelity samples
 
@@ -206,7 +206,7 @@ class _mfGaussianProcess:
         """
         return self.lfGP._num_samples
 
-    @ property
+    @property
     def _get_sample_hf(self) -> np.ndarray:
         """Return samples of high-fidelity
 
@@ -217,7 +217,7 @@ class _mfGaussianProcess:
         """
         return self.sample_xh
 
-    @ property
+    @property
     def _get_sample_lf(self) -> np.ndarray:
         """Return samples of high-fidelity
 

@@ -10,8 +10,8 @@ from .kernels import RBF
 
 
 class _GP:
-    """single fidelity Gaussian process regression model, there is no 
-    normalization for the input and output. This is because we have to 
+    """single fidelity Gaussian process regression model, there is no
+    normalization for the input and output. This is because we have to
     adapt the model to the Co-Kriging model.
     """
 
@@ -724,7 +724,7 @@ class CoKriging:
 
         return self.lfGP
 
-    @ property
+    @property
     def _num_xh(self) -> int:
         """Return the number of high-fidelity samples
 
@@ -735,7 +735,7 @@ class CoKriging:
         """
         return self.sample_xh.shape[0]
 
-    @ property
+    @property
     def _num_xl(self) -> int:
         """Return the number of low-fidelity samples
 
@@ -746,7 +746,7 @@ class CoKriging:
         """
         return self.lfGP._num_samples
 
-    @ property
+    @property
     def _get_sample_hf(self) -> np.ndarray:
         """Return samples of high-fidelity
 
@@ -757,7 +757,7 @@ class CoKriging:
         """
         return self.sample_xh
 
-    @ property
+    @property
     def _get_sample_lf(self) -> np.ndarray:
         """Return samples of high-fidelity
 

@@ -175,6 +175,8 @@ class RBF(KernelCore):
         setattr(self, "param", 10**params)
 
 # =========================================================================== #
+
+
 def kronDelta(X, Y):
     """
     Computes Kronecker delta for rows in x and y.
