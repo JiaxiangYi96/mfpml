@@ -47,6 +47,3 @@ def test_DE() -> None:
     assert best_y == pytest.approx(optimum)
     assert best_x == pytest.approx(optimum_scheme)
 
-
-if __name__ == "__main__":  # pragma: no cover
-    pytest.main()

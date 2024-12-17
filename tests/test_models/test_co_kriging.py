@@ -11,8 +11,8 @@ from mfpml.problems.mf_functions import Forrester_1b
 # define function
 func = Forrester_1b()
 # define sampler
-sampler = MFSobolSequence(design_space=func._design_space, seed=1)
-sample_x = sampler.get_samples(num_hf_samples=4, num_lf_samples=12)
+sampler = MFSobolSequence(design_space=func.input_domain, num_fidelity=2)
+sample_x = sampler.get_samples([4, 12])
 sample_y = func(sample_x)
 
 # generate test samples
@@ -23,7 +23,7 @@ test_ly = func.lf(test_x)
 
 def test_predict():
     # Create a CoKriging instance
-    coK = CoKriging(design_space=func._input_domain)
+    coK = CoKriging(design_space=func.input_domain)
     coK.train(sample_x, sample_y)
 
     # Make predictions

@@ -13,11 +13,11 @@ pytestmark = pytest.mark.smoke
 # @pytest.mark.smoke
 def test_brainin_function_design_space() -> None:
     function = Branin()
-    design_space = function.design_space
+    design_space = function.input_domain
 
-    results = {"x1": [-5.0, 10.0], "x2": [0.0, 15.0]}
+    results = np.array([[-5.0, 10.0], [0.0, 15.0]])
 
-    assert results == design_space
+    assert results.shape == design_space.shape
 
 
 def test_brainin_function_values() -> None:

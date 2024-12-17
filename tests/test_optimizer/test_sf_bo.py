@@ -3,7 +3,7 @@ import numpy as np
 import pytest
 
 # local funstions
-from mfpml.models.kriging import Kriging
+from mfpml.models.gaussian_process import GaussianProcessRegression as Kriging
 from mfpml.optimization.sf_uncons_acqusitions import EI, LCB, PI
 from mfpml.optimization.sf_uncons_bo import BayesUnConsOpt
 from mfpml.problems.sf_functions import Forrester
@@ -18,7 +18,7 @@ func = Forrester()
 x = np.array([0.12, 0.36, 0.8]).reshape((-1, 1))
 y = func.f(x)
 # train the model
-kriging = Kriging(design_space=func._input_domain)
+kriging = Kriging(design_space=func.input_domain)
 kriging.train(x, y)
 
 # regenerate test samples within[0,1]
@@ -49,14 +49,12 @@ def test_sf_acquisitions():
 def test_sg_bo():
 
     # initialize the BayesOpt class
-    bo = BayesUnConsOpt(problem=func)
+    bo = BayesUnConsOpt(problem=func,
+                        acquisition=EI(),
+                        num_init=3,
+                        verbose=False,
+                        seed=4)
     # note by changing acquisition, to lcb and ei, we can get different results
-    bo.run_optimizer(init_x=x,
-                     init_y=y,
-                     max_iter=10,
-                     surrogate=kriging,
-                     acquisition=pi,
-                     print_info=False)
-    best_x = bo.best_x
+    bo.run_optimizer(max_iter=10, stopping_error=0.01)
     best_y = bo.best
     assert (best_y - func.optimum) < 1e-1
