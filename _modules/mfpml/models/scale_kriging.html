@@ -1,0 +1,382 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>mfpml.models.scale_kriging &mdash; mfpml 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/readthedocs-custom.css" />
+
+  
+      <script src="../../../_static/documentation_options.js?v=8d563738"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            mfpml
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Overview:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../readme.html">Summary</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Get started:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../get_started.html">Installation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Design of experiments:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../design_of_experiments.html">Single-Fidelity Samplers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../design_of_experiments.html#multi-fidelity-samplers">Multi-Fidelity Samplers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../design_of_experiments.html#summary">Summary</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Problems:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../problems.html">Problems class structure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../problems.html#single-fidelity-problems">Single fidelity problems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../problems.html#multi-fidelity-problems">Multi fidelity problems</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Surrogates:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../single_fidelity_kriging_models.html">Single fidelity surrogates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../multi_fidelity_kriging_models.html">Multi fidelity surrogates</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Optimization:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../optimization.html">Evolutionary algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../optimization.html#single-fidelity-bayesian-optimization">Single-fidelity Bayesian optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../optimization.html#multi-fidelity-bayesian-optimization">Multi-fidelity Bayesian optimization</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../mfpml.html">API Documentation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">mfpml</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">mfpml.models.scale_kriging</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for mfpml.models.scale_kriging</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">scipy.optimize</span> <span class="kn">import</span> <span class="n">minimize</span>
+
+<span class="kn">from</span> <span class="nn">.gaussian_process</span> <span class="kn">import</span> <span class="n">GaussianProcessRegression</span>
+<span class="kn">from</span> <span class="nn">.kernels</span> <span class="kn">import</span> <span class="n">RBF</span>
+<span class="kn">from</span> <span class="nn">.mf_gaussian_process</span> <span class="kn">import</span> <span class="n">_mfGaussianProcess</span>
+
+
+<div class="viewcode-block" id="ScaledKriging">
+<a class="viewcode-back" href="../../../mfpml.models.html#mfpml.models.scale_kriging.ScaledKriging">[docs]</a>
+<span class="k">class</span> <span class="nc">ScaledKriging</span><span class="p">(</span><span class="n">_mfGaussianProcess</span><span class="p">):</span>
+
+<div class="viewcode-block" id="ScaledKriging.__init__">
+<a class="viewcode-back" href="../../../mfpml.models.html#mfpml.models.scale_kriging.ScaledKriging.__init__">[docs]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">design_space</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">lfGP</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">disc_model</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">optimizer</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">optimizer_restart</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">kernel_bound</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">],</span>
+        <span class="n">rho_optimize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">rho_method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;error&quot;</span><span class="p">,</span>
+        <span class="n">rho_bound</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1e-2</span><span class="p">,</span> <span class="mf">1e1</span><span class="p">],</span>
+        <span class="n">rho_optimizer</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">noise_prior</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Multi-fidelity Kriging model with scaled function</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        design_space : np.ndarray</span>
+<span class="sd">            array of shape=((num_dim,2)) where each row describes</span>
+<span class="sd">            the bound for the variable on specfic dimension</span>
+<span class="sd">        lfGP: any</span>
+<span class="sd">            instance of low-fidelity model, the model should have the method:</span>
+<span class="sd">            train(x: np.ndarray, y: np.ndarray),</span>
+<span class="sd">            predict(x: np.ndarray, return_std: bool)</span>
+<span class="sd">        disc_model: any, optional</span>
+<span class="sd">            instance of discrepancy model, the model should have the method:</span>
+<span class="sd">            train(x: np.ndarray, y: np.ndarray),</span>
+<span class="sd">            predict(x: np.ndarray, return_std: bool). Default Kriging</span>
+<span class="sd">        optimizer: any, optional</span>
+<span class="sd">            instance of the optimizer used to optimize the hyperparameters</span>
+<span class="sd">            with the use style optimizer.run_optimizer(objective function,</span>
+<span class="sd">            number of dimension, design space of variables), if not assigned,</span>
+<span class="sd">            the &#39;L-BFGS-B&#39; method in scipy is used</span>
+<span class="sd">        kernel_bound: list, optional</span>
+<span class="sd">            log bound of the kernel for discrepancy Kriging model, by</span>
+<span class="sd">            default [-3, 2]</span>
+<span class="sd">        rho_optimize : bool, optional</span>
+<span class="sd">            whether to optimize the scale factor, if not the scale</span>
+<span class="sd">            factor is 1, by default False</span>
+<span class="sd">        rho_method : str, optional</span>
+<span class="sd">            method to choose rho, can choose from [&#39;error&#39;, &#39;bumpiness&#39;]</span>
+<span class="sd">        rho_bound : list, optional</span>
+<span class="sd">            bound for the factor rho if optimizing rho, by default [1e-1, 1e1]</span>
+<span class="sd">        rho_optimizer : any, optional</span>
+<span class="sd">            optimizer for the parameter rho, by default &#39;L-BFGS-B&#39;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">design_space</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lfGP</span> <span class="o">=</span> <span class="n">lfGP</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">optimizer_restart</span> <span class="o">=</span> <span class="n">optimizer_restart</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rho_optimize</span> <span class="o">=</span> <span class="n">rho_optimize</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rho</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rho_bound</span> <span class="o">=</span> <span class="n">rho_bound</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rho_method</span> <span class="o">=</span> <span class="n">rho_method</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rho_optimizer</span> <span class="o">=</span> <span class="n">rho_optimizer</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mu</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_dim</span> <span class="o">=</span> <span class="n">design_space</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kernel</span> <span class="o">=</span> <span class="n">RBF</span><span class="p">(</span><span class="n">theta</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_dim</span><span class="p">),</span> <span class="n">bounds</span><span class="o">=</span><span class="n">kernel_bound</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">lfGP</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">lfGP</span> <span class="o">=</span> <span class="n">GaussianProcessRegression</span><span class="p">(</span>
+                <span class="n">design_space</span><span class="o">=</span><span class="n">design_space</span><span class="p">,</span>
+                <span class="n">optimizer</span><span class="o">=</span><span class="n">optimizer</span><span class="p">,</span>
+                <span class="n">optimizer_restart</span><span class="o">=</span><span class="n">optimizer_restart</span><span class="p">,</span>
+                <span class="n">noise_prior</span><span class="o">=</span><span class="n">noise_prior</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">lfGP</span> <span class="o">=</span> <span class="n">lfGP</span>
+        <span class="k">if</span> <span class="n">disc_model</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">disc_model</span> <span class="o">=</span> <span class="n">GaussianProcessRegression</span><span class="p">(</span>
+                <span class="n">design_space</span><span class="o">=</span><span class="n">design_space</span><span class="p">,</span>
+                <span class="n">optimizer</span><span class="o">=</span><span class="n">optimizer</span><span class="p">,</span>
+                <span class="n">optimizer_restart</span><span class="o">=</span><span class="n">optimizer_restart</span><span class="p">,</span>
+                <span class="n">noise_prior</span><span class="o">=</span><span class="n">noise_prior</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">disc_model</span> <span class="o">=</span> <span class="n">disc_model</span></div>
+
+
+<div class="viewcode-block" id="ScaledKriging._train_hf">
+<a class="viewcode-back" href="../../../mfpml.models.html#mfpml.models.scale_kriging.ScaledKriging._train_hf">[docs]</a>
+    <span class="k">def</span> <span class="nf">_train_hf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sample_xh</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">sample_yh</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Train the discrepancy model in mf models</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">        -----------------</span>
+<span class="sd">        sample_xh : np.ndarray</span>
+<span class="sd">            array of high-fidelity samples</span>
+<span class="sd">        sample_yh : np.ndarray</span>
+<span class="sd">            array of high-fidelity responses</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sample_xh</span> <span class="o">=</span> <span class="n">sample_xh</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sample_yh</span> <span class="o">=</span> <span class="n">sample_yh</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rho_optimize</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_rho_optimize</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">disc_model</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_xh</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getDisc</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">noise</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">disc_model</span><span class="o">.</span><span class="n">noise</span></div>
+
+
+<div class="viewcode-block" id="ScaledKriging.predict">
+<a class="viewcode-back" href="../../../mfpml.models.html#mfpml.models.scale_kriging.ScaledKriging.predict">[docs]</a>
+    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">return_std</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Predict high-fidelity responses</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X : np.ndarray</span>
+<span class="sd">            array of high-fidelity to be predicted</span>
+<span class="sd">        return_std : bool, optional</span>
+<span class="sd">            whether to return std values, by default False</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        np.ndarray</span>
+<span class="sd">            prediction of high-fidelity</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">return_std</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">disc_model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">rho</span> \
+                <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">lfGP</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">pre_lf</span><span class="p">,</span> <span class="n">std_lf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lfGP</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">return_std</span><span class="p">)</span>
+            <span class="n">pre_disc</span><span class="p">,</span> <span class="n">std_disc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">disc_model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">return_std</span><span class="p">)</span>
+            <span class="n">mse</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rho</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">std_lf</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">std_disc</span><span class="o">**</span><span class="mi">2</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rho</span> <span class="o">*</span> <span class="n">pre_lf</span> <span class="o">+</span> <span class="n">pre_disc</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mse</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ScaledKriging._getDisc">
+<a class="viewcode-back" href="../../../mfpml.models.html#mfpml.models.scale_kriging.ScaledKriging._getDisc">[docs]</a>
+    <span class="k">def</span> <span class="nf">_getDisc</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the discrepancy between low-fidelity prediction</span>
+<span class="sd">        at high-fidelity samples and high-fidelity responses</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        np.ndarray</span>
+<span class="sd">            discrepancy</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample_yh</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">rho</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict_lf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_xh</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ScaledKriging._rho_optimize">
+<a class="viewcode-back" href="../../../mfpml.models.html#mfpml.models.scale_kriging.ScaledKriging._rho_optimize">[docs]</a>
+    <span class="k">def</span> <span class="nf">_rho_optimize</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Optimize the rho value&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rho_optimizer</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rho_method</span> <span class="o">==</span> <span class="s2">&quot;error&quot;</span><span class="p">:</span>
+                <span class="n">x0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rho_bound</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">rho_bound</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="n">optRes</span> <span class="o">=</span> <span class="n">minimize</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_eval_error</span><span class="p">,</span>
+                    <span class="n">x0</span><span class="o">=</span><span class="n">x0</span><span class="p">,</span>
+                    <span class="n">method</span><span class="o">=</span><span class="s2">&quot;L-BFGS-B&quot;</span><span class="p">,</span>
+                    <span class="n">bounds</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">rho_bound</span><span class="p">]),</span>
+                <span class="p">)</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">rho_method</span> <span class="o">==</span> <span class="s2">&quot;bumpiness&quot;</span><span class="p">:</span>
+                <span class="n">x0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rho_bound</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">rho_bound</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="n">optRes</span> <span class="o">=</span> <span class="n">minimize</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_eval_bumpiness</span><span class="p">,</span>
+                    <span class="n">x0</span><span class="o">=</span><span class="n">x0</span><span class="p">,</span>
+                    <span class="n">method</span><span class="o">=</span><span class="s2">&quot;L-BFGS-B&quot;</span><span class="p">,</span>
+                    <span class="n">bounds</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">rho_bound</span><span class="p">]),</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rho</span> <span class="o">=</span> <span class="n">optRes</span><span class="o">.</span><span class="n">x</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rho_method</span> <span class="o">==</span> <span class="s2">&quot;error&quot;</span><span class="p">:</span>
+                <span class="n">optRes</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rho_optimizer</span><span class="o">.</span><span class="n">run_optimizer</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_eval_error</span><span class="p">,</span>
+                    <span class="n">num_dim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                    <span class="n">design_space</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">rho_bound</span><span class="p">]),</span>
+                <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">rho_optimizer</span><span class="o">.</span><span class="n">plot_optimization_history</span><span class="p">()</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">rho_method</span> <span class="o">==</span> <span class="s2">&quot;bumpiness&quot;</span><span class="p">:</span>
+                <span class="n">optRes</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rho_optimizer</span><span class="o">.</span><span class="n">run_optimizer</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_eval_bumpiness</span><span class="p">,</span>
+                    <span class="n">num_dim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                    <span class="n">design_space</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">rho_bound</span><span class="p">]),</span>
+                <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">rho_optimizer</span><span class="o">.</span><span class="n">plot_optimization_history</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rho</span> <span class="o">=</span> <span class="n">optRes</span><span class="p">[</span><span class="s2">&quot;best_x&quot;</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="ScaledKriging._eval_error">
+<a class="viewcode-back" href="../../../mfpml.models.html#mfpml.models.scale_kriging.ScaledKriging._eval_error">[docs]</a>
+    <span class="k">def</span> <span class="nf">_eval_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluate the summation of squared error for high-fidelity samples</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        rho : np.ndarray</span>
+<span class="sd">            array of rho</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        np.ndarray</span>
+<span class="sd">            sum of error</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">rho</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">rho</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_xh</span><span class="p">))</span>
+        <span class="n">error</span> <span class="o">=</span> <span class="p">(</span><span class="n">rho</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict_lf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_xh</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span> <span class="o">-</span>
+                 <span class="bp">self</span><span class="o">.</span><span class="n">sample_yh</span><span class="o">.</span><span class="n">ravel</span><span class="p">())</span>
+        <span class="n">sum_error2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">error</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">sum_error2</span></div>
+
+
+<div class="viewcode-block" id="ScaledKriging._eval_bumpiness">
+<a class="viewcode-back" href="../../../mfpml.models.html#mfpml.models.scale_kriging.ScaledKriging._eval_bumpiness">[docs]</a>
+    <span class="k">def</span> <span class="nf">_eval_bumpiness</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluate the bumpiness</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        rho : np.ndarray</span>
+<span class="sd">            array of rho</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        np.ndarray</span>
+<span class="sd">            measure of bumpiness</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">rho</span> <span class="o">=</span> <span class="n">rho</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">rho</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">rho</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+            <span class="n">sum_error2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_eval_error</span><span class="p">(</span><span class="n">rho</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">disc_model</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">sample_xh</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">sample_yh</span> <span class="o">-</span> <span class="n">rho</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict_lf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_xh</span><span class="p">),</span>
+            <span class="p">)</span>
+            <span class="n">theta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">disc_model</span><span class="o">.</span><span class="n">kernel</span><span class="o">.</span><span class="n">_get_param</span>
+            <span class="n">out</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">sum_error2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">out</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Jiaxiang Yi.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
