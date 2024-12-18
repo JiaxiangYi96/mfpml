@@ -1,0 +1,387 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>mfpml.models.mf_gaussian_process &mdash; mfpml 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/readthedocs-custom.css" />
+
+  
+      <script src="../../../_static/documentation_options.js?v=8d563738"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            mfpml
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Overview:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../readme.html">Summary</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Get started:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../get_started.html">Installation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Design of experiments:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../design_of_experiments.html">Single-Fidelity Samplers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../design_of_experiments.html#multi-fidelity-samplers">Multi-Fidelity Samplers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../design_of_experiments.html#summary">Summary</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Problems:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../problems.html">Problems class structure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../problems.html#single-fidelity-problems">Single fidelity problems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../problems.html#multi-fidelity-problems">Multi fidelity problems</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Surrogates:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../single_fidelity_kriging_models.html">Single fidelity surrogates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../multi_fidelity_kriging_models.html">Multi fidelity surrogates</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Optimization:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../optimization.html">Evolutionary algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../optimization.html#single-fidelity-bayesian-optimization">Single-fidelity Bayesian optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../optimization.html#multi-fidelity-bayesian-optimization">Multi-fidelity Bayesian optimization</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../mfpml.html">API Documentation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">mfpml</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">mfpml.models.mf_gaussian_process</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for mfpml.models.mf_gaussian_process</h1><div class="highlight"><pre>
+<span></span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">List</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">mfpml.models.gaussian_process</span> <span class="kn">import</span> <span class="n">GaussianProcessRegression</span>
+
+
+<div class="viewcode-block" id="_mfGaussianProcess">
+<a class="viewcode-back" href="../../../mfpml.models.html#mfpml.models.mf_gaussian_process._mfGaussianProcess">[docs]</a>
+<span class="k">class</span> <span class="nc">_mfGaussianProcess</span><span class="p">:</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">design_space</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bound</span> <span class="o">=</span> <span class="n">design_space</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lfGP</span><span class="p">:</span> <span class="n">GaussianProcessRegression</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="_mfGaussianProcess.predict">
+<a class="viewcode-back" href="../../../mfpml.models.html#mfpml.models.mf_gaussian_process._mfGaussianProcess.predict">[docs]</a>
+    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">return_std</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Predict the response of the model</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X : np.ndarray</span>
+<span class="sd">            array of samples to be predicted</span>
+<span class="sd">        return_std : bool, optional</span>
+<span class="sd">            whether to return the standard deviation, by default False</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        np.ndarray</span>
+<span class="sd">            prediction of the model</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Subclasses should implement this method.&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="_mfGaussianProcess._train_hf">
+<a class="viewcode-back" href="../../../mfpml.models.html#mfpml.models.mf_gaussian_process._mfGaussianProcess._train_hf">[docs]</a>
+    <span class="k">def</span> <span class="nf">_train_hf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">Y</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Train the high-fidelity model</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X : np.ndarray</span>
+<span class="sd">            array of high-fidelity samples</span>
+<span class="sd">        Y : np.ndarray</span>
+<span class="sd">            array of high-fidelity responses</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Subclasses should implement this method.&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="_mfGaussianProcess.train">
+<a class="viewcode-back" href="../../../mfpml.models.html#mfpml.models.mf_gaussian_process._mfGaussianProcess.train">[docs]</a>
+    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+              <span class="n">samples</span><span class="p">:</span> <span class="n">List</span><span class="p">,</span>
+              <span class="n">responses</span><span class="p">:</span> <span class="n">List</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;training for multi-fidelity Gaussian process regression model</span>
+<span class="sd">        for two-fidelity model, where the first fidelity is high-fidelity and</span>
+<span class="sd">        second fidelity is low-fidelity.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        samples : List</span>
+<span class="sd">            list with two elements, where each element is a np.ndarray</span>
+<span class="sd">            of samples. The first element is high-fidelity samples and</span>
+<span class="sd">            the second element is low-fidelity samples.</span>
+<span class="sd">        responses : List</span>
+<span class="sd">            list with two elements, where each element is a np.ndarray</span>
+<span class="sd">            of responses. The first element is high-fidelity responses and</span>
+<span class="sd">            the second element is low-fidelity responses.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># record the execution time for training low-fidelity model</span>
+        <span class="n">clock_start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_train_lf</span><span class="p">(</span><span class="n">samples</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">responses</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">clock_lf</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="c1"># train high-fidelity model, it will be trained at child-class</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_train_hf</span><span class="p">(</span><span class="n">samples</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">responses</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">clock_hf</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="c1"># record the training time for low-fidelity and high-fidelity model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lf_training_time</span> <span class="o">=</span> <span class="n">clock_lf</span> <span class="o">-</span> <span class="n">clock_start</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hf_training_time</span> <span class="o">=</span> <span class="n">clock_hf</span> <span class="o">-</span> <span class="n">clock_lf</span></div>
+
+
+<div class="viewcode-block" id="_mfGaussianProcess._train_lf">
+<a class="viewcode-back" href="../../../mfpml.models.html#mfpml.models.mf_gaussian_process._mfGaussianProcess._train_lf">[docs]</a>
+    <span class="k">def</span> <span class="nf">_train_lf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                  <span class="n">X</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+                  <span class="n">Y</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Train the low-fidelity model</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X : np.ndarray</span>
+<span class="sd">            low-fidelity samples</span>
+<span class="sd">        Y : np.ndarray</span>
+<span class="sd">            low-fidelity responses</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># gaussian process regression will normalize the input directly</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lfGP</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">)</span>
+        <span class="c1"># normalize the input</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sample_xl</span> <span class="o">=</span> <span class="n">X</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sample_xl_scaled</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalize_input</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sample_yl</span> <span class="o">=</span> <span class="n">Y</span></div>
+
+
+<div class="viewcode-block" id="_mfGaussianProcess.predict_lf">
+<a class="viewcode-back" href="../../../mfpml.models.html#mfpml.models.mf_gaussian_process._mfGaussianProcess.predict_lf">[docs]</a>
+    <span class="k">def</span> <span class="nf">predict_lf</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">return_std</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Predict low-fidelity responses</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X : np.ndarray</span>
+<span class="sd">            array of low-fidelity to be predicted</span>
+<span class="sd">        return_std : bool, optional</span>
+<span class="sd">            whether to return the standard deviation, by default False</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        np.ndarray</span>
+<span class="sd">            prediction of low-fidelity</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">lfGP</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">return_std</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="_mfGaussianProcess._eval_corr">
+<a class="viewcode-back" href="../../../mfpml.models.html#mfpml.models.mf_gaussian_process._mfGaussianProcess._eval_corr">[docs]</a>
+    <span class="k">def</span> <span class="nf">_eval_corr</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">Xprime</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">fidelity</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluate the correlation values based on current multi-</span>
+<span class="sd">        fidelity model</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X : np.ndarray</span>
+<span class="sd">            x</span>
+<span class="sd">        Xprime : np.ndarray</span>
+<span class="sd">            x&#39;</span>
+<span class="sd">        fidelity : str, optional</span>
+<span class="sd">            str indicating fidelity level, by default &#39;hf&#39;</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        np.ndarray</span>
+<span class="sd">            correlation matrix</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalize_input</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="n">Xprime</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalize_input</span><span class="p">(</span><span class="n">Xprime</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">fidelity</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel</span><span class="o">.</span><span class="n">get_kernel_matrix</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Xprime</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">fidelity</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">lfGP</span><span class="o">.</span><span class="n">kernel</span><span class="o">.</span><span class="n">get_kernel_matrix</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Xprime</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unknown fidelity input.&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="_mfGaussianProcess.normalize_input">
+<a class="viewcode-back" href="../../../mfpml.models.html#mfpml.models.mf_gaussian_process._mfGaussianProcess.normalize_input">[docs]</a>
+    <span class="k">def</span> <span class="nf">normalize_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Normalize samples to range [0, 1]</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        inputs : np.ndarray</span>
+<span class="sd">            samples to scale</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        np.ndarray</span>
+<span class="sd">            normalized samples</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">inputs</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">bound</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bound</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">bound</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="_mfGaussianProcess.normalize_hf_output">
+<a class="viewcode-back" href="../../../mfpml.models.html#mfpml.models.mf_gaussian_process._mfGaussianProcess.normalize_hf_output">[docs]</a>
+    <span class="k">def</span> <span class="nf">normalize_hf_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outputs</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Normalize output to normal distribution</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        outputs : np.ndarray</span>
+<span class="sd">            output to scale</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        np.ndarray</span>
+<span class="sd">            normalized output</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">yh_mean</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">outputs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">yh_std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">outputs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">outputs</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">yh_mean</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">yh_std</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">_get_lfGP</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the low-fidelity model</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Any</span>
+<span class="sd">            low-fidelity model instance</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">lfGP</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">_num_xh</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the number of high-fidelity samples</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        int</span>
+<span class="sd">            #high-fidelity samples</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample_xh</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">_num_xl</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the number of low-fidelity samples</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        int</span>
+<span class="sd">            #low-fidelity samples</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">lfGP</span><span class="o">.</span><span class="n">_num_samples</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">_get_sample_hf</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return samples of high-fidelity</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        np.ndarray</span>
+<span class="sd">            high-fidelity samples</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample_xh</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">_get_sample_lf</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return samples of high-fidelity</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        np.ndarray</span>
+<span class="sd">            high-fidelity samples</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample_xl</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Jiaxiang Yi.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

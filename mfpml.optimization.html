@@ -1,0 +1,1276 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>mfpml.optimization &mdash; mfpml 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/readthedocs-custom.css" />
+
+  
+      <script src="_static/documentation_options.js?v=8d563738"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="mfpml.models" href="mfpml.models.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            mfpml
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Overview:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="readme.html">Summary</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Get started:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="get_started.html">Installation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Design of experiments:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="design_of_experiments.html">Single-Fidelity Samplers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="design_of_experiments.html#multi-fidelity-samplers">Multi-Fidelity Samplers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="design_of_experiments.html#summary">Summary</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Problems:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="problems.html">Problems class structure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="problems.html#single-fidelity-problems">Single fidelity problems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="problems.html#multi-fidelity-problems">Multi fidelity problems</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Surrogates:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="single_fidelity_kriging_models.html">Single fidelity surrogates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="multi_fidelity_kriging_models.html">Multi fidelity surrogates</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Optimization:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="optimization.html">Evolutionary algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="optimization.html#single-fidelity-bayesian-optimization">Single-fidelity Bayesian optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="optimization.html#multi-fidelity-bayesian-optimization">Multi-fidelity Bayesian optimization</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="mfpml.html">API Documentation</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="mfpml.html#modules">Modules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="mfpml.design_of_experiment.html">mfpml.design_of_experiment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mfpml.problems.html">mfpml.problems</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mfpml.models.html">mfpml.models</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">mfpml.optimization</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#module-mfpml.optimization.evolutionary_algorithms">mfpml.optimization.evolutionary_algorithms</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-mfpml.optimization.sf_uncons_bo">mfpml.optimization.single_fidelity_Bayesian_optimization</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mfpml-optimization-single-fidelity-acqusitions">mfpml.optimization.single_fidelity_acqusitions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-mfpml.optimization.mf_uncons_bo">mfpml.optimization.multi_fidelity_Bayesian_optimization</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-mfpml.optimization.mf_acqusitions">mfpml.optimization.multi_fidelity_acqusitions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">mfpml</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="mfpml.html">API Documentation</a></li>
+      <li class="breadcrumb-item active">mfpml.optimization</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="mfpml-optimization">
+<h1>mfpml.optimization<a class="headerlink" href="#mfpml-optimization" title="Link to this heading">¶</a></h1>
+<section id="module-mfpml.optimization.evolutionary_algorithms">
+<span id="mfpml-optimization-evolutionary-algorithms"></span><h2>mfpml.optimization.evolutionary_algorithms<a class="headerlink" href="#module-mfpml.optimization.evolutionary_algorithms" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="mfpml.optimization.evolutionary_algorithms.DE">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">DE</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_pop</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_gen</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">crossover_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strategy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'DE/rand/1/bin'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/optimization/evolutionary_algorithms.html#DE"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.optimization.evolutionary_algorithms.DE" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mfpml.optimization.evolutionary_algorithms.EABase" title="mfpml.optimization.evolutionary_algorithms.EABase"><code class="xref py py-class docutils literal notranslate"><span class="pre">EABase</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.optimization.evolutionary_algorithms.DE.__update_gen_optimum">
+<span class="sig-name descname"><span class="pre">__update_gen_optimum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iter</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mfpml.optimization.evolutionary_algorithms.DE.__update_gen_optimum" title="Link to this definition">¶</a></dt>
+<dd><p>update the generation optimum information</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.optimization.evolutionary_algorithms.DE.__update_obj">
+<span class="sig-name descname"><span class="pre">__update_obj</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iter</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mfpml.optimization.evolutionary_algorithms.DE.__update_obj" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.optimization.evolutionary_algorithms.DE.__update_pop">
+<span class="sig-name descname"><span class="pre">__update_pop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iter</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mfpml.optimization.evolutionary_algorithms.DE.__update_pop" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.optimization.evolutionary_algorithms.DE._de_initializer">
+<span class="sig-name descname"><span class="pre">_de_initializer</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/optimization/evolutionary_algorithms.html#DE._de_initializer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.optimization.evolutionary_algorithms.DE._de_initializer" title="Link to this definition">¶</a></dt>
+<dd><p>calculate the objective values for the initial population</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.optimization.evolutionary_algorithms.DE.run_optimizer">
+<span class="sig-name descname"><span class="pre">run_optimizer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">design_space</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_info</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_step_results</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stopping_error</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/optimization/evolutionary_algorithms.html#DE.run_optimizer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.optimization.evolutionary_algorithms.DE.run_optimizer" title="Link to this definition">¶</a></dt>
+<dd><p>main function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>func</strong> (<em>any</em>) – objective function</p></li>
+<li><p><strong>num_dim</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – dimension of objective</p></li>
+<li><p><strong>design_space</strong> (<em>np.ndarray</em>) – design space</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>results</strong> – optimization results by evolutionary algorithms</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)">dict</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mfpml.optimization.evolutionary_algorithms.EABase">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">EABase</span></span><a class="reference internal" href="_modules/mfpml/optimization/evolutionary_algorithms.html#EABase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.optimization.evolutionary_algorithms.EABase" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.optimization.evolutionary_algorithms.EABase._gen_best_obj">
+<span class="sig-name descname"><span class="pre">_gen_best_obj</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/optimization/evolutionary_algorithms.html#EABase._gen_best_obj"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.optimization.evolutionary_algorithms.EABase._gen_best_obj" title="Link to this definition">¶</a></dt>
+<dd><p>_summary_</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>obj</strong> (<em>np.ndarray</em>) – _description_</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>_description_</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.optimization.evolutionary_algorithms.EABase._gen_best_x">
+<span class="sig-name descname"><span class="pre">_gen_best_x</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pop</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/optimization/evolutionary_algorithms.html#EABase._gen_best_x"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.optimization.evolutionary_algorithms.EABase._gen_best_x" title="Link to this definition">¶</a></dt>
+<dd><p>_summary_</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pop</strong> (<em>np.ndarray</em>) – _description_</p></li>
+<li><p><strong>obj</strong> (<em>np.ndarray</em>) – _description_</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>_description_</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.optimization.evolutionary_algorithms.EABase._loc_cons">
+<span class="sig-name descname"><span class="pre">_loc_cons</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/optimization/evolutionary_algorithms.html#EABase._loc_cons"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.optimization.evolutionary_algorithms.EABase._loc_cons" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.optimization.evolutionary_algorithms.EABase._location_initialzer">
+<span class="sig-name descname"><span class="pre">_location_initialzer</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/optimization/evolutionary_algorithms.html#EABase._location_initialzer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.optimization.evolutionary_algorithms.EABase._location_initialzer" title="Link to this definition">¶</a></dt>
+<dd><p>location/position initialization</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.optimization.evolutionary_algorithms.EABase._save_results">
+<span class="sig-name descname"><span class="pre">_save_results</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/optimization/evolutionary_algorithms.html#EABase._save_results"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.optimization.evolutionary_algorithms.EABase._save_results" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.optimization.evolutionary_algorithms.EABase.plot_optimization_history">
+<span class="sig-name descname"><span class="pre">plot_optimization_history</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">figure_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'optimization'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_figure</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/optimization/evolutionary_algorithms.html#EABase.plot_optimization_history"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.optimization.evolutionary_algorithms.EABase.plot_optimization_history" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.optimization.evolutionary_algorithms.EABase.print_info">
+<span class="sig-name descname"><span class="pre">print_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iter</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/optimization/evolutionary_algorithms.html#EABase.print_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.optimization.evolutionary_algorithms.EABase.print_info" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.optimization.evolutionary_algorithms.EABase.run_optimizer">
+<span class="sig-name descname"><span class="pre">run_optimizer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">design_space</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_info</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/optimization/evolutionary_algorithms.html#EABase.run_optimizer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.optimization.evolutionary_algorithms.EABase.run_optimizer" title="Link to this definition">¶</a></dt>
+<dd><p>main function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>func</strong> (<em>any</em>) – objective function</p></li>
+<li><p><strong>num_dim</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – dimension of objective</p></li>
+<li><p><strong>design_space</strong> (<em>np.ndarray</em>) – design space</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>results</strong> – optimization results by evolutionary algorithms</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)">dict</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mfpml.optimization.evolutionary_algorithms.PSO">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">PSO</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_pop</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_gen</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cognition_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">social_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_velocity_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/optimization/evolutionary_algorithms.html#PSO"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.optimization.evolutionary_algorithms.PSO" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mfpml.optimization.evolutionary_algorithms.EABase" title="mfpml.optimization.evolutionary_algorithms.EABase"><code class="xref py py-class docutils literal notranslate"><span class="pre">EABase</span></code></a></p>
+<p>Initialization of PSO</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>num_pop</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – number of population</p></li>
+<li><p><strong>num_gen</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – number of generation</p></li>
+<li><p><strong>cognition_rate</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><em>optional</em>) – connition rate, by default 1.5</p></li>
+<li><p><strong>social_rate</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><em>optional</em>) – social rate, by default 1.5</p></li>
+<li><p><strong>weight</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><em>optional</em>) – weight of previous speed , by default 0.8</p></li>
+<li><p><strong>max_velocity_rate</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – maximum velocity rate</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.optimization.evolutionary_algorithms.PSO.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_pop</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_gen</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cognition_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">social_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_velocity_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/optimization/evolutionary_algorithms.html#PSO.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.optimization.evolutionary_algorithms.PSO.__init__" title="Link to this definition">¶</a></dt>
+<dd><p>Initialization of PSO</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>num_pop</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – number of population</p></li>
+<li><p><strong>num_gen</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – number of generation</p></li>
+<li><p><strong>cognition_rate</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><em>optional</em>) – connition rate, by default 1.5</p></li>
+<li><p><strong>social_rate</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><em>optional</em>) – social rate, by default 1.5</p></li>
+<li><p><strong>weight</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><em>optional</em>) – weight of previous speed , by default 0.8</p></li>
+<li><p><strong>max_velocity_rate</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – maximum velocity rate</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.optimization.evolutionary_algorithms.PSO.__update_gen_optimum">
+<span class="sig-name descname"><span class="pre">__update_gen_optimum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iter</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mfpml.optimization.evolutionary_algorithms.PSO.__update_gen_optimum" title="Link to this definition">¶</a></dt>
+<dd><p>update the generation optimum information</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.optimization.evolutionary_algorithms.PSO.__update_obj">
+<span class="sig-name descname"><span class="pre">__update_obj</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iter</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mfpml.optimization.evolutionary_algorithms.PSO.__update_obj" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.optimization.evolutionary_algorithms.PSO.__update_pop">
+<span class="sig-name descname"><span class="pre">__update_pop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iter</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mfpml.optimization.evolutionary_algorithms.PSO.__update_pop" title="Link to this definition">¶</a></dt>
+<dd><p>update the population information</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>iter</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – iteration</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.optimization.evolutionary_algorithms.PSO.__update_pop_optimum">
+<span class="sig-name descname"><span class="pre">__update_pop_optimum</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mfpml.optimization.evolutionary_algorithms.PSO.__update_pop_optimum" title="Link to this definition">¶</a></dt>
+<dd><p>update the population optimum information</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.optimization.evolutionary_algorithms.PSO.__velocity_cons">
+<span class="sig-name descname"><span class="pre">__velocity_cons</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mfpml.optimization.evolutionary_algorithms.PSO.__velocity_cons" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.optimization.evolutionary_algorithms.PSO.__velocity_initialzer">
+<span class="sig-name descname"><span class="pre">__velocity_initialzer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trick</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'random'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mfpml.optimization.evolutionary_algorithms.PSO.__velocity_initialzer" title="Link to this definition">¶</a></dt>
+<dd><p>velocity initialization</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>trick</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – “random” or “zero”</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.optimization.evolutionary_algorithms.PSO._pso_initializer">
+<span class="sig-name descname"><span class="pre">_pso_initializer</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/optimization/evolutionary_algorithms.html#PSO._pso_initializer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.optimization.evolutionary_algorithms.PSO._pso_initializer" title="Link to this definition">¶</a></dt>
+<dd><p>calculate the objective values for the initial population</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.optimization.evolutionary_algorithms.PSO.run_optimizer">
+<span class="sig-name descname"><span class="pre">run_optimizer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">design_space</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_info</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_step_results</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stopping_error</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/optimization/evolutionary_algorithms.html#PSO.run_optimizer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.optimization.evolutionary_algorithms.PSO.run_optimizer" title="Link to this definition">¶</a></dt>
+<dd><p>main function of pso algorithm</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>func</strong> (<em>any</em>) – objective function</p></li>
+<li><p><strong>num_dim</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – dimension of objective</p></li>
+<li><p><strong>design_space</strong> (<em>np.ndarray</em>) – design space</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>results</strong> – optimization results of pso</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)">dict</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-mfpml.optimization.sf_uncons_bo">
+<span id="mfpml-optimization-single-fidelity-bayesian-optimization"></span><h2>mfpml.optimization.single_fidelity_Bayesian_optimization<a class="headerlink" href="#module-mfpml.optimization.sf_uncons_bo" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="mfpml.optimization.sf_uncons_bo.BayesUnConsOpt">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">BayesUnConsOpt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">problem</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">acquisition</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_init</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1996</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/optimization/sf_uncons_bo.html#BayesUnConsOpt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.optimization.sf_uncons_bo.BayesUnConsOpt" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/abc.html#abc.ABC" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></a></p>
+<p>Bayesian optimization for single fidelity unconstrained problems</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.optimization.sf_uncons_bo.BayesUnConsOpt.__print_info">
+<span class="sig-name descname"><span class="pre">__print_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iteration</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mfpml.optimization.sf_uncons_bo.BayesUnConsOpt.__print_info" title="Link to this definition">¶</a></dt>
+<dd><p>print optimum information to screen</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>iteration</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – iteration number</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.optimization.sf_uncons_bo.BayesUnConsOpt.__update_error">
+<span class="sig-name descname"><span class="pre">__update_error</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mfpml.optimization.sf_uncons_bo.BayesUnConsOpt.__update_error" title="Link to this definition">¶</a></dt>
+<dd><p>update error between the known optimum and the current optimum</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>error</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mfpml.optimization.sf_uncons_bo.BayesUnConsOpt._abc_impl">
+<span class="sig-name descname"><span class="pre">_abc_impl</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;_abc._abc_data</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#mfpml.optimization.sf_uncons_bo.BayesUnConsOpt._abc_impl" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.optimization.sf_uncons_bo.BayesUnConsOpt._initialization">
+<span class="sig-name descname"><span class="pre">_initialization</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/optimization/sf_uncons_bo.html#BayesUnConsOpt._initialization"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.optimization.sf_uncons_bo.BayesUnConsOpt._initialization" title="Link to this definition">¶</a></dt>
+<dd><p>initialization for single fidelity bayesian optimization</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.optimization.sf_uncons_bo.BayesUnConsOpt._update_para">
+<span class="sig-name descname"><span class="pre">_update_para</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/optimization/sf_uncons_bo.html#BayesUnConsOpt._update_para"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.optimization.sf_uncons_bo.BayesUnConsOpt._update_para" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.optimization.sf_uncons_bo.BayesUnConsOpt.run_optimizer">
+<span class="sig-name descname"><span class="pre">run_optimizer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stopping_error</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/optimization/sf_uncons_bo.html#BayesUnConsOpt.run_optimizer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.optimization.sf_uncons_bo.BayesUnConsOpt.run_optimizer" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.13)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="mfpml-optimization-single-fidelity-acqusitions">
+<h2>mfpml.optimization.single_fidelity_acqusitions<a class="headerlink" href="#mfpml-optimization-single-fidelity-acqusitions" title="Link to this heading">¶</a></h2>
+<dl class="py class" id="module-mfpml.optimization.sf_uncons_acqusitions">
+<dt class="sig sig-object py" id="mfpml.optimization.sf_uncons_acqusitions.EI">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">EI</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">optimizer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/optimization/sf_uncons_acqusitions.html#EI"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.optimization.sf_uncons_acqusitions.EI" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mfpml.optimization.sf_uncons_acqusitions.SFUnConsAcq" title="mfpml.optimization.sf_uncons_acqusitions.SFUnConsAcq"><code class="xref py py-class docutils literal notranslate"><span class="pre">SFUnConsAcq</span></code></a></p>
+<p>Expected improvement acquisition function</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mfpml.optimization.sf_uncons_acqusitions.EI._abc_impl">
+<span class="sig-name descname"><span class="pre">_abc_impl</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;_abc._abc_data</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#mfpml.optimization.sf_uncons_acqusitions.EI._abc_impl" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.optimization.sf_uncons_acqusitions.EI.eval">
+<span class="sig-name descname"><span class="pre">eval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">surrogate</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/optimization/sf_uncons_acqusitions.html#EI.eval"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.optimization.sf_uncons_acqusitions.EI.eval" title="Link to this definition">¶</a></dt>
+<dd><p>core of expected improvement function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>np.ndarray</em>) – locations for evaluation</p></li>
+<li><p><strong>surrogate</strong> (<em>Kriging</em>) – Kriging model at current iteration</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>-ei</strong> – negative expected improvement values</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mfpml.optimization.sf_uncons_acqusitions.LCB">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">LCB</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">optimizer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kappa</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[1.0,</span> <span class="pre">1.96]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/optimization/sf_uncons_acqusitions.html#LCB"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.optimization.sf_uncons_acqusitions.LCB" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mfpml.optimization.sf_uncons_acqusitions.SFUnConsAcq" title="mfpml.optimization.sf_uncons_acqusitions.SFUnConsAcq"><code class="xref py py-class docutils literal notranslate"><span class="pre">SFUnConsAcq</span></code></a></p>
+<p>Lower confidence bounding</p>
+<p>initialize lcb acquisition function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>optimizer</strong> (<em>Any</em>) – optimizer for getting update points</p></li>
+<li><p><strong>kappa</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em>, </em><em>optional</em>) – factors for exploration and exploitation, by default [1.0, 1.96]</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.optimization.sf_uncons_acqusitions.LCB.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">optimizer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kappa</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[1.0,</span> <span class="pre">1.96]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/optimization/sf_uncons_acqusitions.html#LCB.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.optimization.sf_uncons_acqusitions.LCB.__init__" title="Link to this definition">¶</a></dt>
+<dd><p>initialize lcb acquisition function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>optimizer</strong> (<em>Any</em>) – optimizer for getting update points</p></li>
+<li><p><strong>kappa</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em>, </em><em>optional</em>) – factors for exploration and exploitation, by default [1.0, 1.96]</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mfpml.optimization.sf_uncons_acqusitions.LCB._abc_impl">
+<span class="sig-name descname"><span class="pre">_abc_impl</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;_abc._abc_data</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#mfpml.optimization.sf_uncons_acqusitions.LCB._abc_impl" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.optimization.sf_uncons_acqusitions.LCB.eval">
+<span class="sig-name descname"><span class="pre">eval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">surrogate</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/optimization/sf_uncons_acqusitions.html#LCB.eval"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.optimization.sf_uncons_acqusitions.LCB.eval" title="Link to this definition">¶</a></dt>
+<dd><p>Calculate values of LCB acquisition function
+:type x: <span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a></span>
+:param x: locations for evaluation
+:type x: np.ndarray
+:type surrogate: <span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="mfpml.models.html#mfpml.models.gaussian_process.GaussianProcessRegression" title="mfpml.models.gaussian_process.GaussianProcessRegression"><code class="xref py py-class docutils literal notranslate"><span class="pre">GaussianProcessRegression</span></code></a></span>
+:param surrogate: surrogate model
+:type surrogate: Kriging</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>lcb</strong> – lcb values on x</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mfpml.optimization.sf_uncons_acqusitions.PI">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">PI</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">optimizer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/optimization/sf_uncons_acqusitions.html#PI"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.optimization.sf_uncons_acqusitions.PI" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mfpml.optimization.sf_uncons_acqusitions.SFUnConsAcq" title="mfpml.optimization.sf_uncons_acqusitions.SFUnConsAcq"><code class="xref py py-class docutils literal notranslate"><span class="pre">SFUnConsAcq</span></code></a></p>
+<p>Probability improvement acquisition function</p>
+<p>initialization for PI</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>optimizer</strong> (<em>Any</em><em>, </em><em>optional</em>) – optimizer for get new location, by default None</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.optimization.sf_uncons_acqusitions.PI.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">optimizer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/optimization/sf_uncons_acqusitions.html#PI.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.optimization.sf_uncons_acqusitions.PI.__init__" title="Link to this definition">¶</a></dt>
+<dd><p>initialization for PI</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>optimizer</strong> (<em>Any</em><em>, </em><em>optional</em>) – optimizer for get new location, by default None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mfpml.optimization.sf_uncons_acqusitions.PI._abc_impl">
+<span class="sig-name descname"><span class="pre">_abc_impl</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;_abc._abc_data</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#mfpml.optimization.sf_uncons_acqusitions.PI._abc_impl" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.optimization.sf_uncons_acqusitions.PI.eval">
+<span class="sig-name descname"><span class="pre">eval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">surrogate</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/optimization/sf_uncons_acqusitions.html#PI.eval"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.optimization.sf_uncons_acqusitions.PI.eval" title="Link to this definition">¶</a></dt>
+<dd><p>core of probability improvement function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>np.ndarray</em>) – locations for evaluation</p></li>
+<li><p><strong>surrogate</strong> (<em>Kriging</em>) – Kriging model at current iteration</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>-pi</strong> – negative probability improvement values</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mfpml.optimization.sf_uncons_acqusitions.SFUnConsAcq">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SFUnConsAcq</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">optimizer</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/optimization/sf_uncons_acqusitions.html#SFUnConsAcq"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.optimization.sf_uncons_acqusitions.SFUnConsAcq" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/abc.html#abc.ABC" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></a></p>
+<p>base class for sf acquisition functions for single objective</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mfpml.optimization.sf_uncons_acqusitions.SFUnConsAcq._abc_impl">
+<span class="sig-name descname"><span class="pre">_abc_impl</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;_abc._abc_data</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#mfpml.optimization.sf_uncons_acqusitions.SFUnConsAcq._abc_impl" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.optimization.sf_uncons_acqusitions.SFUnConsAcq.eval">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">eval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">surrogate</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/optimization/sf_uncons_acqusitions.html#SFUnConsAcq.eval"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.optimization.sf_uncons_acqusitions.SFUnConsAcq.eval" title="Link to this definition">¶</a></dt>
+<dd><p>core of acquisition function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>np.ndarray</em>) – locations for evaluation</p></li>
+<li><p><strong>surrogate</strong> (<em>Kriging</em>) – Kriging model at current iteration</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>values of acquisition function</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.optimization.sf_uncons_acqusitions.SFUnConsAcq.query">
+<span class="sig-name descname"><span class="pre">query</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">surrogate</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/optimization/sf_uncons_acqusitions.html#SFUnConsAcq.query"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.optimization.sf_uncons_acqusitions.SFUnConsAcq.query" title="Link to this definition">¶</a></dt>
+<dd><p>get the next location to evaluate</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>surrogate</strong> (<em>Any</em>) – Gaussian process regression model</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>opt_x</strong> – location of update point</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-mfpml.optimization.mf_uncons_bo">
+<span id="mfpml-optimization-multi-fidelity-bayesian-optimization"></span><h2>mfpml.optimization.multi_fidelity_Bayesian_optimization<a class="headerlink" href="#module-mfpml.optimization.mf_uncons_bo" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="mfpml.optimization.mf_uncons_bo.mfUnConsBayesOpt">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mfUnConsBayesOpt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">problem</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">acquisition</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_init</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">surrogate_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'HierarchicalKriging'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1996</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/optimization/mf_uncons_bo.html#mfUnConsBayesOpt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.optimization.mf_uncons_bo.mfUnConsBayesOpt" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Multi-fidelity single objective Bayesian optimization</p>
+<p>Initialize the multi-fidelity Bayesian optimization</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>problem</strong> (<em>Any</em>) – optimization problem</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.optimization.mf_uncons_bo.mfUnConsBayesOpt.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">problem</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">acquisition</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_init</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">surrogate_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'HierarchicalKriging'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1996</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/optimization/mf_uncons_bo.html#mfUnConsBayesOpt.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.optimization.mf_uncons_bo.mfUnConsBayesOpt.__init__" title="Link to this definition">¶</a></dt>
+<dd><p>Initialize the multi-fidelity Bayesian optimization</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>problem</strong> (<em>Any</em>) – optimization problem</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.optimization.mf_uncons_bo.mfUnConsBayesOpt.__update_error">
+<span class="sig-name descname"><span class="pre">__update_error</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mfpml.optimization.mf_uncons_bo.mfUnConsBayesOpt.__update_error" title="Link to this definition">¶</a></dt>
+<dd><p>update error between the known optimum and the current optimum</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>error</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.optimization.mf_uncons_bo.mfUnConsBayesOpt._initialization">
+<span class="sig-name descname"><span class="pre">_initialization</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/optimization/mf_uncons_bo.html#mfUnConsBayesOpt._initialization"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.optimization.mf_uncons_bo.mfUnConsBayesOpt._initialization" title="Link to this definition">¶</a></dt>
+<dd><p>Initialize parameters</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.optimization.mf_uncons_bo.mfUnConsBayesOpt._print_info">
+<span class="sig-name descname"><span class="pre">_print_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iteration</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/optimization/mf_uncons_bo.html#mfUnConsBayesOpt._print_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.optimization.mf_uncons_bo.mfUnConsBayesOpt._print_info" title="Link to this definition">¶</a></dt>
+<dd><p>Print optimization information</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>iter</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – current iteration</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.optimization.mf_uncons_bo.mfUnConsBayesOpt._update_para">
+<span class="sig-name descname"><span class="pre">_update_para</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">update_x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">update_y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fidelity</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/optimization/mf_uncons_bo.html#mfUnConsBayesOpt._update_para"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.optimization.mf_uncons_bo.mfUnConsBayesOpt._update_para" title="Link to this definition">¶</a></dt>
+<dd><p>Update parameters</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>update_x</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – update samples</p></li>
+<li><p><strong>update_y</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – update responses</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.optimization.mf_uncons_bo.mfUnConsBayesOpt.run_optimizer">
+<span class="sig-name descname"><span class="pre">run_optimizer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost_ratio</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stopping_error</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/optimization/mf_uncons_bo.html#mfUnConsBayesOpt.run_optimizer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.optimization.mf_uncons_bo.mfUnConsBayesOpt.run_optimizer" title="Link to this definition">¶</a></dt>
+<dd><p>Run the optimization</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>max_iter</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>optional</em>) – maximum number of iterations, by default 10</p></li>
+<li><p><strong>cost_ratio</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><em>optional</em>) – cost ratio between high-fidelity and low-fidelity, by default 1.0</p></li>
+<li><p><strong>stopping_error</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><em>optional</em>) – stopping error, by default 1.0</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-mfpml.optimization.mf_acqusitions">
+<span id="mfpml-optimization-multi-fidelity-acqusitions"></span><h2>mfpml.optimization.multi_fidelity_acqusitions<a class="headerlink" href="#module-mfpml.optimization.mf_acqusitions" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="mfpml.optimization.mf_acqusitions.AugmentedEI">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">AugmentedEI</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">optimizer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/optimization/mf_acqusitions.html#AugmentedEI"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.optimization.mf_acqusitions.AugmentedEI" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mfpml.optimization.mf_acqusitions.MFUnConsAcq" title="mfpml.optimization.mf_acqusitions.MFUnConsAcq"><code class="xref py py-class docutils literal notranslate"><span class="pre">MFUnConsAcq</span></code></a></p>
+<p>Augmented Expected Improvement acquisition function</p>
+<p>Initialize the multi-fidelity acquisition</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>optimizer</strong> (<em>Any</em>) – optimizer instance for getting update location</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.optimization.mf_acqusitions.AugmentedEI.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">optimizer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/optimization/mf_acqusitions.html#AugmentedEI.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.optimization.mf_acqusitions.AugmentedEI.__init__" title="Link to this definition">¶</a></dt>
+<dd><p>Initialize the multi-fidelity acquisition</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>optimizer</strong> (<em>Any</em>) – optimizer instance for getting update location</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mfpml.optimization.mf_acqusitions.AugmentedEI._abc_impl">
+<span class="sig-name descname"><span class="pre">_abc_impl</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;_abc._abc_data</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#mfpml.optimization.mf_acqusitions.AugmentedEI._abc_impl" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.optimization.mf_acqusitions.AugmentedEI._effective_best">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">_effective_best</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mf_surrogate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/optimization/mf_acqusitions.html#AugmentedEI._effective_best"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.optimization.mf_acqusitions.AugmentedEI._effective_best" title="Link to this definition">¶</a></dt>
+<dd><p>Return the effective best solution</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mf_surrogate</strong> (<em>Any</em>) – multi-fidelity surrogate instance</p></li>
+<li><p><strong>c</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><em>optional</em>) – degree of risk aversion, by default 1</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>effective best solution</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.optimization.mf_acqusitions.AugmentedEI.corr">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">corr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mf_surrogate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fidelity</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/optimization/mf_acqusitions.html#AugmentedEI.corr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.optimization.mf_acqusitions.AugmentedEI.corr" title="Link to this definition">¶</a></dt>
+<dd><p>Evaluate correlation between different fidelity</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>np.ndarray</em>) – point to evaluate</p></li>
+<li><p><strong>mf_surrogate</strong> (<em>Any</em>) – multi-fidelity surrogate instance</p></li>
+<li><p><strong>fidelity</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – str indicating fidelity level</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>correlation values</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.optimization.mf_acqusitions.AugmentedEI.eval">
+<span class="sig-name descname"><span class="pre">eval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mf_surrogate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost_ratio</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fidelity</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/optimization/mf_acqusitions.html#AugmentedEI.eval"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.optimization.mf_acqusitions.AugmentedEI.eval" title="Link to this definition">¶</a></dt>
+<dd><p>Evaluates selected acquisition function at certain fidelity</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>np.ndarray</em>) – point to evaluate</p></li>
+<li><p><strong>mf_surrogate</strong> (<em>any</em>) – multi-fidelity surrogate instance</p></li>
+<li><p><strong>cost_ratio</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – ratio of high-fidelity cost to low-fidelity cost</p></li>
+<li><p><strong>fidelity</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – str indicating fidelity level</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>acqusition function values</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.optimization.mf_acqusitions.AugmentedEI.query">
+<span class="sig-name descname"><span class="pre">query</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mf_surrogate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost_ratio</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/optimization/mf_acqusitions.html#AugmentedEI.query"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.optimization.mf_acqusitions.AugmentedEI.query" title="Link to this definition">¶</a></dt>
+<dd><p>Query the acqusition function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mf_surrogate</strong> (<em>Any</em>) – multi-fidelity surrogate instance</p></li>
+<li><p><strong>params</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – parameters of Bayesian Optimization</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>contains two values where ‘hf’ is the update points
+for high-fidelity and ‘lf’ for low-fidelity</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)">dict</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mfpml.optimization.mf_acqusitions.ExtendedPI">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ExtendedPI</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">optimizer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/optimization/mf_acqusitions.html#ExtendedPI"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.optimization.mf_acqusitions.ExtendedPI" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mfpml.optimization.mf_acqusitions.MFUnConsAcq" title="mfpml.optimization.mf_acqusitions.MFUnConsAcq"><code class="xref py py-class docutils literal notranslate"><span class="pre">MFUnConsAcq</span></code></a></p>
+<p>Extended Probability Improvement acqusition function</p>
+<section id="reference">
+<h3>Reference<a class="headerlink" href="#reference" title="Link to this heading">¶</a></h3>
+<p>[1] Ruan, X., Jiang, P., Zhou, Q., Hu, J., &amp; Shu, L. (2020).
+Variable-fidelity probability of improvement method for
+efficient global optimization of expensive black-box problems.
+Structural and Multidisciplinary Optimization, 62(6), 3021-3052.</p>
+<p>Initialize the multi-fidelity acqusition</p>
+<dl class="field-list simple">
+<dt class="field-odd">type optimizer<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.13)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.13)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]</span></p>
+</dd>
+<dt class="field-even">param optimizer<span class="colon">:</span></dt>
+<dd class="field-even"><p>optimizer instance</p>
+</dd>
+<dt class="field-odd">type optimizer<span class="colon">:</span></dt>
+<dd class="field-odd"><p>any</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.optimization.mf_acqusitions.ExtendedPI.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">optimizer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/optimization/mf_acqusitions.html#ExtendedPI.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.optimization.mf_acqusitions.ExtendedPI.__init__" title="Link to this definition">¶</a></dt>
+<dd><p>Initialize the multi-fidelity acqusition</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>optimizer</strong> (<em>any</em>) – optimizer instance</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mfpml.optimization.mf_acqusitions.ExtendedPI._abc_impl">
+<span class="sig-name descname"><span class="pre">_abc_impl</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;_abc._abc_data</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#mfpml.optimization.mf_acqusitions.ExtendedPI._abc_impl" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.optimization.mf_acqusitions.ExtendedPI.corr">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">corr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mf_surrogate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fidelity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/optimization/mf_acqusitions.html#ExtendedPI.corr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.optimization.mf_acqusitions.ExtendedPI.corr" title="Link to this definition">¶</a></dt>
+<dd><p>Evaluate correlation between different fidelity</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>np.ndarray</em>) – point to evaluate</p></li>
+<li><p><strong>mf_surrogate</strong> (<em>any</em>) – multi-fidelity surrogate instance</p></li>
+<li><p><strong>fidelity</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – str indicating fidelity level</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>correlation values</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.optimization.mf_acqusitions.ExtendedPI.eval">
+<span class="sig-name descname"><span class="pre">eval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mf_surrogate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fmin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost_ratio</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fidelity</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/optimization/mf_acqusitions.html#ExtendedPI.eval"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.optimization.mf_acqusitions.ExtendedPI.eval" title="Link to this definition">¶</a></dt>
+<dd><p>Evaluates selected acqusition function at certain fidelity</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>np.ndarray</em>) – point to evaluate</p></li>
+<li><p><strong>mf_surrogate</strong> (<em>Any</em>) – multi-fidelity surrogate instance</p></li>
+<li><p><strong>fmin</strong> (<em>np.ndarray</em>) – best prediction of multi-fidelity model</p></li>
+<li><p><strong>cost_ratio</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – ratio of high-fidelity cost to low-fidelity cost</p></li>
+<li><p><strong>fidelity</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – str indicating fidelity level</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>acqusition function values</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.optimization.mf_acqusitions.ExtendedPI.query">
+<span class="sig-name descname"><span class="pre">query</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mf_surrogate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost_ratio</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/optimization/mf_acqusitions.html#ExtendedPI.query"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.optimization.mf_acqusitions.ExtendedPI.query" title="Link to this definition">¶</a></dt>
+<dd><p>Query the acqusition function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mf_surrogate</strong> (<em>any</em>) – multi-fidelity surrogate instance</p></li>
+<li><p><strong>params</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – parameters of Bayesian Optimization</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>contains two values where ‘hf’ is the update points
+for high-fidelity and ‘lf’ for low-fidelity</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)">dict</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mfpml.optimization.mf_acqusitions.MFUnConsAcq">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MFUnConsAcq</span></span><a class="reference internal" href="_modules/mfpml/optimization/mf_acqusitions.html#MFUnConsAcq"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.optimization.mf_acqusitions.MFUnConsAcq" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/abc.html#abc.ABC" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></a></p>
+<p>Base class for multi-fidelity acquisition functions</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mfpml.optimization.mf_acqusitions.MFUnConsAcq._abc_impl">
+<span class="sig-name descname"><span class="pre">_abc_impl</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;_abc._abc_data</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#mfpml.optimization.mf_acqusitions.MFUnConsAcq._abc_impl" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.optimization.mf_acqusitions.MFUnConsAcq.eval">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">eval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mf_surrogate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost_ratio</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idelity</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/optimization/mf_acqusitions.html#MFUnConsAcq.eval"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.optimization.mf_acqusitions.MFUnConsAcq.eval" title="Link to this definition">¶</a></dt>
+<dd><p>Evaluate the acquisition function at certain fidelity</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>np.ndarray</em>) – point to evaluate</p></li>
+<li><p><strong>mf_surrogate</strong> (<em>Any</em>) – multi-fidelity surrogate instance</p></li>
+<li><p><strong>cost_ratio</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – ratio of high-fidelity cost to low-fidelity cost</p></li>
+<li><p><strong>fidelity</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – str indicating fidelity level</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>acqusition function values</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.optimization.mf_acqusitions.MFUnConsAcq.query">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">query</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mf_surrogate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost_ratio</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fmin</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/optimization/mf_acqusitions.html#MFUnConsAcq.query"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.optimization.mf_acqusitions.MFUnConsAcq.query" title="Link to this definition">¶</a></dt>
+<dd><p>Query the acqusition function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mf_surrogate</strong> (<em>Any</em>) – multi-fidelity surrogate instance</p></li>
+<li><p><strong>params</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – parameters of Bayesian Optimization</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>contains two values where ‘hf’ is the update points
+for high-fidelity and ‘lf’ for low-fidelity</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)">dict</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mfpml.optimization.mf_acqusitions.VFEI">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">VFEI</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">optimizer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/optimization/mf_acqusitions.html#VFEI"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.optimization.mf_acqusitions.VFEI" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mfpml.optimization.mf_acqusitions.MFUnConsAcq" title="mfpml.optimization.mf_acqusitions.MFUnConsAcq"><code class="xref py py-class docutils literal notranslate"><span class="pre">MFUnConsAcq</span></code></a></p>
+<p>Initialize the multi-fidelity acqusition</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>optimizer</strong> (<em>Any</em>) – optimizer instance</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.optimization.mf_acqusitions.VFEI.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">optimizer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/optimization/mf_acqusitions.html#VFEI.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.optimization.mf_acqusitions.VFEI.__init__" title="Link to this definition">¶</a></dt>
+<dd><p>Initialize the multi-fidelity acqusition</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>optimizer</strong> (<em>Any</em>) – optimizer instance</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mfpml.optimization.mf_acqusitions.VFEI._abc_impl">
+<span class="sig-name descname"><span class="pre">_abc_impl</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;_abc._abc_data</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#mfpml.optimization.mf_acqusitions.VFEI._abc_impl" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.optimization.mf_acqusitions.VFEI.eval">
+<span class="sig-name descname"><span class="pre">eval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fmin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mf_surrogate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fidelity</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/optimization/mf_acqusitions.html#VFEI.eval"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.optimization.mf_acqusitions.VFEI.eval" title="Link to this definition">¶</a></dt>
+<dd><p>Evaluates selected acqusition function at certain fidelity</p>
+<section id="parameters">
+<h3>Parameters:<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h3>
+<dl class="simple">
+<dt>x: np.ndarray</dt><dd><p>point to evaluate</p>
+</dd>
+<dt>fmin: float</dt><dd><p>best observed function evaluation</p>
+</dd>
+<dt>mf_surrogate: any</dt><dd><p>multi-fidelity surrogate instance</p>
+</dd>
+<dt>fidelity: str</dt><dd><p>str indicating fidelity level</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Acqusition function value w.r.t corresponding fidelity level.</p>
+</dd>
+<dt class="field-even">rtype<span class="colon">:</span></dt>
+<dd class="field-even"><p>np.ndarray</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.optimization.mf_acqusitions.VFEI.query">
+<span class="sig-name descname"><span class="pre">query</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mf_surrogate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fmin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost_ratio</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/optimization/mf_acqusitions.html#VFEI.query"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.optimization.mf_acqusitions.VFEI.query" title="Link to this definition">¶</a></dt>
+<dd><p>Query the acqusition function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mf_surrogate</strong> (<em>Any</em>) – multi-fidelity surrogate instance</p></li>
+<li><p><strong>params</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – parameters of Bayesian Optimization</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>contains two values where ‘hf’ is the update points
+for high-fidelity and ‘lf’ for low-fidelity</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)">dict</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mfpml.optimization.mf_acqusitions.VFLCB">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">VFLCB</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">optimizer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kappa</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[1.0,</span> <span class="pre">1.96]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/optimization/mf_acqusitions.html#VFLCB"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.optimization.mf_acqusitions.VFLCB" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mfpml.optimization.mf_acqusitions.MFUnConsAcq" title="mfpml.optimization.mf_acqusitions.MFUnConsAcq"><code class="xref py py-class docutils literal notranslate"><span class="pre">MFUnConsAcq</span></code></a></p>
+<p>Variable-fidelity Lower Confidence Bound acqusition function</p>
+<p>Initialize the vflcb acqusition</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>optimizer</strong> (<em>any</em><em>, </em><em>optional</em>) – optimizer instance, by default ‘L-BFGS-B’</p></li>
+<li><p><strong>kappa</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em>, </em><em>optional</em>) – balance factors for exploitation and exploration respectively
+, by default [1., 1.96]</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.optimization.mf_acqusitions.VFLCB.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">optimizer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kappa</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[1.0,</span> <span class="pre">1.96]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/optimization/mf_acqusitions.html#VFLCB.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.optimization.mf_acqusitions.VFLCB.__init__" title="Link to this definition">¶</a></dt>
+<dd><p>Initialize the vflcb acqusition</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>optimizer</strong> (<em>any</em><em>, </em><em>optional</em>) – optimizer instance, by default ‘L-BFGS-B’</p></li>
+<li><p><strong>kappa</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em>, </em><em>optional</em>) – balance factors for exploitation and exploration respectively
+, by default [1., 1.96]</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mfpml.optimization.mf_acqusitions.VFLCB._abc_impl">
+<span class="sig-name descname"><span class="pre">_abc_impl</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;_abc._abc_data</span> <span class="pre">object&gt;</span></em><a class="headerlink" href="#mfpml.optimization.mf_acqusitions.VFLCB._abc_impl" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.optimization.mf_acqusitions.VFLCB.eval">
+<span class="sig-name descname"><span class="pre">eval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mf_surrogate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost_ratio</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fidelity</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/optimization/mf_acqusitions.html#VFLCB.eval"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.optimization.mf_acqusitions.VFLCB.eval" title="Link to this definition">¶</a></dt>
+<dd><p>Evaluate vflcb function values at certain fidelity</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>np.ndarray</em>) – point to evaluate</p></li>
+<li><p><strong>mf_surrogate</strong> (<em>Any</em>) – multi-fidelity surrogate model instance</p></li>
+<li><p><strong>cost_ratio</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – ratio of high-fidelity cost to low-fidelity cost</p></li>
+<li><p><strong>fidelity</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – str indicating fidelity level</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>acqusition function values</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mfpml.optimization.mf_acqusitions.VFLCB.query">
+<span class="sig-name descname"><span class="pre">query</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mf_surrogate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost_ratio</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mfpml/optimization/mf_acqusitions.html#VFLCB.query"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfpml.optimization.mf_acqusitions.VFLCB.query" title="Link to this definition">¶</a></dt>
+<dd><p>Query the acqusition function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mf_surrogate</strong> (<em>Any</em>) – multi-fidelity surrogate instance</p></li>
+<li><p><strong>params</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – parameters of Bayesian Optimization</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>contains two values where ‘hf’ is the update points
+for high-fidelity and ‘lf’ for low-fidelity</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)">dict</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="mfpml.models.html" class="btn btn-neutral float-left" title="mfpml.models" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Jiaxiang Yi.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
