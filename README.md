@@ -12,7 +12,7 @@
 
 # MFPML: Multi-Fidelity Probabilistic Machine Learning Library
 
-**MFPML** is a Python library for multi-fidelity and single-fidelity probabilistic machine learning. It provides tools for **design of experiments**, **surrogate modeling**, **Bayesian optimization**, and **visualization** – empowering researchers and engineers to optimize expensive, black-box systems efficiently.
+**MFPML** is a Python library for multi-/single-fidelity probabilistic machine learning. It provides tools for **design of experiments**, **surrogate modeling**, **Bayesian optimization**, and **visualization** – empowering researchers and engineers to optimize expensive, black-box systems efficiently.
  
 ---
 
@@ -35,19 +35,23 @@ Efficient sampling methods to generate design points for optimization and modeli
 
 Example:
 ```python
+import numpy as np
 from mfpml.design_of_experiment.mf_samplers import MFSobolSequence
-
-design_space = [[0, 1], [0, 1]]  # Define the input design space
+# Define the input design space
+design_space = np.array([[0, 1], [0, 1]]) 
+# define the sampler
 sampler = MFSobolSequence(design_space=design_space, num_fidelity=2, nested=True)
+# get samples 
 samples = sampler.get_samples(num_samples=[2, 5])
+# print samples
 print(samples)
     [array([[0.64763958, 0.28450888],
-        [0.36683413, 0.68135563]]),
-    array([[0.64763958, 0.28450888],
-        [0.36683413, 0.68135563],
-        [0.48028161, 0.47841079],
-        [0.51099956, 0.61233338],
-        [0.92215368, 0.08658168]])]
+            [0.36683413, 0.68135563]]), 
+     array([[0.64763958, 0.28450888],
+            [0.36683413, 0.68135563],
+            [0.48028161, 0.47841079],
+            [0.51099956, 0.61233338],
+            [0.92215368, 0.08658168]])]
 
 ```
 
@@ -59,7 +63,7 @@ Model expensive functions with state-of-the-art surrogate techniques:
 - **Co-Kriging** for multi-fidelity modeling
 - **Hierarchical and Scaled Kriging** variants
 
-Example:
+[**Example**](https://jiaxiangyi96.github.io/mfpml/multi_fidelity_kriging_models.html):
 ```python
 from mfpml.models.co_kriging import CoKriging
 
@@ -73,47 +77,23 @@ Y_pred, sigma = model.predict(X_test, return_std=True)  # Predict outputs
 
 ### 3. Multi-Fidelity Bayesian Optimization
 Efficient optimization algorithms to solve black-box problems:
-- **Single-Fidelity Bayesian Optimization**
-- **Multi-Fidelity Bayesian Optimization**
+- **Single-Fidelity Bayesian Optimization, see [Example](https://jiaxiangyi96.github.io/mfpml/optimization.html#single-fidelity-bayesian-optimization)**
+- **Multi-Fidelity Bayesian Optimization, see [Example](https://jiaxiangyi96.github.io/mfpml/optimization.html#multi-fidelity-bayesian-optimization)**
 ```python
+from mfpml.problems.mf_functions import Forrester_1a
 from mfpml.optimization.mf_uncons_bo import mfUnConsBayesOpt
-from mfpml.optimization.mf_acqusitions import  AugmentedEI
-
-class obj_function():
-    """objective function template"""
-
-    input_domain: np.ndarray = np.array([[0.0, 1.0]])
-    def __call__(self, X: List) -> Dict:
-
-        out = []
-        for i in range(len(X)):
-            if i == 0:
-                out.append(self.hf(np.array(X[i])))
-            if i == 1:
-                out.append(self.lf(np.array(X[i])))
-
-        return out
-    @staticmethod
-    def hf(x: np.ndarray) -> np.ndarray:
-        obj = (6 * x - 2) ** 2 * np.sin(12 * x - 4)
-        obj = np.reshape(obj, (x.shape[0], 1))
-
-        return obj
-
-    @staticmethod
-    def lf(x: np.ndarray, factor: float = None) -> np.ndarray:  
-        obj = (6 * x - 2) ** 2 * np.sin(12 * x - 4) - 5
-        obj = np.reshape(obj, (x.shape[0], 1))
-        return obj
+from mfpml.optimization.mf_acqusitions import  AugmentedEI,
 
 
-# define the multi-fidelity Bayesian optimizer
-optimizer = mfUnConsBayesOpt(problem=obj_function(),
-                             acquisition=AugmentedEI(),
-                             num_init=[5, 20],
-                             )
-optimizer.run_optimizer(max_iter=20, stopping_error=0.01, cost_ratio=5.0)                       
-print("Optimal solution:", optimizer.best)
+# define problem
+problem = Forrester_1a()
+# define the optimizer
+optimizer = mfUnConsBayesOpt(problem=problem,
+                            acquisition=VFEI(),
+                            num_init=[5, 20],
+                            )
+# execute the optimizer
+optimizer.run_optimizer(max_iter=20, stopping_error=0.01, cost_ratio=5.0)
 ```
 ---
 
@@ -135,10 +115,8 @@ pip install .
 
 ## 📚 **Documentation**
 
-You can also explore the tutorials provided in Jupyter Notebooks:
-```bash
-jupyter notebook tutorials/
-```
+You can also explore the tutorials provided by sphinx online [documentation](https://jiaxiangyi96.github.io/mfpml/index.html) or by Jupyter [Notebooks](https://github.com/JiaxiangYi96/mfpml/tree/main/tutorials):
+
 
 ---
 
