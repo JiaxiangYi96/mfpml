@@ -40,6 +40,8 @@ Key features of `mfpml` include:
 2. **Advanced Methods**: Advanced techniques for Bayesian optimization [@Jones1998], including single-fidelity and multi-fidelity optimization.
 3. **Future Development**: Ongoing work includes adding constrained optimization and multi-objective optimization methods, which will be included in future versions.
 
+In a similar scope, several Python packages provide Gaussian process or Bayesian optimization functionality—such as `GPyTorch` [@gardner2021gpytorchblackboxmatrixmatrixgaussian] and `BoTorch` [@balandat2020botorch]. However, these frameworks primarily target single-fidelity modeling or deep Gaussian processes and are often coupled with large software dependencies. The `SMT` toolbox [@saves2024smt] offers various surrogate models with limited capability to integrate multi-fidelity data, yet it lacks support for multi-fidelity Bayesian optimization. By contrast, `mfpml` is designed as a lightweight and standalone toolkit that focuses explicitly on multi-fidelity Gaussian process regression and the corresponding Bayesian optimization framework. It serves both as a platform for developing and benchmarking novel multi-fidelity Gaussian process methods and as an easily deployable tool for real-world applications such as aerodynamic shape optimization, materials design, and other simulation-driven engineering problems.
+
 # Acknowledgements
 
 We thank the Python code of conduct provided by [BessaGroup](https://github.com/bessagroup/python_code_of_conduct) and acknowledge the support from our institutions.
