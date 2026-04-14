@@ -4,7 +4,7 @@ import pytest
 
 from mfpml.design_of_experiment.mf_samplers import MFLatinHyperCube
 from mfpml.models.hierarchical_kriging import HierarchicalKriging
-from mfpml.optimization.mf_acqusitions import (
+from mfpml.optimization.mf_acquisitions import (
     AugmentedEI, VFEI, VFLCB, ExtendedPI)
 from mfpml.optimization.mf_uncons_bo import mfUnConsBayesOpt
 from mfpml.problems.mf_functions import Forrester_1a

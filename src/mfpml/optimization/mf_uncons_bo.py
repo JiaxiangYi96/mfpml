@@ -8,7 +8,7 @@ from ..models.co_kriging import CoKriging as CK
 from ..models.hierarchical_kriging import HierarchicalKriging as HK
 from ..models.scale_kriging import ScaledKriging as SK
 from ..problems.functions import Functions
-from .mf_acqusitions import MFUnConsAcq
+from .mf_acquisitions import MFUnConsAcq
 
 
 class mfUnConsBayesOpt:

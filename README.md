@@ -124,7 +124,7 @@ You can also explore the tutorials provided by sphinx online [documentation](htt
 
 To ensure everything works correctly, run the test suite using `pytest`:
 ```bash
-pytest tests/
+pytest
 ```
 
 
