@@ -1,4 +1,9 @@
 include README.md
-include VERSION
 include LICENSE
-include requirements.txt
+include CONTRIBUTING.md
+
+recursive-include tests *
+recursive-exclude * __pycache__
+recursive-exclude * *.py[co]
+
+recursive-include docs *.md Makefile *.jpg *.png *.gif

@@ -13,18 +13,18 @@
 # MFPML: Multi-Fidelity Probabilistic Machine Learning Library
 
 **MFPML** is a Python library for multi-/single-fidelity probabilistic machine learning. It provides tools for **design of experiments**, **surrogate modeling**, **Bayesian optimization**, and **visualization** – empowering researchers and engineers to optimize expensive, black-box systems efficiently.
- 
+
 ---
 
 ## 👥 **Authorship**
 
-**Authors**:  
-- Jiaxiang Yi (yagafighting@gmail.com) [1]  
-- Ji Cheng (jicheng9617@gmail.com) [2]  
+**Authors**:
+- Jiaxiang Yi (yagafighting@gmail.com) [1]
+- Ji Cheng (jicheng9617@gmail.com) [2]
 
-**Affiliations**:  
-- [1] Delft University of Technology  
-- [2] City University of Hong Kong  
+**Affiliations**:
+- [1] Delft University of Technology
+- [2] City University of Hong Kong
 
 ## 🚀 **Key Features**
 
@@ -38,15 +38,15 @@ Example:
 import numpy as np
 from mfpml.design_of_experiment.mf_samplers import MFSobolSequence
 # Define the input design space
-design_space = np.array([[0, 1], [0, 1]]) 
+design_space = np.array([[0, 1], [0, 1]])
 # define the sampler
 sampler = MFSobolSequence(design_space=design_space, num_fidelity=2, nested=True)
-# get samples 
+# get samples
 samples = sampler.get_samples(num_samples=[2, 5])
 # print samples
 print(samples)
     [array([[0.64763958, 0.28450888],
-            [0.36683413, 0.68135563]]), 
+            [0.36683413, 0.68135563]]),
      array([[0.64763958, 0.28450888],
             [0.36683413, 0.68135563],
             [0.48028161, 0.47841079],
@@ -127,16 +127,7 @@ To ensure everything works correctly, run the test suite using `pytest`:
 pytest tests/
 ```
 
----
 
-## 🤝 **Contributing**
-
-Contributions are welcome! Follow these steps to contribute:
-1. Fork the repository.
-2. Create a new feature branch: `git checkout -b feature/your-feature-name`.
-3. Commit your changes: `git commit -m "Add new feature"`.
-4. Push to your branch: `git push origin feature/your-feature-name`.
-5. Submit a pull request.
 
 ---
 
@@ -165,8 +156,8 @@ We appreciate the open-source community and contributors who make this project b
 ---
 ## 📝 **References**
 
-1. Jiang, Ping, et al. "Variable-fidelity lower confidence bounding approach for engineering optimization problems with expensive simulations." *AIAA Journal* 57.12 (2019): 5416-5430.  
-2. Cheng, Ji, Qiao Lin, and Jiaxiang Yi. "An enhanced variable-fidelity optimization approach for constrained optimization problems and its parallelization." *Structural and Multidisciplinary Optimization* 65.7 (2022): 188.  
-3. Yi, Jiaxiang, et al. "Efficient adaptive Kriging-based reliability analysis combining new learning function and error-based stopping criterion." *Structural and Multidisciplinary Optimization* 62 (2020): 2517-2536.  
-4. Yi, Jiaxiang, et al. "An active-learning method based on multi-fidelity Kriging model for structural reliability analysis." *Structural and Multidisciplinary Optimization* 63 (2021): 173-195.  
-5. Yi, Jiaxiang, Yuansheng Cheng, and Jun Liu. "A novel fidelity selection strategy-guided multifidelity kriging algorithm for structural reliability analysis." *Reliability Engineering & System Safety* 219 (2022): 108247. 
+1. Jiang, Ping, et al. "Variable-fidelity lower confidence bounding approach for engineering optimization problems with expensive simulations." *AIAA Journal* 57.12 (2019): 5416-5430.
+2. Cheng, Ji, Qiao Lin, and Jiaxiang Yi. "An enhanced variable-fidelity optimization approach for constrained optimization problems and its parallelization." *Structural and Multidisciplinary Optimization* 65.7 (2022): 188.
+3. Yi, Jiaxiang, et al. "Efficient adaptive Kriging-based reliability analysis combining new learning function and error-based stopping criterion." *Structural and Multidisciplinary Optimization* 62 (2020): 2517-2536.
+4. Yi, Jiaxiang, et al. "An active-learning method based on multi-fidelity Kriging model for structural reliability analysis." *Structural and Multidisciplinary Optimization* 63 (2021): 173-195.
+5. Yi, Jiaxiang, Yuansheng Cheng, and Jun Liu. "A novel fidelity selection strategy-guided multifidelity kriging algorithm for structural reliability analysis." *Reliability Engineering & System Safety* 219 (2022): 108247.
