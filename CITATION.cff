@@ -1,0 +1,13 @@
+cff-version: 1.2.0
+message: If you use this software, please cite it as below.
+title: 'mfpml: Multi-fidelity probabilistic machine learning toolkit'
+type: software
+authors:
+- given-names: Jiaxiang
+  family-names: Yi
+  orcid: https://orcid.org/0009-0007-9287-4328
+- given-names: Ji
+  family-names: Cheng
+  orcid: https://orcid.org/0000-0002-2525-8070
+repository-code: https://github.com/JiaxiangYi96/mfpml
+license: MIT
